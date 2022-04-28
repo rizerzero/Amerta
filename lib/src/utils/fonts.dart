@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-final overlock = GoogleFonts.overlock();
-final overlockWhite = overlock.copyWith(color: Colors.white);
+final headerFont = GoogleFonts.overlock();
+final headerFontWhite = headerFont.copyWith(color: Colors.white);
 
-final aBeeZee = GoogleFonts.aBeeZee();
-final aBeeZeeWhite = aBeeZee.copyWith(color: Colors.white);
+final bodyFont = GoogleFonts.aBeeZee();
+TextTheme bodyFontTheme(BuildContext context) =>
+    GoogleFonts.abelTextTheme(Theme.of(context).textTheme);
+final bodyFontWhite = bodyFont.copyWith(color: Colors.white);

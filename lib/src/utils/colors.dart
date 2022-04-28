@@ -13,7 +13,8 @@ const primaryShade3 = Color(0xFF00498B);
 const primaryShade4 = Color(0xFF002B67);
 
 /// Neighbor Pallete / Threedom
-const secondary = Color(0xFF629992);
+const secondaryLight = Color(0xFF629992);
+const secondaryDark = Color(0xFF006A61);
 
 /// Grey Friend / Matching Palette
 const grey = Color(0xFF9FADBD);
