@@ -10,36 +10,6 @@ const homeRouteNamed = 'home';
 const settingRouteNamed = 'setting';
 const peopleRouteNamed = 'people';
 
-enum AppBottomNavigationMenu { home, people, setting, unknown }
-
-extension AppBottomNavigationMenuMenuExt on AppBottomNavigationMenu {
-  int toIndex() {
-    switch (this) {
-      case AppBottomNavigationMenu.home:
-        return 0;
-      case AppBottomNavigationMenu.people:
-        return 1;
-      case AppBottomNavigationMenu.setting:
-        return 2;
-      default:
-        return -1;
-    }
-  }
-
-  String toStr() {
-    switch (this) {
-      case AppBottomNavigationMenu.home:
-        return "home";
-      case AppBottomNavigationMenu.people:
-        return "people";
-      case AppBottomNavigationMenu.setting:
-        return "setting";
-      default:
-        return "-";
-    }
-  }
-}
-
 final goRouter = Provider<GoRouter>((ref) {
   return GoRouter(
     debugLogDiagnostics: true,
@@ -228,7 +198,7 @@ class PeoplePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SafeArea(
-      child: const Center(
+      child: Center(
         child: Text("people"),
       ),
     );
@@ -241,7 +211,7 @@ class SettingPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const SafeArea(
-      child: const Center(
+      child: Center(
         child: Text("setting"),
       ),
     );

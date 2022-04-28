@@ -7,6 +7,12 @@ import 'src/utils/colors.dart';
 import 'src/utils/fonts.dart';
 import 'src/utils/go_router.dart';
 
+/// Hive Type List :
+/// 1. People Model
+/// 2. Transaction Model
+/// 3. TransactionType Enum
+/// 4. PaymentStatus Enum
+
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();

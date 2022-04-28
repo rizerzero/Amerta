@@ -1,7 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="zeffry.reynando.amerta">
    <application
-        android:label="amerta"
+        android:label="Amerta"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
