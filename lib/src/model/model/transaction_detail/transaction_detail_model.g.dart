@@ -1,43 +1,50 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'people_model.dart';
+part of 'transaction_detail_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class PeopleModelAdapter extends TypeAdapter<PeopleModel> {
+class TransacitonDetailModelAdapter
+    extends TypeAdapter<TransacitonDetailModel> {
   @override
-  final int typeId = 1;
+  final int typeId = 5;
 
   @override
-  PeopleModel read(BinaryReader reader) {
+  TransacitonDetailModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return PeopleModel(
+    return TransacitonDetailModel(
       id: fields[0] as String,
-      name: fields[1] as String,
-      image: fields[2] as Uint8List?,
-      createdAt: fields[3] as DateTime?,
-      updatedAt: fields[4] as DateTime?,
+      transaction: fields[1] as TransactionModel,
+      amount: fields[2] as double,
+      description: fields[3] as String,
+      attachment: fields[4] as Uint8List?,
+      createdAt: fields[5] as DateTime?,
+      updatedAt: fields[6] as DateTime?,
     );
   }
 
   @override
-  void write(BinaryWriter writer, PeopleModel obj) {
+  void write(BinaryWriter writer, TransacitonDetailModel obj) {
     writer
-      ..writeByte(5)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.name)
+      ..write(obj.transaction)
       ..writeByte(2)
-      ..write(obj.image)
+      ..write(obj.amount)
       ..writeByte(3)
-      ..write(obj.createdAt)
+      ..write(obj.description)
       ..writeByte(4)
+      ..write(obj.attachment)
+      ..writeByte(5)
+      ..write(obj.createdAt)
+      ..writeByte(6)
       ..write(obj.updatedAt);
   }
 
@@ -47,7 +54,7 @@ class PeopleModelAdapter extends TypeAdapter<PeopleModel> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PeopleModelAdapter &&
+      other is TransacitonDetailModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

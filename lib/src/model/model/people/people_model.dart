@@ -15,10 +15,19 @@ class PeopleModel extends Equatable {
     this.updatedAt,
   });
 
+  @HiveField(0)
   final String id;
+
+  @HiveField(1)
   final String name;
+
+  @HiveField(2)
   final Uint8List? image;
+
+  @HiveField(3)
   final DateTime? createdAt;
+
+  @HiveField(4)
   final DateTime? updatedAt;
 
   @override

@@ -3,15 +3,17 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
-import 'src/utils/colors.dart';
-import 'src/utils/fonts.dart';
-import 'src/utils/go_router.dart';
+import 'src/app.dart';
+import 'src/model/model/people/people_model.dart';
+import 'src/model/model/transaction/transaction_model.dart';
+import 'src/utils/utils.dart';
 
 /// Hive Type List :
 /// 1. People Model
 /// 2. Transaction Model
 /// 3. TransactionType Enum
 /// 4. PaymentStatus Enum
+/// 4. TransactionDetail Model
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -22,28 +24,14 @@ Future<void> main() async {
   runApp(const ProviderScope(child: App()));
 }
 
-class App extends ConsumerWidget {
-  const App({Key? key}) : super(key: key);
+Future<void> initHive() async {
+  Hive.registerAdapter(PeopleModelAdapter());
+  Hive.registerAdapter(TransactionModelAdapter());
+  Hive.registerAdapter(TransactionTypeAdapter());
+  Hive.registerAdapter(PaymentStatusAdapter());
+  Hive.registerAdapter(TransactionModelAdapter());
 
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final _goRouter = ref.watch(goRouter);
-    final theme = ThemeData();
-
-    return MaterialApp.router(
-      title: "Amerta",
-      debugShowCheckedModeBanner: false,
-      theme: theme.copyWith(
-        textTheme: bodyFontTheme(context),
-        scaffoldBackgroundColor: Colors.white,
-        colorScheme: theme.colorScheme.copyWith(
-          primary: primary,
-          secondary: secondaryDark,
-        ),
-      ),
-      color: primary,
-      routeInformationParser: _goRouter.routeInformationParser,
-      routerDelegate: _goRouter.routerDelegate,
-    );
-  }
+  await Hive.openBox(kHivePeopleBox);
+  await Hive.openBox(kHiveTransactionBox);
+  await Hive.openBox(kHiveTransactionDetailBox);
 }
