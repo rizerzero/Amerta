@@ -6,5 +6,5 @@ final headerFontWhite = headerFont.copyWith(color: Colors.white);
 
 final bodyFont = GoogleFonts.aBeeZee();
 TextTheme bodyFontTheme(BuildContext context) =>
-    GoogleFonts.abelTextTheme(Theme.of(context).textTheme);
+    GoogleFonts.aBeeZeeTextTheme(Theme.of(context).textTheme);
 final bodyFontWhite = bodyFont.copyWith(color: Colors.white);

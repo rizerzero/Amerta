@@ -15,7 +15,8 @@ class TransactionModel extends Equatable {
     this.people = const PeopleModel(),
     this.title = '',
     this.amount = 0.0,
-    this.date,
+    this.debtDate,
+    this.estimateDebtRepayment,
     this.description,
     this.attachment,
     this.paymentStatus = PaymentStatus.unknown,
@@ -24,6 +25,7 @@ class TransactionModel extends Equatable {
     this.updatedAt,
   });
 
+  /// ID Transaksi == ID People
   @HiveField(0)
   final String id;
 
@@ -37,24 +39,27 @@ class TransactionModel extends Equatable {
   final double amount;
 
   @HiveField(4)
-  final DateTime? date;
+  final DateTime? debtDate;
 
   @HiveField(5)
-  final String? description;
+  final DateTime? estimateDebtRepayment;
 
   @HiveField(6)
-  final Uint8List? attachment;
+  final String? description;
 
   @HiveField(7)
-  final PaymentStatus paymentStatus;
+  final Uint8List? attachment;
 
   @HiveField(8)
-  final TransactionType transactionType;
+  final PaymentStatus paymentStatus;
 
   @HiveField(9)
-  final DateTime? createdAt;
+  final TransactionType transactionType;
 
   @HiveField(10)
+  final DateTime? createdAt;
+
+  @HiveField(11)
   final DateTime? updatedAt;
 
   @override
@@ -64,7 +69,8 @@ class TransactionModel extends Equatable {
       people,
       title,
       amount,
-      date,
+      debtDate,
+      estimateDebtRepayment,
       description,
       attachment,
       paymentStatus,
@@ -76,7 +82,7 @@ class TransactionModel extends Equatable {
 
   @override
   String toString() {
-    return 'TransactionModel(id: $id, people: $people, title: $title, amount: $amount, date: $date, description: $description, attachment: $attachment, paymentStatus: $paymentStatus, transactionType: $transactionType, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TransactionModel(id: $id, people: $people, title: $title, amount: $amount, debtDate: $debtDate, estimateDebtRepayment: $estimateDebtRepayment, description: $description, attachment: $attachment, paymentStatus: $paymentStatus, transactionType: $transactionType, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   TransactionModel copyWith({
@@ -84,7 +90,8 @@ class TransactionModel extends Equatable {
     PeopleModel? people,
     String? title,
     double? amount,
-    DateTime? date,
+    DateTime? debtDate,
+    DateTime? estimateDebtRepayment,
     String? description,
     Uint8List? attachment,
     PaymentStatus? paymentStatus,
@@ -97,7 +104,8 @@ class TransactionModel extends Equatable {
       people: people ?? this.people,
       title: title ?? this.title,
       amount: amount ?? this.amount,
-      date: date ?? this.date,
+      debtDate: debtDate ?? this.debtDate,
+      estimateDebtRepayment: estimateDebtRepayment ?? this.estimateDebtRepayment,
       description: description ?? this.description,
       attachment: attachment ?? this.attachment,
       paymentStatus: paymentStatus ?? this.paymentStatus,

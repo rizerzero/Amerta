@@ -16,7 +16,7 @@ class App extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: theme.copyWith(
         textTheme: bodyFontTheme(context),
-        scaffoldBackgroundColor: Colors.white,
+        scaffoldBackgroundColor: scaffoldColor,
         colorScheme: theme.colorScheme.copyWith(
           primary: primary,
           secondary: secondaryDark,

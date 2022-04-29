@@ -21,20 +21,21 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       people: fields[1] as PeopleModel,
       title: fields[2] as String,
       amount: fields[3] as double,
-      date: fields[4] as DateTime?,
-      description: fields[5] as String?,
-      attachment: fields[6] as Uint8List?,
-      paymentStatus: fields[7] as PaymentStatus,
-      transactionType: fields[8] as TransactionType,
-      createdAt: fields[9] as DateTime?,
-      updatedAt: fields[10] as DateTime?,
+      debtDate: fields[4] as DateTime?,
+      estimateDebtRepayment: fields[5] as DateTime?,
+      description: fields[6] as String?,
+      attachment: fields[7] as Uint8List?,
+      paymentStatus: fields[8] as PaymentStatus,
+      transactionType: fields[9] as TransactionType,
+      createdAt: fields[10] as DateTime?,
+      updatedAt: fields[11] as DateTime?,
     );
   }
 
   @override
   void write(BinaryWriter writer, TransactionModel obj) {
     writer
-      ..writeByte(11)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -44,18 +45,20 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       ..writeByte(3)
       ..write(obj.amount)
       ..writeByte(4)
-      ..write(obj.date)
+      ..write(obj.debtDate)
       ..writeByte(5)
-      ..write(obj.description)
+      ..write(obj.estimateDebtRepayment)
       ..writeByte(6)
-      ..write(obj.attachment)
+      ..write(obj.description)
       ..writeByte(7)
-      ..write(obj.paymentStatus)
+      ..write(obj.attachment)
       ..writeByte(8)
-      ..write(obj.transactionType)
+      ..write(obj.paymentStatus)
       ..writeByte(9)
-      ..write(obj.createdAt)
+      ..write(obj.transactionType)
       ..writeByte(10)
+      ..write(obj.createdAt)
+      ..writeByte(11)
       ..write(obj.updatedAt);
   }
 

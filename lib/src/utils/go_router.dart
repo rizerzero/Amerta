@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 
 import 'utils.dart';
 
@@ -65,6 +68,9 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
+  bool _isLoading = false;
+  bool _isError = false;
+  String? _message;
   @override
   void initState() {
     super.initState();
@@ -74,19 +80,47 @@ class _SplashPageState extends State<SplashPage> {
   }
 
   Future<void> _initApplication() async {
-    await Future.delayed(const Duration(seconds: 2));
-    context.goNamed(appRouteNamed);
+    try {
+      setState(() {
+        _isLoading = true;
+      });
+      await Future.delayed(const Duration(seconds: 2));
+    } catch (e) {
+      setState(() {
+        _isError = true;
+      });
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
+
+      if (!_isError) {
+        log("good, can be navigate to main screen");
+        context.goNamed(appRouteNamed);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: primary,
-      body: Center(
-        child: CircularProgressIndicator(
-          color: Colors.white,
-        ),
-      ),
+      body: Builder(builder: (ctx) {
+        if (_isError) {
+          return Center(
+            child: Text("Error $_message"),
+          );
+        }
+        if (_isLoading) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: Colors.white,
+            ),
+          );
+        }
+
+        return const SizedBox();
+      }),
     );
   }
 }
@@ -105,73 +139,175 @@ class WelcomePage extends StatefulWidget {
 
 class _WelcomePageState extends State<WelcomePage> {
   int _selectedIndex = AppBottomNavigationMenu.home.toIndex();
+
+  final _pages = [
+    const HomePage(),
+    const SettingPage(),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: [
-        const HomePage(),
-        const PeoplePage(),
-        const SettingPage(),
-      ].elementAt(_selectedIndex),
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(60.0)),
-        child: Theme(
-          data: Theme.of(context).copyWith(
-            navigationBarTheme: NavigationBarThemeData(
-              labelTextStyle: MaterialStateProperty.resolveWith(
-                (states) {
-                  /// Ubah warna text jika terselected
-                  if (states.contains(MaterialState.selected)) {
-                    return const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                    );
-                  }
-                  return null;
-                },
-              ),
+      body: _pages.elementAt(_selectedIndex),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+          await showModalBottomSheet(
+            context: context,
+            builder: (ctx) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    OptionTile(
+                      title: "Tambah Piutang",
+                      subtitle: "Kamu ingin memberikan / meminjami uang kamu",
+                      icon: Icons.money_off_outlined,
+                      sideColor: Colors.green,
+                      margin: const EdgeInsets.only(bottom: 16.0),
+                      onTap: () {
+                        log("tes");
+                      },
+                    ),
+                    const OptionTile(
+                      title: "Tambah Hutang",
+                      subtitle: "Kamu ingin meminjam uang dari seseorang",
+                      icon: Icons.handshake_outlined,
+                      sideColor: Colors.deepOrange,
+                      margin: EdgeInsets.only(bottom: 16.0),
+                    ),
+                    const OptionTile(
+                      title: "Tambah Orang",
+                      subtitle: "Menambahkan daftar orang yang ingin dipinjami atau meminjami",
+                      icon: Icons.people_outline,
+                      sideColor: primary,
+                      margin: EdgeInsets.only(bottom: 16.0),
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+      ),
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          navigationBarTheme: NavigationBarThemeData(
+            labelTextStyle: MaterialStateProperty.resolveWith(
+              (states) {
+                /// Ubah warna text jika terselected
+                if (states.contains(MaterialState.selected)) {
+                  return const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  );
+                }
+                return null;
+              },
             ),
           ),
-          child: NavigationBar(
-            onDestinationSelected: (index) => setState(() => _selectedIndex = index),
-            backgroundColor: primary,
-            selectedIndex: _selectedIndex,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(
-                  Icons.home_outlined,
-                  color: primaryShade2,
-                ),
-                selectedIcon: Icon(
-                  Icons.home,
-                  color: Colors.white,
-                ),
-                label: "Home",
+        ),
+        child: NavigationBar(
+          onDestinationSelected: (index) => setState(() => _selectedIndex = index),
+          backgroundColor: primary,
+          selectedIndex: _selectedIndex,
+          labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+          destinations: const [
+            NavigationDestination(
+              icon: Icon(
+                Icons.home_outlined,
+                color: primaryShade2,
               ),
-              NavigationDestination(
-                icon: Icon(
-                  Icons.people_alt_outlined,
-                  color: primaryShade2,
-                ),
-                selectedIcon: Icon(
-                  Icons.people_alt,
-                  color: Colors.white,
-                ),
-                label: "People",
+              selectedIcon: Icon(
+                Icons.home,
+                color: Colors.white,
               ),
-              NavigationDestination(
-                icon: Icon(
-                  Icons.settings_outlined,
-                  color: primaryShade2,
-                ),
-                selectedIcon: Icon(
-                  Icons.settings,
-                  color: Colors.white,
-                ),
-                label: "Setting",
+              label: "Home",
+            ),
+            NavigationDestination(
+              icon: Icon(
+                Icons.settings_outlined,
+                color: primaryShade2,
               ),
+              selectedIcon: Icon(
+                Icons.settings,
+                color: Colors.white,
+              ),
+              label: "Setting",
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class OptionTile extends StatelessWidget {
+  const OptionTile({
+    Key? key,
+    this.title = '-',
+    this.subtitle = '-',
+    this.icon = Icons.home,
+    this.sideColor,
+    this.margin,
+    this.onTap,
+  }) : super(key: key);
+
+  final String title;
+  final String subtitle;
+  final IconData icon;
+  final Color? sideColor;
+  final EdgeInsetsGeometry? margin;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: margin,
+      decoration: BoxDecoration(
+        color: sideColor ?? primary,
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(4.0),
+          bottomLeft: Radius.circular(4.0),
+          topRight: Radius.circular(8.0),
+          bottomRight: Radius.circular(8.0),
+        ),
+        boxShadow: [
+          BoxShadow(
+            blurRadius: 2.0,
+            color: black.withOpacity(.25),
+          ),
+        ],
+      ),
+      child: Container(
+        margin: const EdgeInsets.only(left: 4.0),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.only(
+            topRight: Radius.circular(8.0),
+            bottomRight: Radius.circular(8.0),
+          ),
+        ),
+        child: ListTile(
+          onTap: onTap,
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon),
             ],
+          ),
+          title: Text(
+            title,
+            style: bodyFont,
+          ),
+          subtitle: Text(
+            subtitle,
+            style: bodyFont.copyWith(
+              fontSize: 10.0,
+              color: grey,
+            ),
           ),
         ),
       ),
@@ -184,10 +320,316 @@ class HomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SafeArea(
-      child: Center(
-        child: Text("home"),
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const HeaderContent(),
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    "Aktifitas Terbaru",
+                    style: bodyFont.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16.0),
+                  ListView.separated(
+                    separatorBuilder: (context, index) => const SizedBox(height: 32.0),
+                    shrinkWrap: true,
+                    itemCount: 20,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemBuilder: (ctx, index) {
+                      return Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: primary,
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  blurRadius: 2.0,
+                                  color: black.withOpacity(.25),
+                                ),
+                              ],
+                            ),
+                            child: Container(
+                              margin: const EdgeInsets.only(left: 4.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0).copyWith(
+                                  bottomLeft: const Radius.circular(4.0),
+                                  topLeft: const Radius.circular(4.0),
+                                ),
+                              ),
+                              child: ListTile(
+                                isThreeLine: true,
+                                title: Text(
+                                  "Buat buka puasa bersama",
+                                  style: bodyFont.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 12.0,
+                                  ),
+                                ),
+                                subtitle: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                                  children: [
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      fn.rupiahCurrency.format(250000),
+                                      style: bodyFont.copyWith(
+                                        color: secondaryDark,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text.rich(
+                                      TextSpan(
+                                        text: "Reference : ",
+                                        children: [
+                                          const TextSpan(text: "Zeffry Reynando "),
+                                          TextSpan(
+                                            text: Uuid().v4(),
+                                            style: bodyFont.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: primary,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      style: bodyFont.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 8.0,
+                                        color: grey,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                  ],
+                                ),
+                                trailing: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: const [
+                                    CircleAvatar(),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Positioned(
+                            top: -15,
+                            right: -15,
+                            child: RotationTransition(
+                              turns: const AlwaysStoppedAnimation(45 / 360),
+                              child: Card(
+                                color: index.isEven ? Colors.deepOrange : Colors.deepPurple,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Text(
+                                    index.isEven ? "Hutang" : "Piutang",
+                                    style: bodyFont.copyWith(
+                                      fontSize: 10.0,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          )
+                        ],
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 100.0),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
+    );
+  }
+}
+
+class HeaderContent extends StatelessWidget {
+  const HeaderContent({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: fn.vh(context) / 2.5,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final height = constraints.maxHeight;
+          final width = constraints.maxWidth;
+
+          final floatingHeight = height / 2;
+          final mainHeight = height - (floatingHeight / 2);
+          final mainPaddingBottom = (floatingHeight / 2);
+          return Stack(
+            children: [
+              Positioned.fill(
+                child: Align(
+                  alignment: AlignmentDirectional.topStart,
+                  child: Container(
+                    height: mainHeight,
+                    width: width,
+                    decoration: const BoxDecoration(color: primary),
+                    padding: EdgeInsets.only(
+                      top: 16.0,
+                      bottom: mainPaddingBottom,
+                      left: 16.0,
+                      right: 16.0,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: const [
+                        Expanded(
+                          child: HeaderSummaryAmount(),
+                        ),
+                        Expanded(
+                          child: HeaderSummaryAmount(title: "Piutang"),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                height: floatingHeight,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                      child: Text(
+                        "Selengkapnya",
+                        style: bodyFontWhite.copyWith(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12.0,
+                        ),
+                        textAlign: TextAlign.right,
+                      ),
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: 10,
+                        padding: const EdgeInsets.symmetric(vertical: 8.0),
+                        itemBuilder: (ctx, index) {
+                          if (index == 0) {
+                            return Card(
+                              margin: const EdgeInsets.only(right: 16.0, left: 16.0),
+                              child: InkWell(
+                                onTap: () {},
+                                child: const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(
+                                    child: Icon(Icons.add),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return SizedBox(
+                            width: width / 3.5,
+                            child: Card(
+                              margin: const EdgeInsets.only(right: 16.0),
+                              child: InkWell(
+                                onTap: () {},
+                                child: Padding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  child: Column(
+                                    children: [
+                                      const Expanded(child: CircleAvatar()),
+                                      Expanded(
+                                        child: Align(
+                                          child: Text(
+                                            index.isEven
+                                                ? "zeffry reynando sad ada dsadasd"
+                                                : "nakia",
+                                            textAlign: TextAlign.center,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: bodyFont.copyWith(
+                                              fontSize: 10.0,
+                                              color: grey,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class HeaderSummaryAmount extends StatelessWidget {
+  const HeaderSummaryAmount({
+    Key? key,
+    this.title = 'Hutang',
+    this.amount = 0,
+    this.onTap,
+  }) : super(key: key);
+
+  final String title;
+  final int amount;
+  final VoidCallback? onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          title,
+          style: bodyFontWhite.copyWith(
+            fontSize: 16.0,
+          ),
+        ),
+        const SizedBox(height: 8.0),
+        FittedBox(
+          fit: BoxFit.fitWidth,
+          child: InkWell(
+            onTap: onTap,
+            child: Text(
+              fn.rupiahCurrency.format(amount),
+              style: headerFontWhite.copyWith(
+                fontSize: 32.0,
+                fontWeight: FontWeight.bold,
+                decoration: TextDecoration.underline,
+                decorationStyle: TextDecorationStyle.dashed,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
