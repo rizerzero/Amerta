@@ -8,9 +8,7 @@ enum TransactionType {
   @HiveField(0)
   hutang,
   @HiveField(1)
-  piutang,
-  @HiveField(2)
-  unknown
+  piutang
 }
 
 @HiveType(typeId: 4)

@@ -20,7 +20,7 @@ class TransactionModel extends Equatable {
     this.description,
     this.attachment,
     this.paymentStatus = PaymentStatus.unknown,
-    this.transactionType = TransactionType.unknown,
+    this.transactionType = TransactionType.hutang,
     this.createdAt,
     this.updatedAt,
   });

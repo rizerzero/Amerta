@@ -17,8 +17,6 @@ class TransactionTypeAdapter extends TypeAdapter<TransactionType> {
         return TransactionType.hutang;
       case 1:
         return TransactionType.piutang;
-      case 2:
-        return TransactionType.unknown;
       default:
         return TransactionType.hutang;
     }
@@ -32,9 +30,6 @@ class TransactionTypeAdapter extends TypeAdapter<TransactionType> {
         break;
       case TransactionType.piutang:
         writer.writeByte(1);
-        break;
-      case TransactionType.unknown:
-        writer.writeByte(2);
         break;
     }
   }

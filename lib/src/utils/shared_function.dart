@@ -9,6 +9,7 @@ class SharedFunction {
   double vh(BuildContext context) => MediaQuery.of(context).size.height;
   double vhMinusNavigationBar(BuildContext context) =>
       vh(context) - (const NavigationBarThemeData().height ?? 80.0);
+  double notchTop(BuildContext context) => MediaQuery.of(context).padding.top;
 
   final rupiahCurrency = NumberFormat.simpleCurrency(
     locale: "id_ID",

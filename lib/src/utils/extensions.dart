@@ -39,6 +39,17 @@ extension TransactionTypeExt on TransactionType {
         return "unknown";
     }
   }
+
+  int toIndex() {
+    switch (this) {
+      case TransactionType.hutang:
+        return 0;
+      case TransactionType.piutang:
+        return 1;
+      default:
+        return -1;
+    }
+  }
 }
 
 extension PaymentStatusExt on PaymentStatus {

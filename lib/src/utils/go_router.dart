@@ -3,15 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import 'utils.dart';
 
 const splashRouteNamed = 'splash';
 const appRouteNamed = 'welcome';
-const homeRouteNamed = 'home';
-const settingRouteNamed = 'setting';
-const peopleRouteNamed = 'people';
+
+const userTransactionRouteNamed = 'user-transaction';
 
 final goRouter = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -54,9 +54,149 @@ final goRouter = Provider<GoRouter>((ref) {
           ),
         ],
       ),
+      GoRoute(
+        path: '/user/:userId/transaction',
+        name: userTransactionRouteNamed,
+        builder: (ctx, state) {
+          final userId = state.params['userId'] ?? "-";
+          return UserTransaction(userId: userId);
+        },
+      ),
     ],
   );
 });
+
+class UserTransaction extends StatelessWidget {
+  const UserTransaction({
+    Key? key,
+    required this.userId,
+  }) : super(key: key);
+
+  final String userId;
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: TransactionType.values.length,
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              pinned: true,
+              snap: true,
+              floating: true,
+              expandedHeight: fn.vh(context) / 2.5,
+              backgroundColor: primary,
+              flexibleSpace: LayoutBuilder(
+                builder: (context, constraints) {
+                  final height = constraints.maxHeight;
+                  final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
+                  return FlexibleSpaceBar(
+                    title: isCollapse ? const Text("Zeffry Reynando") : null,
+                    background: SafeArea(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Hero(
+                              tag: userId,
+                              child: const Center(
+                                child: CircleAvatar(radius: 40.0),
+                              ),
+                            ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              "Zeffry Reynando",
+                              style: bodyFontWhite.copyWith(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 20.0,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            const SizedBox(height: 16.0),
+                            Expanded(
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: const [
+                                  Expanded(
+                                    child: HeaderSummaryAmount(),
+                                  ),
+                                  Expanded(
+                                    child: HeaderSummaryAmount(title: "Piutang"),
+                                  ),
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: SliverTabBarTransactionType(
+                tabBar: TabBar(
+                  unselectedLabelStyle: bodyFont.copyWith(color: black),
+                  unselectedLabelColor: black,
+                  indicator: BoxDecoration(
+                    color: primary,
+                    borderRadius: BorderRadius.circular(60.0),
+                  ),
+                  tabs: TransactionType.values
+                      .map((e) => Tab(
+                            text: toBeginningOfSentenceCase(e.name),
+                          ))
+                      .toList(),
+                ),
+              ),
+            ),
+            SliverList(
+              delegate: SliverChildBuilderDelegate((ctx, index) {
+                return ListTile(
+                  title: Text('$index'),
+                );
+              }, childCount: 1000),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class SliverTabBarTransactionType extends SliverPersistentHeaderDelegate {
+  const SliverTabBarTransactionType({
+    required this.tabBar,
+  });
+  final TabBar tabBar;
+  @override
+  Widget build(BuildContext context, shrinkOffset, overlapsContent) {
+    return Container(
+      color: scaffoldColor,
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Card(
+        margin: const EdgeInsets.only(top: 16.0),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(60.0),
+        ),
+        child: tabBar,
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => tabBar.preferredSize.height + 16.0;
+
+  @override
+  double get minExtent => tabBar.preferredSize.height + 16.0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+}
 
 class SplashPage extends StatefulWidget {
   const SplashPage({
@@ -153,41 +293,7 @@ class _WelcomePageState extends State<WelcomePage> {
         onPressed: () async {
           await showModalBottomSheet(
             context: context,
-            builder: (ctx) {
-              return Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    OptionTile(
-                      title: "Tambah Piutang",
-                      subtitle: "Kamu ingin memberikan / meminjami uang kamu",
-                      icon: Icons.money_off_outlined,
-                      sideColor: Colors.green,
-                      margin: const EdgeInsets.only(bottom: 16.0),
-                      onTap: () {
-                        log("tes");
-                      },
-                    ),
-                    const OptionTile(
-                      title: "Tambah Hutang",
-                      subtitle: "Kamu ingin meminjam uang dari seseorang",
-                      icon: Icons.handshake_outlined,
-                      sideColor: Colors.deepOrange,
-                      margin: EdgeInsets.only(bottom: 16.0),
-                    ),
-                    const OptionTile(
-                      title: "Tambah Orang",
-                      subtitle: "Menambahkan daftar orang yang ingin dipinjami atau meminjami",
-                      icon: Icons.people_outline,
-                      sideColor: primary,
-                      margin: EdgeInsets.only(bottom: 16.0),
-                    ),
-                  ],
-                ),
-              );
-            },
+            builder: (ctx) => const ModalOptionTile(),
           );
         },
       ),
@@ -238,6 +344,49 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class ModalOptionTile extends StatelessWidget {
+  const ModalOptionTile({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          OptionTile(
+            title: "Tambah Piutang",
+            subtitle: "Kamu ingin memberikan / meminjami uang kamu",
+            icon: Icons.money_off_outlined,
+            sideColor: Colors.green,
+            margin: const EdgeInsets.only(bottom: 16.0),
+            onTap: () {
+              log("tes");
+            },
+          ),
+          const OptionTile(
+            title: "Tambah Hutang",
+            subtitle: "Kamu ingin meminjam uang dari seseorang",
+            icon: Icons.handshake_outlined,
+            sideColor: Colors.deepOrange,
+            margin: EdgeInsets.only(bottom: 16.0),
+          ),
+          const OptionTile(
+            title: "Tambah Orang",
+            subtitle: "Menambahkan daftar orang yang ingin dipinjami atau meminjami",
+            icon: Icons.people_outline,
+            sideColor: primary,
+            margin: EdgeInsets.only(bottom: 16.0),
+          ),
+        ],
       ),
     );
   }
@@ -338,112 +487,35 @@ class HomePage extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 16.0),
+                  DefaultTabController(
+                    length: TransactionType.values.length,
+                    child: Card(
+                      margin: EdgeInsets.zero,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(60.0),
+                      ),
+                      child: TabBar(
+                        onTap: (index) {},
+                        indicator: BoxDecoration(
+                          color: primary,
+                          borderRadius: BorderRadius.circular(60.0),
+                        ),
+                        unselectedLabelColor: grey,
+                        tabs: TransactionType.values
+                            .map(
+                              (e) => Tab(text: e.name.toUpperCase()),
+                            )
+                            .toList(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 40.0),
                   ListView.separated(
                     separatorBuilder: (context, index) => const SizedBox(height: 32.0),
                     shrinkWrap: true,
                     itemCount: 20,
                     physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (ctx, index) {
-                      return Stack(
-                        clipBehavior: Clip.none,
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: primary,
-                              borderRadius: BorderRadius.circular(8.0),
-                              boxShadow: [
-                                BoxShadow(
-                                  blurRadius: 2.0,
-                                  color: black.withOpacity(.25),
-                                ),
-                              ],
-                            ),
-                            child: Container(
-                              margin: const EdgeInsets.only(left: 4.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0).copyWith(
-                                  bottomLeft: const Radius.circular(4.0),
-                                  topLeft: const Radius.circular(4.0),
-                                ),
-                              ),
-                              child: ListTile(
-                                isThreeLine: true,
-                                title: Text(
-                                  "Buat buka puasa bersama",
-                                  style: bodyFont.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 12.0,
-                                  ),
-                                ),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                                  children: [
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      fn.rupiahCurrency.format(250000),
-                                      style: bodyFont.copyWith(
-                                        color: secondaryDark,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text.rich(
-                                      TextSpan(
-                                        text: "Reference : ",
-                                        children: [
-                                          const TextSpan(text: "Zeffry Reynando "),
-                                          TextSpan(
-                                            text: Uuid().v4(),
-                                            style: bodyFont.copyWith(
-                                              fontWeight: FontWeight.bold,
-                                              color: primary,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      style: bodyFont.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 8.0,
-                                        color: grey,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                  ],
-                                ),
-                                trailing: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: const [
-                                    CircleAvatar(),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            top: -15,
-                            right: -15,
-                            child: RotationTransition(
-                              turns: const AlwaysStoppedAnimation(45 / 360),
-                              child: Card(
-                                color: index.isEven ? Colors.deepOrange : Colors.deepPurple,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Text(
-                                    index.isEven ? "Hutang" : "Piutang",
-                                    style: bodyFont.copyWith(
-                                      fontSize: 10.0,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                          )
-                        ],
-                      );
-                    },
+                    itemBuilder: (ctx, index) => const TransactionDebtTile(),
                   ),
                   const SizedBox(height: 100.0),
                 ],
@@ -452,6 +524,118 @@ class HomePage extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+class TransactionDebtTile extends StatelessWidget {
+  const TransactionDebtTile({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: primary,
+            borderRadius: BorderRadius.circular(8.0),
+            boxShadow: [
+              BoxShadow(
+                blurRadius: 2.0,
+                color: black.withOpacity(.25),
+              ),
+            ],
+          ),
+          child: Container(
+            margin: const EdgeInsets.only(left: 4.0),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(8.0).copyWith(
+                bottomLeft: const Radius.circular(4.0),
+                topLeft: const Radius.circular(4.0),
+              ),
+            ),
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(16.0),
+              isThreeLine: true,
+              title: Text(
+                "Buat buka puasa bersama",
+                style: bodyFont.copyWith(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12.0,
+                ),
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const SizedBox(height: 8.0),
+                  Text(
+                    fn.rupiahCurrency.format(250000),
+                    style: bodyFont.copyWith(
+                      color: secondaryDark,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                  const SizedBox(height: 8.0),
+                  Text.rich(
+                    TextSpan(
+                      text: "Reference : ",
+                      children: [
+                        const TextSpan(text: "Zeffry Reynando "),
+                        TextSpan(
+                          text: "#${const Uuid().v4()}",
+                          style: bodyFont.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: primary,
+                          ),
+                        ),
+                      ],
+                    ),
+                    style: bodyFont.copyWith(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 8.0,
+                      color: grey,
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 8.0),
+                ],
+              ),
+              trailing: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: const [
+                  CircleAvatar(),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: -15,
+          right: -15,
+          child: RotationTransition(
+            turns: const AlwaysStoppedAnimation(45 / 360),
+            child: Card(
+              color: Colors.deepPurple,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  "Piutang",
+                  style: bodyFont.copyWith(
+                    fontSize: 10.0,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        )
+      ],
     );
   }
 }
@@ -473,6 +657,7 @@ class HeaderContent extends StatelessWidget {
           final floatingHeight = height / 2;
           final mainHeight = height - (floatingHeight / 2);
           final mainPaddingBottom = (floatingHeight / 2);
+
           return Stack(
             children: [
               Positioned.fill(
@@ -543,17 +728,30 @@ class HeaderContent extends StatelessWidget {
                               ),
                             );
                           }
+
                           return SizedBox(
                             width: width / 3.5,
                             child: Card(
                               margin: const EdgeInsets.only(right: 16.0),
                               child: InkWell(
-                                onTap: () {},
+                                onTap: () {
+                                  context.pushNamed(
+                                    userTransactionRouteNamed,
+                                    params: {
+                                      "userId": index.toString(),
+                                    },
+                                  );
+                                },
                                 child: Padding(
                                   padding: const EdgeInsets.all(16.0),
                                   child: Column(
                                     children: [
-                                      const Expanded(child: CircleAvatar()),
+                                      Expanded(
+                                        child: Hero(
+                                          tag: index.toString(),
+                                          child: const CircleAvatar(),
+                                        ),
+                                      ),
                                       Expanded(
                                         child: Align(
                                           child: Text(
