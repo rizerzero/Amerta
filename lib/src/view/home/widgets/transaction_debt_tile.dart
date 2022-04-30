@@ -6,14 +6,17 @@ import '../../../utils/utils.dart';
 class TransactionDebtTile extends StatelessWidget {
   const TransactionDebtTile({
     Key? key,
+    this.margin,
   }) : super(key: key);
 
+  final EdgeInsetsGeometry? margin;
   @override
   Widget build(BuildContext context) {
     return Stack(
       clipBehavior: Clip.none,
       children: [
         Container(
+          margin: margin,
           decoration: BoxDecoration(
             color: primary,
             borderRadius: BorderRadius.circular(8.0),

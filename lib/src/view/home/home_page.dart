@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../utils/utils.dart';
 import 'widgets/home_header_content.dart';
 import 'widgets/home_tabbar_persistent_header.dart';
+import 'widgets/transaction_debt_tile.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -13,46 +15,121 @@ class HomePage extends StatelessWidget {
 
     return DefaultTabController(
       length: TransactionType.values.length,
-      child: CustomScrollView(
-        slivers: [
-          SliverAppBar(
-            automaticallyImplyLeading: false,
-            elevation: 0,
-            pinned: true,
-            snap: true,
-            floating: true,
-            expandedHeight: appBarHeight,
-            flexibleSpace: const HomeHeaderContent(),
-          ),
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: HomeTabBarPersistentHeader(
-              tabbar: TabBar(
-                labelColor: Colors.white,
-                unselectedLabelColor: Colors.white54,
-                onTap: (index) {},
-                indicator: const BoxDecoration(
-                  color: primary,
-                  border: Border(
-                    bottom: BorderSide(
-                      color: Colors.white,
-                      width: 2,
+      child: NestedScrollView(
+        headerSliverBuilder: (context, innerBoxIsScrolled) {
+          return [
+            SliverOverlapAbsorber(
+              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+              sliver: MultiSliver(
+                pushPinnedChildren: false,
+                children: [
+                  SliverAppBar(
+                    elevation: 0,
+                    automaticallyImplyLeading: false,
+                    pinned: true,
+                    snap: true,
+                    floating: true,
+                    expandedHeight: appBarHeight,
+                    forceElevated: innerBoxIsScrolled,
+                    flexibleSpace: const HomeHeaderContent(),
+                  ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: HomeTabBarPersistentHeader(
+                      tabbar: TabBar(
+                        labelColor: Colors.white,
+                        unselectedLabelColor: Colors.white54,
+                        onTap: (index) {},
+                        indicator: const BoxDecoration(
+                          color: primary,
+                          border: Border(
+                            bottom: BorderSide(
+                              color: Colors.white,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        tabs: TransactionType.values
+                            .map(
+                              (e) => Tab(text: e.name.toUpperCase()),
+                            )
+                            .toList(),
+                      ),
                     ),
                   ),
-                ),
-                tabs: TransactionType.values
-                    .map(
-                      (e) => Tab(text: e.name.toUpperCase()),
-                    )
-                    .toList(),
+                ],
               ),
             ),
-          ),
-          const SliverToBoxAdapter(
-            child: SizedBox(height: 20000),
-          )
-        ],
+          ];
+        },
+        body: TabBarView(
+          children: TransactionType.values
+              .map(
+                (e) => Builder(
+                  builder: (context) {
+                    return CustomScrollView(
+                      /// Untuk menyimpan last scroll position
+                      key: PageStorageKey(e),
+                      primary: true,
+                      slivers: [
+                        /// Akumulasi jarak/space berdasarkan jumlah sliver yang berada didalam [SliverOverlapAbsorber]
+                        SliverOverlapInjector(
+                          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                        ),
+                        SliverPadding(
+                          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
+                          sliver: SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (ctx, index) => const TransactionDebtTile(
+                                margin: EdgeInsets.only(bottom: 32.0),
+                              ),
+                              childCount: 20000,
+                            ),
+                          ),
+                        )
+                      ],
+                    );
+                  },
+                ),
+              )
+              .toList(),
+        ),
       ),
+      // child: CustomScrollView(
+      //   slivers: [
+      //     SliverAppBar(
+      //       automaticallyImplyLeading: false,
+      //       elevation: 0,
+      //       pinned: true,
+      //       expandedHeight: appBarHeight,
+      //       flexibleSpace: const HomeHeaderContent(),
+      //     ),
+      //     SliverPersistentHeader(
+      //       pinned: true,
+      //       delegate: HomeTabBarPersistentHeader(
+      //         tabbar: TabBar(
+      //           labelColor: Colors.white,
+      //           unselectedLabelColor: Colors.white54,
+      //           onTap: (index) {},
+      //           indicator: const BoxDecoration(
+      //             color: primary,
+      //             border: Border(
+      //               bottom: BorderSide(
+      //                 color: Colors.white,
+      //                 width: 2,
+      //               ),
+      //             ),
+      //           ),
+      //           tabs: TransactionType.values
+      //               .map(
+      //                 (e) => Tab(text: e.name.toUpperCase()),
+      //               )
+      //               .toList(),
+      //         ),
+      //       ),
+      //     ),
+      //   ],
+      // ),
     );
   }
 }
