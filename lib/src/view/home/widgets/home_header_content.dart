@@ -74,13 +74,18 @@ class HomeHeaderContent extends StatelessWidget {
                           ),
                           textAlign: TextAlign.right,
                         ),
-                        Text(
-                          "Selengkapnya",
-                          style: bodyFontWhite.copyWith(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12.0,
+                        InkWell(
+                          onTap: () {
+                            context.pushNamed(userListRouteNamed);
+                          },
+                          child: Text(
+                            "Selengkapnya",
+                            style: bodyFontWhite.copyWith(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12.0,
+                            ),
+                            textAlign: TextAlign.right,
                           ),
-                          textAlign: TextAlign.right,
                         ),
                       ],
                     ),

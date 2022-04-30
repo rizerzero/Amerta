@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../utils/utils.dart';
@@ -94,7 +93,7 @@ class UserTransactionPage extends StatelessWidget {
                         ),
                         tabs: TransactionType.values
                             .map((e) => Tab(
-                                  text: toBeginningOfSentenceCase(e.name),
+                                  text: e.name.toUpperCase(),
                                 ))
                             .toList(),
                       ),

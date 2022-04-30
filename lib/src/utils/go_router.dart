@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../view/form_transaction/form_transaction_page.dart';
 import '../view/splash/splash_page.dart';
 import '../view/user_transaction/user_transaction_page.dart';
+import '../view/users/users_page.dart';
 import '../view/welcome/welcome_page.dart';
 import 'utils.dart';
 
@@ -12,6 +13,7 @@ const splashRouteNamed = 'splash';
 const appRouteNamed = 'welcome';
 
 const userTransactionRouteNamed = 'user-transaction';
+const userListRouteNamed = 'user-list';
 
 const formNewTransactionRouteNamed = 'form-new-transaction';
 const formEditTransactionRouteNamed = 'form-edit-transaction';
@@ -59,12 +61,20 @@ final goRouter = Provider<GoRouter>(
           ],
         ),
         GoRoute(
-          path: '/transaction/user/:userId',
-          name: userTransactionRouteNamed,
-          builder: (ctx, state) {
-            final userId = state.params['userId'] ?? "-";
-            return UserTransactionPage(userId: userId);
-          },
+          path: "/user",
+          name: userListRouteNamed,
+          builder: (ctx, state) => const UsersPage(),
+          routes: [
+            /// [user/123-123/transaction]
+            GoRoute(
+              path: ':userId/transaction',
+              name: userTransactionRouteNamed,
+              builder: (ctx, state) {
+                final userId = state.params['userId'] ?? "-";
+                return UserTransactionPage(userId: userId);
+              },
+            ),
+          ],
         ),
         GoRoute(
           path: "/transaction/form",
