@@ -2,67 +2,56 @@ import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
 import 'widgets/home_header_content.dart';
-import 'widgets/transaction_debt_tile.dart';
+import 'widgets/home_tabbar_persistent_header.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const HomeHeaderContent(),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Text(
-                    "Aktifitas Terbaru",
-                    style: bodyFont.copyWith(
-                      fontWeight: FontWeight.bold,
+    final appBarHeight = fn.vh(context) / 2;
+
+    return DefaultTabController(
+      length: TransactionType.values.length,
+      child: CustomScrollView(
+        slivers: [
+          SliverAppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            pinned: true,
+            snap: true,
+            floating: true,
+            expandedHeight: appBarHeight,
+            flexibleSpace: const HomeHeaderContent(),
+          ),
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: HomeTabBarPersistentHeader(
+              tabbar: TabBar(
+                labelColor: Colors.white,
+                unselectedLabelColor: Colors.white54,
+                onTap: (index) {},
+                indicator: const BoxDecoration(
+                  color: primary,
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.white,
+                      width: 2,
                     ),
                   ),
-                  const SizedBox(height: 16.0),
-                  DefaultTabController(
-                    length: TransactionType.values.length,
-                    child: Card(
-                      margin: EdgeInsets.zero,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(60.0),
-                      ),
-                      child: TabBar(
-                        onTap: (index) {},
-                        indicator: BoxDecoration(
-                          color: primary,
-                          borderRadius: BorderRadius.circular(60.0),
-                        ),
-                        unselectedLabelColor: grey,
-                        tabs: TransactionType.values
-                            .map(
-                              (e) => Tab(text: e.name.toUpperCase()),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 40.0),
-                  ListView.separated(
-                    separatorBuilder: (context, index) => const SizedBox(height: 32.0),
-                    shrinkWrap: true,
-                    itemCount: 20,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemBuilder: (ctx, index) => const TransactionDebtTile(),
-                  ),
-                  const SizedBox(height: 100.0),
-                ],
+                ),
+                tabs: TransactionType.values
+                    .map(
+                      (e) => Tab(text: e.name.toUpperCase()),
+                    )
+                    .toList(),
               ),
             ),
-          ],
-        ),
+          ),
+          const SliverToBoxAdapter(
+            child: SizedBox(height: 20000),
+          )
+        ],
       ),
     );
   }

@@ -22,21 +22,24 @@ class SummaryAmount extends StatelessWidget {
         Text(
           title,
           style: bodyFontWhite.copyWith(
-            fontSize: 16.0,
+            fontSize: 20.0,
           ),
         ),
         const SizedBox(height: 8.0),
-        FittedBox(
-          fit: BoxFit.fitWidth,
-          child: InkWell(
-            onTap: onTap,
-            child: Text(
-              fn.rupiahCurrency.format(amount),
-              style: headerFontWhite.copyWith(
-                fontSize: 32.0,
-                fontWeight: FontWeight.bold,
-                decoration: TextDecoration.underline,
-                decorationStyle: TextDecorationStyle.dashed,
+        SizedBox(
+          height: 60.0,
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: InkWell(
+              onTap: onTap,
+              child: Text(
+                fn.rupiahCurrency.format(amount),
+                style: headerFontWhite.copyWith(
+                  fontSize: 40.0,
+                  fontWeight: FontWeight.bold,
+                  decoration: TextDecoration.underline,
+                  decorationStyle: TextDecorationStyle.dashed,
+                ),
               ),
             ),
           ),

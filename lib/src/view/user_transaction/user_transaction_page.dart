@@ -94,11 +94,14 @@ class UserTransactionPage extends StatelessWidget {
               ),
             ),
             SliverList(
-              delegate: SliverChildBuilderDelegate((ctx, index) {
-                return ListTile(
-                  title: Text('$index'),
-                );
-              }, childCount: 1000),
+              delegate: SliverChildBuilderDelegate(
+                (ctx, index) {
+                  return ListTile(
+                    title: Text('$index'),
+                  );
+                },
+                childCount: 1000,
+              ),
             ),
           ],
         ),
