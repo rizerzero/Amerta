@@ -1,16 +1,41 @@
-# amerta
+[![GitHub followers](https://img.shields.io/github/followers/zgramming.svg?style=social&label=Follow&maxAge=2592000)](https://github.com/zgramming?tab=followers)
 
-Hutang yang tidak akan pernah terlupakan.
+<p align="center">
+  <img src="github/banner.png" height="400">
+</p>
 
-## Getting Started
+# Amerta
+Aplikasi untuk mengatur flow keluar-masuk hutang dan piutang kamu.
 
-This project is a starting point for a Flutter application.
+## Issues
 
-A few resources to get you started if this is your first Flutter project:
+Please file any issues, bugs or feature request as an issue on <a href="https://github.com/zgramming/Amerta/issues"><b> Github </b></a>
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+## Contributing
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+
+<table border="0" cellspacing="0" cellpadding="0">
+    <thead>
+        <tr>
+            <th>Github</th>
+            <th>LinkedIn</th>
+            <th>Facebook</th>
+            <th>Instagram</th>
+            <th>Website</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+            <a href="https://github.com/zgramming/" target="_blank"><img src="github/icons/icon_github.png" width=48 height=48></a>
+            </td>
+            <td><a href="https://www.linkedin.com/in/zeffry-reynando" target="_blank"><img src="github/icons/icon_linkedin.png" width=48 height=48></a></td>
+            <td><a href="https://www.facebook.com/zeffry.reynando" target="_blank"><img src="github/icons/icon_fb.png" width=48 height=48></a></td>
+            <td><a href="https://www.instagram.com/zeffry_reynando" target="_blank"><img src="github/icons/icon_instagram.png" width=48 height=48></a></td>
+            <td><a href="https://zeffry.dev/" target="_blank"><img src="github/icons/icon_website.png" width=48 height=48></a></td>
+        </tr>
+    </tbody>
+
+</table>
