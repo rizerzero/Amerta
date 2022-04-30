@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../utils/utils.dart';
 
@@ -8,44 +9,29 @@ class UsersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primary,
       appBar: AppBar(
         elevation: 0.0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: primary,
         leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: secondaryDark,
-          ),
+          onPressed: () => Navigator.pop(context),
+          icon: const Icon(Icons.arrow_back),
         ),
         title: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              "Daftar orang",
-              style: bodyFont.copyWith(
-                color: secondaryDark,
-              ),
-            ),
+            Text("Daftar orang", style: bodyFont.copyWith()),
             Text(
               "Total : 0 Orang",
-              style: bodyFont.copyWith(
-                color: secondaryDark.withOpacity(.5),
-                fontSize: 12.0,
-              ),
+              style: bodyFont.copyWith(color: Colors.white60, fontSize: 12.0),
             ),
           ],
         ),
         actions: [
           IconButton(
             onPressed: () {},
-            icon: const Icon(
-              Icons.search,
-              color: secondaryDark,
-            ),
+            icon: const Icon(Icons.search),
           ),
         ],
       ),
@@ -58,7 +44,12 @@ class UsersPage extends StatelessWidget {
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
             margin: const EdgeInsets.only(bottom: 16.0),
             child: InkWell(
-              onTap: () {},
+              onTap: () => context.pushNamed(
+                userTransactionRouteNamed,
+                params: {
+                  "userId": index.toString(),
+                },
+              ),
               borderRadius: BorderRadius.circular(8.0),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
@@ -67,12 +58,15 @@ class UsersPage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        ClipOval(
-                          child: Image.asset(
-                            kLogo,
-                            fit: BoxFit.cover,
-                            height: 30,
-                            width: 30,
+                        Hero(
+                          tag: index.toString(),
+                          child: ClipOval(
+                            child: Image.asset(
+                              kLogo,
+                              fit: BoxFit.cover,
+                              height: 30,
+                              width: 30,
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16.0),

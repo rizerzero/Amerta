@@ -3,7 +3,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../utils/utils.dart';
 import '../home/widgets/summary_amount.dart';
-import '../home/widgets/transaction_debt_tile.dart';
+import '../home/widgets/transaction_tile.dart';
 import 'widgets/sliver_tabbar_transaction_type.dart';
 
 class UserTransactionPage extends StatelessWidget {
@@ -32,34 +32,38 @@ class UserTransactionPage extends StatelessWidget {
                     floating: true,
                     expandedHeight: fn.vh(context) / 2.5,
                     backgroundColor: primary,
+                    forceElevated: innerBoxIsScrolled,
                     flexibleSpace: LayoutBuilder(
                       builder: (context, constraints) {
                         final height = constraints.maxHeight;
                         final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
                         return FlexibleSpaceBar(
                           title: isCollapse ? const Text("Zeffry Reynando") : null,
+                          centerTitle: true,
                           background: SafeArea(
                             child: Padding(
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: [
-                                  Hero(
-                                    tag: userId,
-                                    child: const Center(
-                                      child: CircleAvatar(radius: 40.0),
+                                  ...[
+                                    Hero(
+                                      tag: userId,
+                                      child: const Center(
+                                        child: CircleAvatar(radius: 40.0),
+                                      ),
                                     ),
-                                  ),
-                                  const SizedBox(height: 8.0),
-                                  Text(
-                                    "Zeffry Reynando",
-                                    style: bodyFontWhite.copyWith(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 20.0,
+                                    const SizedBox(height: 8.0),
+                                    Text(
+                                      "Zeffry Reynando",
+                                      style: bodyFontWhite.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 20.0,
+                                      ),
+                                      textAlign: TextAlign.center,
                                     ),
-                                    textAlign: TextAlign.center,
-                                  ),
-                                  const SizedBox(height: 16.0),
+                                    const SizedBox(height: 16.0),
+                                  ],
                                   Expanded(
                                     child: Row(
                                       crossAxisAlignment: CrossAxisAlignment.center,
@@ -105,7 +109,9 @@ class UserTransactionPage extends StatelessWidget {
           ],
           body: TabBarView(
             children: TransactionType.values
-                .map((e) => Builder(builder: (context) {
+                .map(
+                  (e) => Builder(
+                    builder: (context) {
                       return CustomScrollView(
                         key: PageStorageKey(e),
                         slivers: [
@@ -116,16 +122,16 @@ class UserTransactionPage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
-                                (ctx, index) => const TransactionDebtTile(
-                                  margin: EdgeInsets.only(bottom: 40.0),
-                                ),
+                                (ctx, index) => const TransactionTile(),
                                 childCount: 1000,
                               ),
                             ),
                           ),
                         ],
                       );
-                    }))
+                    },
+                  ),
+                )
                 .toList(),
           ),
         ),

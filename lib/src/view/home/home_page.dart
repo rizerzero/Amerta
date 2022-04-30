@@ -6,7 +6,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../../utils/utils.dart';
 import 'widgets/home_header_content.dart';
 import 'widgets/home_tabbar_persistent_header.dart';
-import 'widgets/transaction_debt_tile.dart';
+import 'widgets/transaction_tile.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -84,9 +84,7 @@ class HomePage extends StatelessWidget {
                             padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
-                                (ctx, index) => const TransactionDebtTile(
-                                  margin: EdgeInsets.only(bottom: 32.0),
-                                ),
+                                (ctx, index) => const TransactionTile(),
                                 childCount: 20000,
                               ),
                             ),

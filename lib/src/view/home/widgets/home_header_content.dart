@@ -96,23 +96,8 @@ class HomeHeaderContent extends StatelessWidget {
                       scrollDirection: Axis.horizontal,
                       shrinkWrap: true,
                       itemCount: 10,
-                      padding: const EdgeInsets.symmetric(vertical: 8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                       itemBuilder: (ctx, index) {
-                        if (index == 0) {
-                          return Card(
-                            margin: const EdgeInsets.only(right: 16.0, left: 16.0),
-                            child: InkWell(
-                              onTap: () {},
-                              child: const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(
-                                  child: Icon(Icons.add),
-                                ),
-                              ),
-                            ),
-                          );
-                        }
-
                         return SizedBox(
                           width: width / 3.5,
                           child: Card(

@@ -54,7 +54,7 @@ class OptionTile extends StatelessWidget {
           leading: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon),
+              Icon(icon, color: sideColor),
             ],
           ),
           title: Text(

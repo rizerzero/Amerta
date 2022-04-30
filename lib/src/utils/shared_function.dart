@@ -16,6 +16,14 @@ class SharedFunction {
     decimalDigits: 0,
     name: "Rp. ",
   );
+
+  /// currentValue   =  125000
+  /// boundaryValue  =  250000
+  /// result         =  (currentValue * 100) / boundaryValue
+  ///                =  12500000 / 250000
+  ///                =  50 %
+  double formulaPercentage(double currentValue, double upperValue) =>
+      (currentValue * 100) / upperValue;
 }
 
 final fn = SharedFunction.instance;
