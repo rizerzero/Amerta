@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
@@ -67,27 +69,30 @@ class HomePage extends StatelessWidget {
               .map(
                 (e) => Builder(
                   builder: (context) {
-                    return CustomScrollView(
-                      /// Untuk menyimpan last scroll position
-                      key: PageStorageKey(e),
-                      primary: true,
-                      slivers: [
-                        /// Akumulasi jarak/space berdasarkan jumlah sliver yang berada didalam [SliverOverlapAbsorber]
-                        SliverOverlapInjector(
-                          handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                        ),
-                        SliverPadding(
-                          padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
-                          sliver: SliverList(
-                            delegate: SliverChildBuilderDelegate(
-                              (ctx, index) => const TransactionDebtTile(
-                                margin: EdgeInsets.only(bottom: 32.0),
-                              ),
-                              childCount: 20000,
-                            ),
+                    return RefreshIndicator(
+                      onRefresh: () async => log("tes"),
+                      child: CustomScrollView(
+                        /// Untuk menyimpan last scroll position
+                        key: PageStorageKey(e),
+                        primary: true,
+                        slivers: [
+                          /// Akumulasi jarak/space berdasarkan jumlah sliver yang berada didalam [SliverOverlapAbsorber]
+                          SliverOverlapInjector(
+                            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                           ),
-                        )
-                      ],
+                          SliverPadding(
+                            padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
+                            sliver: SliverList(
+                              delegate: SliverChildBuilderDelegate(
+                                (ctx, index) => const TransactionDebtTile(
+                                  margin: EdgeInsets.only(bottom: 32.0),
+                                ),
+                                childCount: 20000,
+                              ),
+                            ),
+                          )
+                        ],
+                      ),
                     );
                   },
                 ),
