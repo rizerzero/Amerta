@@ -1,6 +1,5 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../utils/utils.dart';
 import 'option_tile.dart';
@@ -19,21 +18,14 @@ class ModalOptionTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           OptionTile(
-            title: "Tambah Piutang",
-            subtitle: "Kamu ingin memberikan / meminjami uang kamu",
+            title: "Catat Piutang / Hutang",
+            subtitle: "Mencatat transaksi piutang / hutang kamu.",
             icon: Icons.money_off_outlined,
             sideColor: Colors.green,
             margin: const EdgeInsets.only(bottom: 16.0),
             onTap: () {
-              log("tes");
+              context.pushNamed(formNewTransactionRouteNamed);
             },
-          ),
-          const OptionTile(
-            title: "Tambah Hutang",
-            subtitle: "Kamu ingin meminjam uang dari seseorang",
-            icon: Icons.handshake_outlined,
-            sideColor: Colors.deepOrange,
-            margin: EdgeInsets.only(bottom: 16.0),
           ),
           const OptionTile(
             title: "Tambah Orang",

@@ -114,7 +114,7 @@ class UserTransactionPage extends StatelessWidget {
                             handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                           ),
                           SliverPadding(
-                            padding: const EdgeInsets.all(16.0),
+                            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                             sliver: SliverList(
                               delegate: SliverChildBuilderDelegate(
                                 (ctx, index) => const TransactionDebtTile(

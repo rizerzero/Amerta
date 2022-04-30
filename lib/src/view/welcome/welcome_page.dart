@@ -30,6 +30,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return Scaffold(
       body: _pages.elementAt(_selectedIndex),
       floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.menu),
         onPressed: () async {
           await showModalBottomSheet(
             context: context,
