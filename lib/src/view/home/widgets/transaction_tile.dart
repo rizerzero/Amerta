@@ -44,7 +44,7 @@ class TransactionTile extends StatelessWidget {
                   contentPadding: const EdgeInsets.all(16.0),
                   onTap: () {
                     context.pushNamed(
-                      userTransactionDetailRouteNamed,
+                      userTransactionRouteNamed,
                       params: {
                         "userId": const Uuid().v4(),
                         'transactionId': const Uuid().v4(),

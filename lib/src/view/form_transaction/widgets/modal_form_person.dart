@@ -2,16 +2,18 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/utils.dart';
 
-class ModalFormQuickAddPerson extends StatefulWidget {
-  const ModalFormQuickAddPerson({
+class ModalFormPerson extends StatefulWidget {
+  const ModalFormPerson({
     Key? key,
+    required this.userId,
   }) : super(key: key);
 
+  final String userId;
   @override
-  State<ModalFormQuickAddPerson> createState() => _ModalFormQuickAddPersonState();
+  State<ModalFormPerson> createState() => _ModalFormPersonState();
 }
 
-class _ModalFormQuickAddPersonState extends State<ModalFormQuickAddPerson> {
+class _ModalFormPersonState extends State<ModalFormPerson> {
   final _nameController = TextEditingController();
 
   final inputDecoration = InputDecoration(
@@ -42,6 +44,31 @@ class _ModalFormQuickAddPersonState extends State<ModalFormQuickAddPerson> {
               decoration: inputDecoration,
             ),
             const SizedBox(height: 16.0),
+          ],
+          ...[
+            Text('Gambar (optional)', style: bodyFont),
+            const SizedBox(height: 8.0),
+            Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: grey),
+              ),
+              child: TextButton.icon(
+                onPressed: () {},
+                icon: const Icon(
+                  Icons.image,
+                  color: black,
+                ),
+                label: FittedBox(
+                  fit: BoxFit.fitWidth,
+                  child: Text(
+                    "Tekan untuk menambahkan lampiran",
+                    style: bodyFont.copyWith(
+                      color: black,
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ],
       ),

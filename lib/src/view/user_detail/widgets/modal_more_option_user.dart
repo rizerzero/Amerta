@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../utils/utils.dart';
 import '../../welcome/widgets/option_tile.dart';
 
-class ModalMoreOptionTransaction extends StatelessWidget {
-  const ModalMoreOptionTransaction({
+class ModalMoreOptionUser extends StatelessWidget {
+  const ModalMoreOptionUser({
     Key? key,
   }) : super(key: key);
 
@@ -17,8 +17,8 @@ class ModalMoreOptionTransaction extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: const [
           OptionTile(
-            title: "Edit Transaksi",
-            subtitle: "Mengkoreksi transaksi jika terjadi kesalahan.",
+            title: "Edit Profile",
+            subtitle: "Mengkoreksi profile kamu jika terjadi kesalahan.",
             icon: Icons.edit_outlined,
             sideColor: primary,
             padding: EdgeInsets.only(bottom: 16.0),

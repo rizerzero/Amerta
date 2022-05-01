@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../view/form_transaction/form_transaction_page.dart';
 import '../view/splash/splash_page.dart';
+import '../view/user_detail/user_detail_page.dart';
 import '../view/user_transaction/user_transaction_page.dart';
-import '../view/user_transaction_detail/user_transaction_detail_page.dart';
 import '../view/users/users_page.dart';
 import '../view/welcome/welcome_page.dart';
 import 'utils.dart';
@@ -13,12 +13,16 @@ import 'utils.dart';
 const splashRouteNamed = 'splash';
 const appRouteNamed = 'welcome';
 
+/// User Section
+const userFormNewRouteNamed = 'user-form-new';
+const userFormEditRouteNamed = 'user-form-edit';
 const userTransactionRouteNamed = 'user-transaction';
-const userTransactionDetailRouteNamed = 'user-transaction-detail';
+const userDetailRouteNamed = 'user-detail';
 const userListRouteNamed = 'user-list';
 
-const formNewTransactionRouteNamed = 'form-new-transaction';
-const formEditTransactionRouteNamed = 'form-edit-transaction';
+/// Transaction Section
+const transactionFormNewRouteNamed = 'transaction-form-new';
+const transactionFormEditRouteNamed = 'transaction-form-edit';
 
 final goRouter = Provider<GoRouter>(
   (ref) {
@@ -44,8 +48,7 @@ final goRouter = Provider<GoRouter>(
           name: appRouteNamed,
 
           /// [0]  = Home
-          /// [1]  = People
-          /// [2]  = Setting
+          /// [1]  = Setting
           redirect: (state) => "/app/${AppBottomNavigationMenu.home.toStr()}",
           routes: [
             GoRoute(
@@ -70,21 +73,21 @@ final goRouter = Provider<GoRouter>(
             /// [user/$userId/transaction]
             GoRoute(
               path: ':userId/transaction',
-              name: userTransactionRouteNamed,
+              name: userDetailRouteNamed,
               builder: (ctx, state) {
                 final userId = state.params['userId'] ?? "-";
-                return UserTransactionPage(userId: userId);
+                return UserDetailPage(userId: userId);
               },
               routes: [
                 /// [user/$userId/transaction/$transactionId]
                 GoRoute(
                   path: ":transactionId",
-                  name: userTransactionDetailRouteNamed,
+                  name: userTransactionRouteNamed,
                   builder: (ctx, state) {
                     final transactionId = state.params["transactionId"] ?? "-";
                     final userId = state.params['userId'] ?? "-";
 
-                    return UserTransactionDetailPage(
+                    return UserTransactionPage(
                       transactionId: transactionId,
                       userId: userId,
                     );
@@ -96,12 +99,12 @@ final goRouter = Provider<GoRouter>(
         ),
         GoRoute(
           path: "/transaction/form",
-          name: formNewTransactionRouteNamed,
+          name: transactionFormNewRouteNamed,
           redirect: (state) => "/transaction/form/new",
           routes: [
             GoRoute(
               path: ":transactionId",
-              name: formEditTransactionRouteNamed,
+              name: transactionFormEditRouteNamed,
               builder: (ctx, state) {
                 // final transactionId = state.params['transactionId']!;
                 return const FormTransactionPage();

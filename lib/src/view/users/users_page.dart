@@ -45,7 +45,7 @@ class UsersPage extends StatelessWidget {
             margin: const EdgeInsets.only(bottom: 16.0),
             child: InkWell(
               onTap: () => context.pushNamed(
-                userTransactionRouteNamed,
+                userDetailRouteNamed,
                 params: {
                   "userId": index.toString(),
                 },

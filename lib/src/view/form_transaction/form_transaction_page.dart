@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../utils/utils.dart';
-import 'widgets/modal_form_quick_add_person.dart';
+import 'widgets/modal_form_person.dart';
 
 class FormTransactionPage extends StatefulWidget {
   const FormTransactionPage({
@@ -118,9 +118,7 @@ class _FormTransactionPageState extends State<FormTransactionPage> {
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,
-                                    builder: (ctx) {
-                                      return const ModalFormQuickAddPerson();
-                                    },
+                                    builder: (ctx) => const ModalFormPerson(userId: ""),
                                   );
                                 },
                                 icon: const Icon(
@@ -336,10 +334,13 @@ class _FormTransactionPageState extends State<FormTransactionPage> {
                               Icons.image,
                               color: black,
                             ),
-                            label: Text(
-                              "Tekan untuk menambahkan lampiran",
-                              style: bodyFont.copyWith(
-                                color: black,
+                            label: FittedBox(
+                              fit: BoxFit.fitWidth,
+                              child: Text(
+                                "Tekan untuk menambahkan lampiran",
+                                style: bodyFont.copyWith(
+                                  color: black,
+                                ),
                               ),
                             ),
                           ),
