@@ -1,23 +1,25 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../utils/utils.dart';
 
-class SplashPage extends StatefulWidget {
+class SplashPage extends ConsumerStatefulWidget {
   const SplashPage({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<SplashPage> createState() => _SplashPageState();
+  _SplashPageState createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> {
+class _SplashPageState extends ConsumerState<SplashPage> {
   bool _isLoading = false;
   bool _isError = false;
   String? _message;
+
   @override
   void initState() {
     super.initState();
@@ -28,18 +30,17 @@ class _SplashPageState extends State<SplashPage> {
 
   Future<void> _initApplication() async {
     try {
-      setState(() {
-        _isLoading = true;
-      });
-      await Future.delayed(const Duration(seconds: 2));
+      setState(() => _isLoading = true);
+
+      /// Give delayed to show splah screen
+      await Future.delayed(const Duration(seconds: 1));
     } catch (e) {
       setState(() {
+        _message = e.toString();
         _isError = true;
       });
     } finally {
-      setState(() {
-        _isLoading = false;
-      });
+      setState(() => _isLoading = false);
 
       if (!_isError) {
         log("good, can be navigate to main screen");

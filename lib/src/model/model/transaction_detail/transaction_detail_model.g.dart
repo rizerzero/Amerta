@@ -6,18 +6,18 @@ part of 'transaction_detail_model.dart';
 // TypeAdapterGenerator
 // **************************************************************************
 
-class TransacitonDetailModelAdapter
-    extends TypeAdapter<TransacitonDetailModel> {
+class TransactionDetailModelAdapter
+    extends TypeAdapter<TransactionDetailModel> {
   @override
   final int typeId = 5;
 
   @override
-  TransacitonDetailModel read(BinaryReader reader) {
+  TransactionDetailModel read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return TransacitonDetailModel(
+    return TransactionDetailModel(
       id: fields[0] as String,
       transaction: fields[1] as TransactionModel,
       amount: fields[2] as double,
@@ -29,7 +29,7 @@ class TransacitonDetailModelAdapter
   }
 
   @override
-  void write(BinaryWriter writer, TransacitonDetailModel obj) {
+  void write(BinaryWriter writer, TransactionDetailModel obj) {
     writer
       ..writeByte(7)
       ..writeByte(0)
@@ -54,7 +54,7 @@ class TransacitonDetailModelAdapter
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is TransacitonDetailModelAdapter &&
+      other is TransactionDetailModelAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }

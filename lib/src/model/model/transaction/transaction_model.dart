@@ -1,13 +1,17 @@
 import 'dart:typed_data';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:hive/hive.dart';
+import 'package:json_annotation/json_annotation.dart';
 
 import '../../../utils/utils.dart';
 import '../people/people_model.dart';
 
 part 'transaction_model.g.dart';
 
+@immutable
+@JsonSerializable(fieldRename: FieldRename.snake)
 @HiveType(typeId: 2)
 class TransactionModel extends Equatable {
   const TransactionModel({
@@ -48,7 +52,7 @@ class TransactionModel extends Equatable {
   final String? description;
 
   @HiveField(7)
-  final Uint8List? attachment;
+  final List<int>? attachment;
 
   @HiveField(8)
   final PaymentStatus paymentStatus;
@@ -61,6 +65,9 @@ class TransactionModel extends Equatable {
 
   @HiveField(11)
   final DateTime? updatedAt;
+
+  factory TransactionModel.fromJson(Map<String, dynamic> json) => _$TransactionModelFromJson(json);
+  Map<String, dynamic> toJson() => _$TransactionModelToJson(this);
 
   @override
   List<Object?> get props {

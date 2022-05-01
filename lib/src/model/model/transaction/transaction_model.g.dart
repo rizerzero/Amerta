@@ -24,7 +24,7 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
       debtDate: fields[4] as DateTime?,
       estimateDebtRepayment: fields[5] as DateTime?,
       description: fields[6] as String?,
-      attachment: fields[7] as Uint8List?,
+      attachment: (fields[7] as List?)?.cast<int>(),
       paymentStatus: fields[8] as PaymentStatus,
       transactionType: fields[9] as TransactionType,
       createdAt: fields[10] as DateTime?,
@@ -72,3 +72,66 @@ class TransactionModelAdapter extends TypeAdapter<TransactionModel> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+TransactionModel _$TransactionModelFromJson(Map<String, dynamic> json) =>
+    TransactionModel(
+      id: json['id'] as String? ?? '',
+      people: json['people'] == null
+          ? const PeopleModel()
+          : PeopleModel.fromJson(json['people'] as Map<String, dynamic>),
+      title: json['title'] as String? ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      debtDate: json['debt_date'] == null
+          ? null
+          : DateTime.parse(json['debt_date'] as String),
+      estimateDebtRepayment: json['estimate_debt_repayment'] == null
+          ? null
+          : DateTime.parse(json['estimate_debt_repayment'] as String),
+      description: json['description'] as String?,
+      attachment:
+          (json['attachment'] as List<dynamic>?)?.map((e) => e as int).toList(),
+      paymentStatus:
+          $enumDecodeNullable(_$PaymentStatusEnumMap, json['payment_status']) ??
+              PaymentStatus.unknown,
+      transactionType: $enumDecodeNullable(
+              _$TransactionTypeEnumMap, json['transaction_type']) ??
+          TransactionType.hutang,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+    );
+
+Map<String, dynamic> _$TransactionModelToJson(TransactionModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'people': instance.people,
+      'title': instance.title,
+      'amount': instance.amount,
+      'debt_date': instance.debtDate?.toIso8601String(),
+      'estimate_debt_repayment':
+          instance.estimateDebtRepayment?.toIso8601String(),
+      'description': instance.description,
+      'attachment': instance.attachment,
+      'payment_status': _$PaymentStatusEnumMap[instance.paymentStatus],
+      'transaction_type': _$TransactionTypeEnumMap[instance.transactionType],
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+    };
+
+const _$PaymentStatusEnumMap = {
+  PaymentStatus.paidOff: 'paidOff',
+  PaymentStatus.notPaidOff: 'notPaidOff',
+  PaymentStatus.unknown: 'unknown',
+};
+
+const _$TransactionTypeEnumMap = {
+  TransactionType.hutang: 'hutang',
+  TransactionType.piutang: 'piutang',
+};

@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+
+import 'fonts.dart';
 
 class SharedFunction {
   SharedFunction._();
@@ -22,13 +27,11 @@ class SharedFunction {
   /// result         =  (currentValue * 100) / boundaryValue
   ///                =  12500000 / 250000
   ///                =  50 %
-  double formulaPercentage(double currentValue, double upperValue) =>
-      (currentValue * 100) / upperValue;
+  double formulaPercentage(double currentValue, double upperValue) {
+    return (currentValue * 100) / upperValue;
+  }
 
-  Future<DateTime?> showDateTimePicker(
-    BuildContext context, {
-    bool withTimePicker = true,
-  }) async {
+  Future<DateTime?> showDateTimePicker(BuildContext context, {bool withTimePicker = true}) async {
     DateTime? _date;
     TimeOfDay? _time;
 
@@ -65,6 +68,37 @@ class SharedFunction {
     }
 
     return null;
+  }
+
+  Future<File?> takeImage({ImageSource source = ImageSource.gallery}) async {
+    final _imagePicker = ImagePicker();
+    final _pickedFile = await _imagePicker.pickImage(
+      source: source,
+      maxHeight: 600,
+      maxWidth: 600,
+    );
+    if (_pickedFile == null) return null;
+
+    final file = File(_pickedFile.path);
+    return file;
+  }
+
+  void showSnackbar(
+    BuildContext context, {
+    required String title,
+    Color? color,
+  }) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          title,
+          style: bodyFontWhite.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: color,
+      ),
+    );
   }
 }
 

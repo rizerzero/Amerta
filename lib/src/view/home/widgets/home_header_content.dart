@@ -19,28 +19,30 @@ class HomeHeaderContent extends StatelessWidget {
         final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
         return FlexibleSpaceBar(
           titlePadding: EdgeInsets.zero,
-          title: Builder(builder: (context) {
-            if (!isCollapse) return const SizedBox();
-            return Container(
-              color: primary,
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      "Hutang : ${fn.rupiahCurrency.format(250000)}",
-                      style: bodyFont.copyWith(fontSize: 12.0),
-                    ),
-                    Text(
-                      "Piutang : ${fn.rupiahCurrency.format(250000)}",
-                      style: bodyFont.copyWith(fontSize: 12.0),
-                    ),
-                  ],
+          title: Builder(
+            builder: (context) {
+              if (!isCollapse) return const SizedBox();
+              return Container(
+                color: primary,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Hutang : ${fn.rupiahCurrency.format(250000)}",
+                        style: bodyFont.copyWith(fontSize: 12.0),
+                      ),
+                      Text(
+                        "Piutang : ${fn.rupiahCurrency.format(250000)}",
+                        style: bodyFont.copyWith(fontSize: 12.0),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-            );
-          }),
+              );
+            },
+          ),
           background: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

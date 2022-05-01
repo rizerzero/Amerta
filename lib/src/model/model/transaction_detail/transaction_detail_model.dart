@@ -8,8 +8,8 @@ import '../transaction/transaction_model.dart';
 part 'transaction_detail_model.g.dart';
 
 @HiveType(typeId: 5)
-class TransacitonDetailModel extends Equatable {
-  const TransacitonDetailModel({
+class TransactionDetailModel extends Equatable {
+  const TransactionDetailModel({
     this.id = '',
     this.transaction = const TransactionModel(),
     this.amount = 0.0,
@@ -55,10 +55,10 @@ class TransacitonDetailModel extends Equatable {
 
   @override
   String toString() {
-    return 'TransacitonDetailModel(id: $id, transaction: $transaction, amount: $amount, description: $description, attachment: $attachment, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TransactionDetailModel(id: $id, transaction: $transaction, amount: $amount, description: $description, attachment: $attachment, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
-  TransacitonDetailModel copyWith({
+  TransactionDetailModel copyWith({
     String? id,
     TransactionModel? transaction,
     double? amount,
@@ -67,7 +67,7 @@ class TransacitonDetailModel extends Equatable {
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
-    return TransacitonDetailModel(
+    return TransactionDetailModel(
       id: id ?? this.id,
       transaction: transaction ?? this.transaction,
       amount: amount ?? this.amount,

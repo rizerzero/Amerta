@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../utils/utils.dart';
-import 'widgets/modal_form_person.dart';
+import 'widgets/modal_form_people.dart';
 
 class FormTransactionPage extends StatefulWidget {
   const FormTransactionPage({
@@ -118,7 +118,9 @@ class _FormTransactionPageState extends State<FormTransactionPage> {
                                 onPressed: () async {
                                   await showDialog(
                                     context: context,
-                                    builder: (ctx) => const ModalFormPerson(userId: ""),
+                                    builder: (ctx) => const ModalFormPeople(
+                                      userId: "",
+                                    ),
                                   );
                                 },
                                 icon: const Icon(

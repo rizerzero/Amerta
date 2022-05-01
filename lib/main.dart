@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'src/app.dart';
 import 'src/model/model/people/people_model.dart';
 import 'src/model/model/transaction/transaction_model.dart';
+import 'src/model/model/transaction_detail/transaction_detail_model.dart';
 import 'src/utils/utils.dart';
 
 /// Hive Type List :
@@ -13,11 +14,13 @@ import 'src/utils/utils.dart';
 /// 2. Transaction Model
 /// 3. TransactionType Enum
 /// 4. PaymentStatus Enum
-/// 4. TransactionDetail Model
+/// 5. TransactionDetail Model
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Hive.initFlutter();
+  await initHive();
 
   // turn off the # in the URLs on the web
   GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
@@ -29,9 +32,9 @@ Future<void> initHive() async {
   Hive.registerAdapter(TransactionModelAdapter());
   Hive.registerAdapter(TransactionTypeAdapter());
   Hive.registerAdapter(PaymentStatusAdapter());
-  Hive.registerAdapter(TransactionModelAdapter());
+  Hive.registerAdapter(TransactionDetailModelAdapter());
 
-  await Hive.openBox(kHivePeopleBox);
-  await Hive.openBox(kHiveTransactionBox);
-  await Hive.openBox(kHiveTransactionDetailBox);
+  await Hive.openBox<PeopleModel>(kHivePeopleBox);
+  await Hive.openBox<List<TransactionModel>>(kHiveTransactionBox);
+  await Hive.openBox<List<TransactionDetailModel>>(kHiveTransactionDetailBox);
 }

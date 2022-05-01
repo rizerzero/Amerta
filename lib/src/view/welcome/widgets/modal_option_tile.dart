@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../utils/utils.dart';
-import '../../form_transaction/widgets/modal_form_person.dart';
+import '../../form_transaction/widgets/modal_form_people.dart';
 import 'option_tile.dart';
 
 class ModalOptionTile extends StatelessWidget {
@@ -32,11 +32,13 @@ class ModalOptionTile extends StatelessWidget {
             icon: Icons.people_outline,
             sideColor: Colors.teal,
             padding: const EdgeInsets.only(bottom: 16.0),
-            onTap: () {
-              showDialog(
+            onTap: () async {
+              await showDialog(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) => const ModalFormPerson(userId: ""),
+                builder: (context) => const ModalFormPeople(
+                  userId: "",
+                ),
               );
             },
           ),

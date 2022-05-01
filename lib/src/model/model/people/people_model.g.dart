@@ -19,7 +19,7 @@ class PeopleModelAdapter extends TypeAdapter<PeopleModel> {
     return PeopleModel(
       id: fields[0] as String,
       name: fields[1] as String,
-      image: fields[2] as Uint8List?,
+      imagePath: fields[2] as String?,
       createdAt: fields[3] as DateTime?,
       updatedAt: fields[4] as DateTime?,
     );
@@ -34,7 +34,7 @@ class PeopleModelAdapter extends TypeAdapter<PeopleModel> {
       ..writeByte(1)
       ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.image)
+      ..write(obj.imagePath)
       ..writeByte(3)
       ..write(obj.createdAt)
       ..writeByte(4)
@@ -51,3 +51,28 @@ class PeopleModelAdapter extends TypeAdapter<PeopleModel> {
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
+
+// **************************************************************************
+// JsonSerializableGenerator
+// **************************************************************************
+
+PeopleModel _$PeopleModelFromJson(Map<String, dynamic> json) => PeopleModel(
+      id: json['id'] as String? ?? '',
+      name: json['name'] as String? ?? '',
+      imagePath: json['image_path'] as String?,
+      createdAt: json['created_at'] == null
+          ? null
+          : DateTime.parse(json['created_at'] as String),
+      updatedAt: json['updated_at'] == null
+          ? null
+          : DateTime.parse(json['updated_at'] as String),
+    );
+
+Map<String, dynamic> _$PeopleModelToJson(PeopleModel instance) =>
+    <String, dynamic>{
+      'id': instance.id,
+      'name': instance.name,
+      'image_path': instance.imagePath,
+      'created_at': instance.createdAt?.toIso8601String(),
+      'updated_at': instance.updatedAt?.toIso8601String(),
+    };
