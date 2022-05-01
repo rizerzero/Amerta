@@ -28,8 +28,6 @@ class UserTransactionPage extends StatelessWidget {
                 children: [
                   SliverAppBar(
                     pinned: true,
-                    snap: true,
-                    floating: true,
                     expandedHeight: fn.vh(context) / 2.5,
                     backgroundColor: primary,
                     forceElevated: innerBoxIsScrolled,

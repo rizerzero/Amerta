@@ -18,31 +18,19 @@ class ModalOptionTile extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           OptionTile(
+            onTap: () => context.pushNamed(formNewTransactionRouteNamed),
             title: "Catat Piutang / Hutang",
             subtitle: "Mencatat transaksi piutang / hutang kamu.",
             icon: Icons.add_outlined,
             sideColor: Colors.green,
-            margin: const EdgeInsets.only(bottom: 16.0),
-            onTap: () {
-              context.pushNamed(formNewTransactionRouteNamed);
-            },
-          ),
-          OptionTile(
-            title: "Cicil Piutang / Hutang",
-            subtitle: "Mencicil transaksi piutang / hutang kamu.",
-            icon: Icons.payments_outlined,
-            sideColor: primary,
-            margin: const EdgeInsets.only(bottom: 16.0),
-            onTap: () {
-              context.pushNamed(formNewTransactionRouteNamed);
-            },
+            padding: const EdgeInsets.only(bottom: 16.0),
           ),
           const OptionTile(
             title: "Tambah Orang",
             subtitle: "Menambahkan daftar orang yang ingin dipinjami atau meminjami",
             icon: Icons.people_outline,
             sideColor: Colors.deepOrange,
-            margin: EdgeInsets.only(bottom: 16.0),
+            padding: EdgeInsets.only(bottom: 16.0),
           ),
         ],
       ),

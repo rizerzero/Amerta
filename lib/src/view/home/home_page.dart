@@ -29,8 +29,6 @@ class HomePage extends StatelessWidget {
                     elevation: 0,
                     automaticallyImplyLeading: false,
                     pinned: true,
-                    snap: true,
-                    floating: true,
                     expandedHeight: appBarHeight,
                     forceElevated: innerBoxIsScrolled,
                     flexibleSpace: const HomeHeaderContent(),

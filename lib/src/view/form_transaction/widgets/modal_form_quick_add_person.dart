@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/utils.dart';
 
-class ModalQuickAddPerson extends StatefulWidget {
-  const ModalQuickAddPerson({
+class ModalFormQuickAddPerson extends StatefulWidget {
+  const ModalFormQuickAddPerson({
     Key? key,
   }) : super(key: key);
 
   @override
-  State<ModalQuickAddPerson> createState() => _ModalQuickAddPersonState();
+  State<ModalFormQuickAddPerson> createState() => _ModalFormQuickAddPersonState();
 }
 
-class _ModalQuickAddPersonState extends State<ModalQuickAddPerson> {
+class _ModalFormQuickAddPersonState extends State<ModalFormQuickAddPerson> {
   final _nameController = TextEditingController();
 
   final inputDecoration = InputDecoration(

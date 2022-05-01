@@ -24,6 +24,48 @@ class SharedFunction {
   ///                =  50 %
   double formulaPercentage(double currentValue, double upperValue) =>
       (currentValue * 100) / upperValue;
+
+  Future<DateTime?> showDateTimePicker(
+    BuildContext context, {
+    bool withTimePicker = true,
+  }) async {
+    DateTime? _date;
+    TimeOfDay? _time;
+
+    final _datePicker = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2100),
+    );
+
+    if (_datePicker != null) {
+      _date = _datePicker;
+
+      if (withTimePicker) {
+        final _timePicker = await showTimePicker(
+          context: context,
+          initialTime: TimeOfDay.now(),
+        );
+
+        if (_timePicker != null) {
+          _time = _timePicker;
+        }
+      }
+    }
+
+    if (withTimePicker) {
+      if (_date != null && _time != null) {
+        return _date.add(Duration(hours: _time.hour, minutes: _time.minute));
+      }
+    } else {
+      if (_date != null) {
+        return _date;
+      }
+    }
+
+    return null;
+  }
 }
 
 final fn = SharedFunction.instance;

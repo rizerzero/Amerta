@@ -41,6 +41,7 @@ class TransactionTile extends StatelessWidget {
                   ),
                 ),
                 child: ListTile(
+                  contentPadding: const EdgeInsets.all(16.0),
                   onTap: () {
                     context.pushNamed(
                       userTransactionDetailRouteNamed,
@@ -50,8 +51,6 @@ class TransactionTile extends StatelessWidget {
                       },
                     );
                   },
-                  contentPadding: const EdgeInsets.all(16.0),
-                  isThreeLine: true,
                   title: Text(
                     "Buat buka puasa bersama",
                     style: bodyFont.copyWith(
@@ -94,63 +93,49 @@ class TransactionTile extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      const SizedBox(height: 8.0),
-                      Row(
+                      const SizedBox(height: 16.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                Container(
-                                  height: 10,
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(60.0),
-                                    border: Border.all(color: secondaryLight),
-                                  ),
-                                  child: FractionallySizedBox(
-                                    widthFactor: .5,
-                                    heightFactor: 1,
-                                    alignment: Alignment.centerLeft,
-                                    child: DecoratedBox(
-                                      decoration: BoxDecoration(
-                                        color: secondaryLight,
-                                        borderRadius: BorderRadius.circular(60.0),
-                                      ),
-                                    ),
-                                  ),
+                          Container(
+                            height: 10,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(60.0),
+                              border: Border.all(color: secondaryLight),
+                            ),
+                            child: FractionallySizedBox(
+                              widthFactor: .5,
+                              heightFactor: 1,
+                              alignment: Alignment.centerLeft,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: secondaryLight,
+                                  borderRadius: BorderRadius.circular(60.0),
                                 ),
-                                const SizedBox(height: 4.0),
-                                Text.rich(
-                                  TextSpan(
-                                    text: fn.rupiahCurrency.format(125000),
-                                    children: [
-                                      TextSpan(
-                                        text: " (50%) ",
-                                        style: bodyFont.copyWith(
-                                          color: secondaryDark,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 4.0),
+                          Text.rich(
+                            TextSpan(
+                              text: fn.rupiahCurrency.format(125000),
+                              children: [
+                                TextSpan(
+                                  text: " (50%) ",
                                   style: bodyFont.copyWith(
-                                    color: grey,
-                                    fontSize: 8.0,
+                                    color: secondaryDark,
+                                    fontWeight: FontWeight.bold,
                                   ),
-                                  textAlign: TextAlign.right,
                                 ),
                               ],
                             ),
-                          ),
-                          ...[
-                            const SizedBox(width: 16.0),
-                            ElevatedButton(
-                              onPressed: () {},
-                              style: ElevatedButton.styleFrom(primary: Colors.deepOrange),
-                              child: const Text("Cicil"),
+                            style: bodyFont.copyWith(
+                              color: grey,
+                              fontSize: 8.0,
                             ),
-                          ],
+                            textAlign: TextAlign.right,
+                          ),
                         ],
                       ),
                     ],

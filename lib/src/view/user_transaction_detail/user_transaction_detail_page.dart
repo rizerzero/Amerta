@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../utils/utils.dart';
+import 'widgets/modal_form_transaction_detail.dart';
+import 'widgets/modal_remove_transaction_detail.dart';
 
 class UserTransactionDetailPage extends StatelessWidget {
   const UserTransactionDetailPage({
@@ -15,11 +17,24 @@ class UserTransactionDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () async {
+          await showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const ModalFormTransactionDetail(),
+          );
+        },
+        label: Text('Cicil', style: bodyFontWhite),
+        backgroundColor: Colors.deepOrange,
+        icon: const Icon(Icons.payments_outlined),
+      ),
       appBar: AppBar(
         elevation: 0.0,
-        // centerTitle: true,
+        centerTitle: true,
         title: Text(
           const Uuid().v4(),
+          style: bodyFontWhite.copyWith(fontSize: 14.0),
         ),
       ),
       body: SafeArea(
@@ -161,6 +176,138 @@ class UserTransactionDetailPage extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 16.0),
+              Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.vertical(
+                    top: Radius.circular(30.0),
+                  ),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16.0),
+                      decoration: const BoxDecoration(
+                        color: secondaryDark,
+                        borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30.0),
+                        ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            DateFormat.yMMMMEEEEd().format(DateTime.now()),
+                            style: bodyFontWhite.copyWith(
+                              fontSize: 16.0,
+                            ),
+                          ),
+                          InkWell(
+                            onTap: () {},
+                            child: const Icon(
+                              Icons.arrow_drop_down,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const Divider(height: 0),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: ListTile.divideTiles(
+                        context: context,
+                        color: grey,
+                        tiles: List.generate(
+                          3,
+                          (index) => ListTile(
+                            isThreeLine: true,
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16.0,
+                              vertical: 8.0,
+                            ),
+                            leading: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                CircleAvatar(
+                                  child: Text("${index + 1}"),
+                                  backgroundColor: secondaryLight,
+                                  foregroundColor: Colors.white,
+                                  radius: 15.0,
+                                ),
+                              ],
+                            ),
+                            title: Text(
+                              "#${const Uuid().v4()}",
+                              style: bodyFont.copyWith(
+                                fontSize: 10.0,
+                                color: primary,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                const SizedBox(height: 8.0),
+                                Text(
+                                  fn.rupiahCurrency.format(250000),
+                                  style: bodyFont.copyWith(
+                                    color: secondaryDark,
+                                    fontSize: 20.0,
+                                  ),
+                                ),
+                                const SizedBox(height: 8.0),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    OutlinedButton(
+                                      onPressed: () async {
+                                        await showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) => const ModalFormTransactionDetail(),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        side: const BorderSide(color: primary),
+                                      ),
+                                      child: Text(
+                                        "Edit",
+                                        style: bodyFont.copyWith(color: primary),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 16.0),
+                                    OutlinedButton(
+                                      onPressed: () async {
+                                        await showDialog(
+                                          context: context,
+                                          builder: (context) =>
+                                              const ModalRemoveTransactionDetail(),
+                                        );
+                                      },
+                                      style: TextButton.styleFrom(
+                                        side: const BorderSide(color: Colors.red),
+                                      ),
+                                      child: Text(
+                                        "Hapus",
+                                        style: bodyFont.copyWith(color: Colors.red),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8.0),
+                              ],
+                            ),
+                          ),
+                        ).toList(),
+                      ).toList(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 100.0),
             ],
           ),
         ),
