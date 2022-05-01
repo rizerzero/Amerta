@@ -4,6 +4,7 @@ import 'package:sliver_tools/sliver_tools.dart';
 import '../../utils/utils.dart';
 import '../home/widgets/summary_amount.dart';
 import '../home/widgets/transaction_tile.dart';
+import 'widgets/modal_more_option_transaction.dart';
 import 'widgets/sliver_tabbar_transaction_type.dart';
 
 class UserTransactionPage extends StatelessWidget {
@@ -27,6 +28,7 @@ class UserTransactionPage extends StatelessWidget {
                 pushPinnedChildren: false,
                 children: [
                   SliverAppBar(
+                    automaticallyImplyLeading: false,
                     pinned: true,
                     expandedHeight: fn.vh(context) / 2.5,
                     backgroundColor: primary,
@@ -35,48 +37,102 @@ class UserTransactionPage extends StatelessWidget {
                       builder: (context, constraints) {
                         final height = constraints.maxHeight;
                         final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
+
+                        final iconBackButton = IconButton(
+                          onPressed: () => Navigator.pop(context),
+                          icon: const Icon(
+                            Icons.arrow_back,
+                            color: Colors.white,
+                          ),
+                        );
+
+                        final iconMoreButton = IconButton(
+                          onPressed: () async => await showModalBottomSheet(
+                            context: context,
+                            builder: (context) => const ModalMoreOptionTransaction(),
+                          ),
+                          icon: const Icon(
+                            Icons.more_vert_outlined,
+                            color: Colors.white,
+                          ),
+                        );
+
                         return FlexibleSpaceBar(
-                          title: isCollapse ? const Text("Zeffry Reynando") : null,
-                          centerTitle: true,
-                          background: SafeArea(
-                            child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                          titlePadding: const EdgeInsets.only(bottom: 8.0),
+                          title: Builder(
+                            builder: (context) {
+                              if (!isCollapse) return const SizedBox();
+                              return Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
-                                  ...[
-                                    Hero(
-                                      tag: userId,
-                                      child: const Center(
-                                        child: CircleAvatar(radius: 40.0),
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
+                                  iconBackButton,
+                                  Expanded(
+                                    child: Text(
                                       "Zeffry Reynando",
-                                      style: bodyFontWhite.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 20.0,
-                                      ),
+                                      style: bodyFontWhite.copyWith(fontWeight: FontWeight.bold),
+                                      maxLines: 1,
                                       textAlign: TextAlign.center,
                                     ),
-                                    const SizedBox(height: 16.0),
+                                  ),
+                                  iconMoreButton,
+                                ],
+                              );
+                            },
+                          ),
+                          centerTitle: true,
+                          background: SafeArea(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                AppBar(
+                                  elevation: 0,
+                                  leading: iconBackButton,
+                                  actions: [
+                                    iconMoreButton,
                                   ],
-                                  Expanded(
-                                    child: Row(
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: const [
+                                ),
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(16.0).copyWith(top: 0.0),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                                      children: [
+                                        ...[
+                                          Hero(
+                                            tag: userId,
+                                            child: const Center(
+                                              child: CircleAvatar(radius: 40.0),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8.0),
+                                          Text(
+                                            "Zeffry Reynando",
+                                            style: bodyFontWhite.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 20.0,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                          const SizedBox(height: 16.0),
+                                        ],
                                         Expanded(
-                                          child: SummaryAmount(),
-                                        ),
-                                        Expanded(
-                                          child: SummaryAmount(title: "Piutang"),
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.center,
+                                            children: const [
+                                              Expanded(
+                                                child: SummaryAmount(),
+                                              ),
+                                              Expanded(
+                                                child: SummaryAmount(title: "Piutang"),
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  )
-                                ],
-                              ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         );
@@ -94,9 +150,9 @@ class UserTransactionPage extends StatelessWidget {
                           borderRadius: BorderRadius.circular(60.0),
                         ),
                         tabs: TransactionType.values
-                            .map((e) => Tab(
-                                  text: e.name.toUpperCase(),
-                                ))
+                            .map(
+                              (e) => Tab(text: e.name.toUpperCase()),
+                            )
                             .toList(),
                       ),
                     ),
