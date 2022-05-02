@@ -19,7 +19,7 @@ class PeopleRepository {
       final result = await peopleLocalService.insertOrUpdate(form);
       return Right(result);
     } on SqliteException catch (exception) {
-      throw Left(SqliteFailure(exception: exception));
+      return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
     }
@@ -30,7 +30,7 @@ class PeopleRepository {
       final result = await peopleLocalService.delete(peopleId);
       return Right(result);
     } on SqliteException catch (exception) {
-      throw Left(SqliteFailure(exception: exception));
+      return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
     }
