@@ -10,17 +10,17 @@ class SharedFunction {
   SharedFunction._();
   static final instance = SharedFunction._();
 
-  double vw(BuildContext context) => MediaQuery.of(context).size.width;
-  double vh(BuildContext context) => MediaQuery.of(context).size.height;
-  double vhMinusNavigationBar(BuildContext context) =>
-      vh(context) - (const NavigationBarThemeData().height ?? 80.0);
-  double notchTop(BuildContext context) => MediaQuery.of(context).padding.top;
-
   final rupiahCurrency = NumberFormat.simpleCurrency(
     locale: "id_ID",
     decimalDigits: 0,
     name: "Rp. ",
   );
+
+  double vw(BuildContext context) => MediaQuery.of(context).size.width;
+  double vh(BuildContext context) => MediaQuery.of(context).size.height;
+  double vhMinusNavigationBar(BuildContext context) =>
+      vh(context) - (const NavigationBarThemeData().height ?? 80.0);
+  double notchTop(BuildContext context) => MediaQuery.of(context).padding.top;
 
   /// currentValue   =  125000
   /// boundaryValue  =  250000
@@ -29,6 +29,11 @@ class SharedFunction {
   ///                =  50 %
   double formulaPercentage(double currentValue, double upperValue) {
     return (currentValue * 100) / upperValue;
+  }
+
+  DateTime? dateTimeFromUnix(int? unixtime) {
+    if (unixtime == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(unixtime);
   }
 
   Future<DateTime?> showDateTimePicker(BuildContext context, {bool withTimePicker = true}) async {

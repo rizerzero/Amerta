@@ -11,15 +11,15 @@ class PeoplesTableData extends DataClass
     implements Insertable<PeoplesTableData> {
   final String id;
   final String name;
-  final Uint8List imagePath;
-  final DateTime createdAt;
-  final DateTime updatedA;
+  final String? imagePath;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   PeoplesTableData(
       {required this.id,
       required this.name,
-      required this.imagePath,
-      required this.createdAt,
-      required this.updatedA});
+      this.imagePath,
+      this.createdAt,
+      this.updatedAt});
   factory PeoplesTableData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -28,12 +28,12 @@ class PeoplesTableData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       name: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}name'])!,
-      imagePath: const BlobType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}image_path'])!,
+      imagePath: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}image_path']),
       createdAt: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}created_at'])!,
-      updatedA: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}updated_a'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}created_at']),
+      updatedAt: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at']),
     );
   }
   @override
@@ -41,9 +41,15 @@ class PeoplesTableData extends DataClass
     final map = <String, Expression>{};
     map['id'] = Variable<String>(id);
     map['name'] = Variable<String>(name);
-    map['image_path'] = Variable<Uint8List>(imagePath);
-    map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_a'] = Variable<DateTime>(updatedA);
+    if (!nullToAbsent || imagePath != null) {
+      map['image_path'] = Variable<String?>(imagePath);
+    }
+    if (!nullToAbsent || createdAt != null) {
+      map['created_at'] = Variable<DateTime?>(createdAt);
+    }
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime?>(updatedAt);
+    }
     return map;
   }
 
@@ -51,9 +57,15 @@ class PeoplesTableData extends DataClass
     return PeoplesTableCompanion(
       id: Value(id),
       name: Value(name),
-      imagePath: Value(imagePath),
-      createdAt: Value(createdAt),
-      updatedA: Value(updatedA),
+      imagePath: imagePath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(imagePath),
+      createdAt: createdAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(createdAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -63,9 +75,9 @@ class PeoplesTableData extends DataClass
     return PeoplesTableData(
       id: serializer.fromJson<String>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      imagePath: serializer.fromJson<Uint8List>(json['imagePath']),
-      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedA: serializer.fromJson<DateTime>(json['updatedA']),
+      imagePath: serializer.fromJson<String?>(json['imagePath']),
+      createdAt: serializer.fromJson<DateTime?>(json['createdAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -74,24 +86,24 @@ class PeoplesTableData extends DataClass
     return <String, dynamic>{
       'id': serializer.toJson<String>(id),
       'name': serializer.toJson<String>(name),
-      'imagePath': serializer.toJson<Uint8List>(imagePath),
-      'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedA': serializer.toJson<DateTime>(updatedA),
+      'imagePath': serializer.toJson<String?>(imagePath),
+      'createdAt': serializer.toJson<DateTime?>(createdAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
   PeoplesTableData copyWith(
           {String? id,
           String? name,
-          Uint8List? imagePath,
+          String? imagePath,
           DateTime? createdAt,
-          DateTime? updatedA}) =>
+          DateTime? updatedAt}) =>
       PeoplesTableData(
         id: id ?? this.id,
         name: name ?? this.name,
         imagePath: imagePath ?? this.imagePath,
         createdAt: createdAt ?? this.createdAt,
-        updatedA: updatedA ?? this.updatedA,
+        updatedAt: updatedAt ?? this.updatedAt,
       );
   @override
   String toString() {
@@ -100,13 +112,13 @@ class PeoplesTableData extends DataClass
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedA: $updatedA')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, imagePath, createdAt, updatedA);
+  int get hashCode => Object.hash(id, name, imagePath, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -115,60 +127,57 @@ class PeoplesTableData extends DataClass
           other.name == this.name &&
           other.imagePath == this.imagePath &&
           other.createdAt == this.createdAt &&
-          other.updatedA == this.updatedA);
+          other.updatedAt == this.updatedAt);
 }
 
 class PeoplesTableCompanion extends UpdateCompanion<PeoplesTableData> {
   final Value<String> id;
   final Value<String> name;
-  final Value<Uint8List> imagePath;
-  final Value<DateTime> createdAt;
-  final Value<DateTime> updatedA;
+  final Value<String?> imagePath;
+  final Value<DateTime?> createdAt;
+  final Value<DateTime?> updatedAt;
   const PeoplesTableCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
     this.imagePath = const Value.absent(),
     this.createdAt = const Value.absent(),
-    this.updatedA = const Value.absent(),
+    this.updatedAt = const Value.absent(),
   });
   PeoplesTableCompanion.insert({
     this.id = const Value.absent(),
     required String name,
-    required Uint8List imagePath,
-    required DateTime createdAt,
-    required DateTime updatedA,
-  })  : name = Value(name),
-        imagePath = Value(imagePath),
-        createdAt = Value(createdAt),
-        updatedA = Value(updatedA);
+    this.imagePath = const Value.absent(),
+    this.createdAt = const Value.absent(),
+    this.updatedAt = const Value.absent(),
+  }) : name = Value(name);
   static Insertable<PeoplesTableData> custom({
     Expression<String>? id,
     Expression<String>? name,
-    Expression<Uint8List>? imagePath,
-    Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedA,
+    Expression<String?>? imagePath,
+    Expression<DateTime?>? createdAt,
+    Expression<DateTime?>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
       if (imagePath != null) 'image_path': imagePath,
       if (createdAt != null) 'created_at': createdAt,
-      if (updatedA != null) 'updated_a': updatedA,
+      if (updatedAt != null) 'updated_at': updatedAt,
     });
   }
 
   PeoplesTableCompanion copyWith(
       {Value<String>? id,
       Value<String>? name,
-      Value<Uint8List>? imagePath,
-      Value<DateTime>? createdAt,
-      Value<DateTime>? updatedA}) {
+      Value<String?>? imagePath,
+      Value<DateTime?>? createdAt,
+      Value<DateTime?>? updatedAt}) {
     return PeoplesTableCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
       imagePath: imagePath ?? this.imagePath,
       createdAt: createdAt ?? this.createdAt,
-      updatedA: updatedA ?? this.updatedA,
+      updatedAt: updatedAt ?? this.updatedAt,
     );
   }
 
@@ -182,13 +191,13 @@ class PeoplesTableCompanion extends UpdateCompanion<PeoplesTableData> {
       map['name'] = Variable<String>(name.value);
     }
     if (imagePath.present) {
-      map['image_path'] = Variable<Uint8List>(imagePath.value);
+      map['image_path'] = Variable<String?>(imagePath.value);
     }
     if (createdAt.present) {
-      map['created_at'] = Variable<DateTime>(createdAt.value);
+      map['created_at'] = Variable<DateTime?>(createdAt.value);
     }
-    if (updatedA.present) {
-      map['updated_a'] = Variable<DateTime>(updatedA.value);
+    if (updatedAt.present) {
+      map['updated_at'] = Variable<DateTime?>(updatedAt.value);
     }
     return map;
   }
@@ -200,7 +209,7 @@ class PeoplesTableCompanion extends UpdateCompanion<PeoplesTableData> {
           ..write('name: $name, ')
           ..write('imagePath: $imagePath, ')
           ..write('createdAt: $createdAt, ')
-          ..write('updatedA: $updatedA')
+          ..write('updatedAt: $updatedAt')
           ..write(')'))
         .toString();
   }
@@ -226,22 +235,22 @@ class $PeoplesTableTable extends PeoplesTable
       type: const StringType(), requiredDuringInsert: true);
   final VerificationMeta _imagePathMeta = const VerificationMeta('imagePath');
   @override
-  late final GeneratedColumn<Uint8List?> imagePath =
-      GeneratedColumn<Uint8List?>('image_path', aliasedName, false,
-          type: const BlobType(), requiredDuringInsert: true);
+  late final GeneratedColumn<String?> imagePath = GeneratedColumn<String?>(
+      'image_path', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   @override
   late final GeneratedColumn<DateTime?> createdAt = GeneratedColumn<DateTime?>(
-      'created_at', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
-  final VerificationMeta _updatedAMeta = const VerificationMeta('updatedA');
+      'created_at', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
+  final VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
   @override
-  late final GeneratedColumn<DateTime?> updatedA = GeneratedColumn<DateTime?>(
-      'updated_a', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+  late final GeneratedColumn<DateTime?> updatedAt = GeneratedColumn<DateTime?>(
+      'updated_at', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns =>
-      [id, name, imagePath, createdAt, updatedA];
+      [id, name, imagePath, createdAt, updatedAt];
   @override
   String get aliasedName => _alias ?? 'people';
   @override
@@ -263,26 +272,20 @@ class $PeoplesTableTable extends PeoplesTable
     if (data.containsKey('image_path')) {
       context.handle(_imagePathMeta,
           imagePath.isAcceptableOrUnknown(data['image_path']!, _imagePathMeta));
-    } else if (isInserting) {
-      context.missing(_imagePathMeta);
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
           createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta));
-    } else if (isInserting) {
-      context.missing(_createdAtMeta);
     }
-    if (data.containsKey('updated_a')) {
-      context.handle(_updatedAMeta,
-          updatedA.isAcceptableOrUnknown(data['updated_a']!, _updatedAMeta));
-    } else if (isInserting) {
-      context.missing(_updatedAMeta);
+    if (data.containsKey('updated_at')) {
+      context.handle(_updatedAtMeta,
+          updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   PeoplesTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
     return PeoplesTableData.fromData(data,
@@ -295,33 +298,37 @@ class $PeoplesTableTable extends PeoplesTable
   }
 }
 
-class transaction extends DataClass implements Insertable<transaction> {
+class TransactionTableData extends DataClass
+    implements Insertable<TransactionTableData> {
   final String id;
   final String peopleId;
   final String title;
   final int amount;
-  final DateTime date;
-  final String description;
-  final Uint8List attachment;
+  final DateTime loanDate;
+  final DateTime? returnDate;
+  final String? description;
+  final String? attachmentPath;
   final String paymentStatus;
   final String transactionType;
   final DateTime createdAt;
-  final DateTime updatedAt;
-  transaction(
+  final DateTime? updatedAt;
+  TransactionTableData(
       {required this.id,
       required this.peopleId,
       required this.title,
       required this.amount,
-      required this.date,
-      required this.description,
-      required this.attachment,
+      required this.loanDate,
+      this.returnDate,
+      this.description,
+      this.attachmentPath,
       required this.paymentStatus,
       required this.transactionType,
       required this.createdAt,
-      required this.updatedAt});
-  factory transaction.fromData(Map<String, dynamic> data, {String? prefix}) {
+      this.updatedAt});
+  factory TransactionTableData.fromData(Map<String, dynamic> data,
+      {String? prefix}) {
     final effectivePrefix = prefix ?? '';
-    return transaction(
+    return TransactionTableData(
       id: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}id'])!,
       peopleId: const StringType()
@@ -330,12 +337,14 @@ class transaction extends DataClass implements Insertable<transaction> {
           .mapFromDatabaseResponse(data['${effectivePrefix}title'])!,
       amount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}amount'])!,
-      date: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
+      loanDate: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}loan_date'])!,
+      returnDate: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}return_date']),
       description: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}description'])!,
-      attachment: const BlobType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}attachment'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}description']),
+      attachmentPath: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}attachment_path']),
       paymentStatus: const StringType()
           .mapFromDatabaseResponse(data['${effectivePrefix}payment_status'])!,
       transactionType: const StringType()
@@ -343,7 +352,7 @@ class transaction extends DataClass implements Insertable<transaction> {
       createdAt: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}created_at'])!,
       updatedAt: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at']),
     );
   }
   @override
@@ -353,13 +362,22 @@ class transaction extends DataClass implements Insertable<transaction> {
     map['people_id'] = Variable<String>(peopleId);
     map['title'] = Variable<String>(title);
     map['amount'] = Variable<int>(amount);
-    map['date'] = Variable<DateTime>(date);
-    map['description'] = Variable<String>(description);
-    map['attachment'] = Variable<Uint8List>(attachment);
+    map['loan_date'] = Variable<DateTime>(loanDate);
+    if (!nullToAbsent || returnDate != null) {
+      map['return_date'] = Variable<DateTime?>(returnDate);
+    }
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String?>(description);
+    }
+    if (!nullToAbsent || attachmentPath != null) {
+      map['attachment_path'] = Variable<String?>(attachmentPath);
+    }
     map['payment_status'] = Variable<String>(paymentStatus);
     map['transaction_type'] = Variable<String>(transactionType);
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime?>(updatedAt);
+    }
     return map;
   }
 
@@ -369,31 +387,41 @@ class transaction extends DataClass implements Insertable<transaction> {
       peopleId: Value(peopleId),
       title: Value(title),
       amount: Value(amount),
-      date: Value(date),
-      description: Value(description),
-      attachment: Value(attachment),
+      loanDate: Value(loanDate),
+      returnDate: returnDate == null && nullToAbsent
+          ? const Value.absent()
+          : Value(returnDate),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      attachmentPath: attachmentPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(attachmentPath),
       paymentStatus: Value(paymentStatus),
       transactionType: Value(transactionType),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
-  factory transaction.fromJson(Map<String, dynamic> json,
+  factory TransactionTableData.fromJson(Map<String, dynamic> json,
       {ValueSerializer? serializer}) {
     serializer ??= driftRuntimeOptions.defaultSerializer;
-    return transaction(
+    return TransactionTableData(
       id: serializer.fromJson<String>(json['id']),
       peopleId: serializer.fromJson<String>(json['peopleId']),
       title: serializer.fromJson<String>(json['title']),
       amount: serializer.fromJson<int>(json['amount']),
-      date: serializer.fromJson<DateTime>(json['date']),
-      description: serializer.fromJson<String>(json['description']),
-      attachment: serializer.fromJson<Uint8List>(json['attachment']),
+      loanDate: serializer.fromJson<DateTime>(json['loanDate']),
+      returnDate: serializer.fromJson<DateTime?>(json['returnDate']),
+      description: serializer.fromJson<String?>(json['description']),
+      attachmentPath: serializer.fromJson<String?>(json['attachmentPath']),
       paymentStatus: serializer.fromJson<String>(json['paymentStatus']),
       transactionType: serializer.fromJson<String>(json['transactionType']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -404,36 +432,39 @@ class transaction extends DataClass implements Insertable<transaction> {
       'peopleId': serializer.toJson<String>(peopleId),
       'title': serializer.toJson<String>(title),
       'amount': serializer.toJson<int>(amount),
-      'date': serializer.toJson<DateTime>(date),
-      'description': serializer.toJson<String>(description),
-      'attachment': serializer.toJson<Uint8List>(attachment),
+      'loanDate': serializer.toJson<DateTime>(loanDate),
+      'returnDate': serializer.toJson<DateTime?>(returnDate),
+      'description': serializer.toJson<String?>(description),
+      'attachmentPath': serializer.toJson<String?>(attachmentPath),
       'paymentStatus': serializer.toJson<String>(paymentStatus),
       'transactionType': serializer.toJson<String>(transactionType),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
-  transaction copyWith(
+  TransactionTableData copyWith(
           {String? id,
           String? peopleId,
           String? title,
           int? amount,
-          DateTime? date,
+          DateTime? loanDate,
+          DateTime? returnDate,
           String? description,
-          Uint8List? attachment,
+          String? attachmentPath,
           String? paymentStatus,
           String? transactionType,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
-      transaction(
+      TransactionTableData(
         id: id ?? this.id,
         peopleId: peopleId ?? this.peopleId,
         title: title ?? this.title,
         amount: amount ?? this.amount,
-        date: date ?? this.date,
+        loanDate: loanDate ?? this.loanDate,
+        returnDate: returnDate ?? this.returnDate,
         description: description ?? this.description,
-        attachment: attachment ?? this.attachment,
+        attachmentPath: attachmentPath ?? this.attachmentPath,
         paymentStatus: paymentStatus ?? this.paymentStatus,
         transactionType: transactionType ?? this.transactionType,
         createdAt: createdAt ?? this.createdAt,
@@ -441,14 +472,15 @@ class transaction extends DataClass implements Insertable<transaction> {
       );
   @override
   String toString() {
-    return (StringBuffer('transaction(')
+    return (StringBuffer('TransactionTableData(')
           ..write('id: $id, ')
           ..write('peopleId: $peopleId, ')
           ..write('title: $title, ')
           ..write('amount: $amount, ')
-          ..write('date: $date, ')
+          ..write('loanDate: $loanDate, ')
+          ..write('returnDate: $returnDate, ')
           ..write('description: $description, ')
-          ..write('attachment: $attachment, ')
+          ..write('attachmentPath: $attachmentPath, ')
           ..write('paymentStatus: $paymentStatus, ')
           ..write('transactionType: $transactionType, ')
           ..write('createdAt: $createdAt, ')
@@ -463,9 +495,10 @@ class transaction extends DataClass implements Insertable<transaction> {
       peopleId,
       title,
       amount,
-      date,
+      loanDate,
+      returnDate,
       description,
-      attachment,
+      attachmentPath,
       paymentStatus,
       transactionType,
       createdAt,
@@ -473,40 +506,43 @@ class transaction extends DataClass implements Insertable<transaction> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      (other is transaction &&
+      (other is TransactionTableData &&
           other.id == this.id &&
           other.peopleId == this.peopleId &&
           other.title == this.title &&
           other.amount == this.amount &&
-          other.date == this.date &&
+          other.loanDate == this.loanDate &&
+          other.returnDate == this.returnDate &&
           other.description == this.description &&
-          other.attachment == this.attachment &&
+          other.attachmentPath == this.attachmentPath &&
           other.paymentStatus == this.paymentStatus &&
           other.transactionType == this.transactionType &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
 
-class TransactionTableCompanion extends UpdateCompanion<transaction> {
+class TransactionTableCompanion extends UpdateCompanion<TransactionTableData> {
   final Value<String> id;
   final Value<String> peopleId;
   final Value<String> title;
   final Value<int> amount;
-  final Value<DateTime> date;
-  final Value<String> description;
-  final Value<Uint8List> attachment;
+  final Value<DateTime> loanDate;
+  final Value<DateTime?> returnDate;
+  final Value<String?> description;
+  final Value<String?> attachmentPath;
   final Value<String> paymentStatus;
   final Value<String> transactionType;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   const TransactionTableCompanion({
     this.id = const Value.absent(),
     this.peopleId = const Value.absent(),
     this.title = const Value.absent(),
     this.amount = const Value.absent(),
-    this.date = const Value.absent(),
+    this.loanDate = const Value.absent(),
+    this.returnDate = const Value.absent(),
     this.description = const Value.absent(),
-    this.attachment = const Value.absent(),
+    this.attachmentPath = const Value.absent(),
     this.paymentStatus = const Value.absent(),
     this.transactionType = const Value.absent(),
     this.createdAt = const Value.absent(),
@@ -517,43 +553,43 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
     this.peopleId = const Value.absent(),
     required String title,
     required int amount,
-    required DateTime date,
-    required String description,
-    required Uint8List attachment,
+    required DateTime loanDate,
+    this.returnDate = const Value.absent(),
+    this.description = const Value.absent(),
+    this.attachmentPath = const Value.absent(),
     required String paymentStatus,
     required String transactionType,
     required DateTime createdAt,
-    required DateTime updatedAt,
+    this.updatedAt = const Value.absent(),
   })  : title = Value(title),
         amount = Value(amount),
-        date = Value(date),
-        description = Value(description),
-        attachment = Value(attachment),
+        loanDate = Value(loanDate),
         paymentStatus = Value(paymentStatus),
         transactionType = Value(transactionType),
-        createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
-  static Insertable<transaction> custom({
+        createdAt = Value(createdAt);
+  static Insertable<TransactionTableData> custom({
     Expression<String>? id,
     Expression<String>? peopleId,
     Expression<String>? title,
     Expression<int>? amount,
-    Expression<DateTime>? date,
-    Expression<String>? description,
-    Expression<Uint8List>? attachment,
+    Expression<DateTime>? loanDate,
+    Expression<DateTime?>? returnDate,
+    Expression<String?>? description,
+    Expression<String?>? attachmentPath,
     Expression<String>? paymentStatus,
     Expression<String>? transactionType,
     Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<DateTime?>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (peopleId != null) 'people_id': peopleId,
       if (title != null) 'title': title,
       if (amount != null) 'amount': amount,
-      if (date != null) 'date': date,
+      if (loanDate != null) 'loan_date': loanDate,
+      if (returnDate != null) 'return_date': returnDate,
       if (description != null) 'description': description,
-      if (attachment != null) 'attachment': attachment,
+      if (attachmentPath != null) 'attachment_path': attachmentPath,
       if (paymentStatus != null) 'payment_status': paymentStatus,
       if (transactionType != null) 'transaction_type': transactionType,
       if (createdAt != null) 'created_at': createdAt,
@@ -566,21 +602,23 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
       Value<String>? peopleId,
       Value<String>? title,
       Value<int>? amount,
-      Value<DateTime>? date,
-      Value<String>? description,
-      Value<Uint8List>? attachment,
+      Value<DateTime>? loanDate,
+      Value<DateTime?>? returnDate,
+      Value<String?>? description,
+      Value<String?>? attachmentPath,
       Value<String>? paymentStatus,
       Value<String>? transactionType,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<DateTime?>? updatedAt}) {
     return TransactionTableCompanion(
       id: id ?? this.id,
       peopleId: peopleId ?? this.peopleId,
       title: title ?? this.title,
       amount: amount ?? this.amount,
-      date: date ?? this.date,
+      loanDate: loanDate ?? this.loanDate,
+      returnDate: returnDate ?? this.returnDate,
       description: description ?? this.description,
-      attachment: attachment ?? this.attachment,
+      attachmentPath: attachmentPath ?? this.attachmentPath,
       paymentStatus: paymentStatus ?? this.paymentStatus,
       transactionType: transactionType ?? this.transactionType,
       createdAt: createdAt ?? this.createdAt,
@@ -603,14 +641,17 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
     if (amount.present) {
       map['amount'] = Variable<int>(amount.value);
     }
-    if (date.present) {
-      map['date'] = Variable<DateTime>(date.value);
+    if (loanDate.present) {
+      map['loan_date'] = Variable<DateTime>(loanDate.value);
+    }
+    if (returnDate.present) {
+      map['return_date'] = Variable<DateTime?>(returnDate.value);
     }
     if (description.present) {
-      map['description'] = Variable<String>(description.value);
+      map['description'] = Variable<String?>(description.value);
     }
-    if (attachment.present) {
-      map['attachment'] = Variable<Uint8List>(attachment.value);
+    if (attachmentPath.present) {
+      map['attachment_path'] = Variable<String?>(attachmentPath.value);
     }
     if (paymentStatus.present) {
       map['payment_status'] = Variable<String>(paymentStatus.value);
@@ -622,7 +663,7 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<DateTime?>(updatedAt.value);
     }
     return map;
   }
@@ -634,9 +675,10 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
           ..write('peopleId: $peopleId, ')
           ..write('title: $title, ')
           ..write('amount: $amount, ')
-          ..write('date: $date, ')
+          ..write('loanDate: $loanDate, ')
+          ..write('returnDate: $returnDate, ')
           ..write('description: $description, ')
-          ..write('attachment: $attachment, ')
+          ..write('attachmentPath: $attachmentPath, ')
           ..write('paymentStatus: $paymentStatus, ')
           ..write('transactionType: $transactionType, ')
           ..write('createdAt: $createdAt, ')
@@ -647,7 +689,7 @@ class TransactionTableCompanion extends UpdateCompanion<transaction> {
 }
 
 class $TransactionTableTable extends TransactionTable
-    with TableInfo<$TransactionTableTable, transaction> {
+    with TableInfo<$TransactionTableTable, TransactionTableData> {
   @override
   final GeneratedDatabase attachedDatabase;
   final String? _alias;
@@ -677,22 +719,28 @@ class $TransactionTableTable extends TransactionTable
   late final GeneratedColumn<int?> amount = GeneratedColumn<int?>(
       'amount', aliasedName, false,
       type: const IntType(), requiredDuringInsert: true);
-  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  final VerificationMeta _loanDateMeta = const VerificationMeta('loanDate');
   @override
-  late final GeneratedColumn<DateTime?> date = GeneratedColumn<DateTime?>(
-      'date', aliasedName, false,
+  late final GeneratedColumn<DateTime?> loanDate = GeneratedColumn<DateTime?>(
+      'loan_date', aliasedName, false,
       type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _returnDateMeta = const VerificationMeta('returnDate');
+  @override
+  late final GeneratedColumn<DateTime?> returnDate = GeneratedColumn<DateTime?>(
+      'return_date', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   @override
   late final GeneratedColumn<String?> description = GeneratedColumn<String?>(
-      'description', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _attachmentMeta = const VerificationMeta('attachment');
+      'description', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _attachmentPathMeta =
+      const VerificationMeta('attachmentPath');
   @override
-  late final GeneratedColumn<Uint8List?> attachment =
-      GeneratedColumn<Uint8List?>('attachment', aliasedName, false,
-          type: const BlobType(), requiredDuringInsert: true);
+  late final GeneratedColumn<String?> attachmentPath = GeneratedColumn<String?>(
+      'attachment_path', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
   final VerificationMeta _paymentStatusMeta =
       const VerificationMeta('paymentStatus');
   @override
@@ -713,28 +761,30 @@ class $TransactionTableTable extends TransactionTable
   final VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime?> updatedAt = GeneratedColumn<DateTime?>(
-      'updated_at', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      'updated_at', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         peopleId,
         title,
         amount,
-        date,
+        loanDate,
+        returnDate,
         description,
-        attachment,
+        attachmentPath,
         paymentStatus,
         transactionType,
         createdAt,
         updatedAt
       ];
   @override
-  String get aliasedName => _alias ?? 'transaction';
+  String get aliasedName => _alias ?? 'transaction_table';
   @override
-  String get actualTableName => 'transaction';
+  String get actualTableName => 'transaction_table';
   @override
-  VerificationContext validateIntegrity(Insertable<transaction> instance,
+  VerificationContext validateIntegrity(
+      Insertable<TransactionTableData> instance,
       {bool isInserting = false}) {
     final context = VerificationContext();
     final data = instance.toColumns(true);
@@ -757,27 +807,29 @@ class $TransactionTableTable extends TransactionTable
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
-    if (data.containsKey('date')) {
-      context.handle(
-          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    if (data.containsKey('loan_date')) {
+      context.handle(_loanDateMeta,
+          loanDate.isAcceptableOrUnknown(data['loan_date']!, _loanDateMeta));
     } else if (isInserting) {
-      context.missing(_dateMeta);
+      context.missing(_loanDateMeta);
+    }
+    if (data.containsKey('return_date')) {
+      context.handle(
+          _returnDateMeta,
+          returnDate.isAcceptableOrUnknown(
+              data['return_date']!, _returnDateMeta));
     }
     if (data.containsKey('description')) {
       context.handle(
           _descriptionMeta,
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
     }
-    if (data.containsKey('attachment')) {
+    if (data.containsKey('attachment_path')) {
       context.handle(
-          _attachmentMeta,
-          attachment.isAcceptableOrUnknown(
-              data['attachment']!, _attachmentMeta));
-    } else if (isInserting) {
-      context.missing(_attachmentMeta);
+          _attachmentPathMeta,
+          attachmentPath.isAcceptableOrUnknown(
+              data['attachment_path']!, _attachmentPathMeta));
     }
     if (data.containsKey('payment_status')) {
       context.handle(
@@ -804,17 +856,15 @@ class $TransactionTableTable extends TransactionTable
     if (data.containsKey('updated_at')) {
       context.handle(_updatedAtMeta,
           updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
-  transaction map(Map<String, dynamic> data, {String? tablePrefix}) {
-    return transaction.fromData(data,
+  TransactionTableData map(Map<String, dynamic> data, {String? tablePrefix}) {
+    return TransactionTableData.fromData(data,
         prefix: tablePrefix != null ? '$tablePrefix.' : null);
   }
 
@@ -830,19 +880,21 @@ class TransactionDetailTableData extends DataClass
   final String peopleId;
   final String transactionId;
   final int amount;
-  final String description;
-  final Uint8List attachment;
+  final DateTime date;
+  final String? description;
+  final String? attachmentPath;
   final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? updatedAt;
   TransactionDetailTableData(
       {required this.id,
       required this.peopleId,
       required this.transactionId,
       required this.amount,
-      required this.description,
-      required this.attachment,
+      required this.date,
+      this.description,
+      this.attachmentPath,
       required this.createdAt,
-      required this.updatedAt});
+      this.updatedAt});
   factory TransactionDetailTableData.fromData(Map<String, dynamic> data,
       {String? prefix}) {
     final effectivePrefix = prefix ?? '';
@@ -855,14 +907,16 @@ class TransactionDetailTableData extends DataClass
           .mapFromDatabaseResponse(data['${effectivePrefix}transaction_id'])!,
       amount: const IntType()
           .mapFromDatabaseResponse(data['${effectivePrefix}amount'])!,
+      date: const DateTimeType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}date'])!,
       description: const StringType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}description'])!,
-      attachment: const BlobType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}attachment'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}description']),
+      attachmentPath: const StringType()
+          .mapFromDatabaseResponse(data['${effectivePrefix}attachment_path']),
       createdAt: const DateTimeType()
           .mapFromDatabaseResponse(data['${effectivePrefix}created_at'])!,
       updatedAt: const DateTimeType()
-          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at'])!,
+          .mapFromDatabaseResponse(data['${effectivePrefix}updated_at']),
     );
   }
   @override
@@ -872,10 +926,17 @@ class TransactionDetailTableData extends DataClass
     map['people_id'] = Variable<String>(peopleId);
     map['transaction_id'] = Variable<String>(transactionId);
     map['amount'] = Variable<int>(amount);
-    map['description'] = Variable<String>(description);
-    map['attachment'] = Variable<Uint8List>(attachment);
+    map['date'] = Variable<DateTime>(date);
+    if (!nullToAbsent || description != null) {
+      map['description'] = Variable<String?>(description);
+    }
+    if (!nullToAbsent || attachmentPath != null) {
+      map['attachment_path'] = Variable<String?>(attachmentPath);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
-    map['updated_at'] = Variable<DateTime>(updatedAt);
+    if (!nullToAbsent || updatedAt != null) {
+      map['updated_at'] = Variable<DateTime?>(updatedAt);
+    }
     return map;
   }
 
@@ -885,10 +946,17 @@ class TransactionDetailTableData extends DataClass
       peopleId: Value(peopleId),
       transactionId: Value(transactionId),
       amount: Value(amount),
-      description: Value(description),
-      attachment: Value(attachment),
+      date: Value(date),
+      description: description == null && nullToAbsent
+          ? const Value.absent()
+          : Value(description),
+      attachmentPath: attachmentPath == null && nullToAbsent
+          ? const Value.absent()
+          : Value(attachmentPath),
       createdAt: Value(createdAt),
-      updatedAt: Value(updatedAt),
+      updatedAt: updatedAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(updatedAt),
     );
   }
 
@@ -900,10 +968,11 @@ class TransactionDetailTableData extends DataClass
       peopleId: serializer.fromJson<String>(json['peopleId']),
       transactionId: serializer.fromJson<String>(json['transactionId']),
       amount: serializer.fromJson<int>(json['amount']),
-      description: serializer.fromJson<String>(json['description']),
-      attachment: serializer.fromJson<Uint8List>(json['attachment']),
+      date: serializer.fromJson<DateTime>(json['date']),
+      description: serializer.fromJson<String?>(json['description']),
+      attachmentPath: serializer.fromJson<String?>(json['attachmentPath']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
-      updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
+      updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
     );
   }
   @override
@@ -914,10 +983,11 @@ class TransactionDetailTableData extends DataClass
       'peopleId': serializer.toJson<String>(peopleId),
       'transactionId': serializer.toJson<String>(transactionId),
       'amount': serializer.toJson<int>(amount),
-      'description': serializer.toJson<String>(description),
-      'attachment': serializer.toJson<Uint8List>(attachment),
+      'date': serializer.toJson<DateTime>(date),
+      'description': serializer.toJson<String?>(description),
+      'attachmentPath': serializer.toJson<String?>(attachmentPath),
       'createdAt': serializer.toJson<DateTime>(createdAt),
-      'updatedAt': serializer.toJson<DateTime>(updatedAt),
+      'updatedAt': serializer.toJson<DateTime?>(updatedAt),
     };
   }
 
@@ -926,8 +996,9 @@ class TransactionDetailTableData extends DataClass
           String? peopleId,
           String? transactionId,
           int? amount,
+          DateTime? date,
           String? description,
-          Uint8List? attachment,
+          String? attachmentPath,
           DateTime? createdAt,
           DateTime? updatedAt}) =>
       TransactionDetailTableData(
@@ -935,8 +1006,9 @@ class TransactionDetailTableData extends DataClass
         peopleId: peopleId ?? this.peopleId,
         transactionId: transactionId ?? this.transactionId,
         amount: amount ?? this.amount,
+        date: date ?? this.date,
         description: description ?? this.description,
-        attachment: attachment ?? this.attachment,
+        attachmentPath: attachmentPath ?? this.attachmentPath,
         createdAt: createdAt ?? this.createdAt,
         updatedAt: updatedAt ?? this.updatedAt,
       );
@@ -947,8 +1019,9 @@ class TransactionDetailTableData extends DataClass
           ..write('peopleId: $peopleId, ')
           ..write('transactionId: $transactionId, ')
           ..write('amount: $amount, ')
+          ..write('date: $date, ')
           ..write('description: $description, ')
-          ..write('attachment: $attachment, ')
+          ..write('attachmentPath: $attachmentPath, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -956,8 +1029,8 @@ class TransactionDetailTableData extends DataClass
   }
 
   @override
-  int get hashCode => Object.hash(id, peopleId, transactionId, amount,
-      description, attachment, createdAt, updatedAt);
+  int get hashCode => Object.hash(id, peopleId, transactionId, amount, date,
+      description, attachmentPath, createdAt, updatedAt);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -966,8 +1039,9 @@ class TransactionDetailTableData extends DataClass
           other.peopleId == this.peopleId &&
           other.transactionId == this.transactionId &&
           other.amount == this.amount &&
+          other.date == this.date &&
           other.description == this.description &&
-          other.attachment == this.attachment &&
+          other.attachmentPath == this.attachmentPath &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -978,17 +1052,19 @@ class TransactionDetailTableCompanion
   final Value<String> peopleId;
   final Value<String> transactionId;
   final Value<int> amount;
-  final Value<String> description;
-  final Value<Uint8List> attachment;
+  final Value<DateTime> date;
+  final Value<String?> description;
+  final Value<String?> attachmentPath;
   final Value<DateTime> createdAt;
-  final Value<DateTime> updatedAt;
+  final Value<DateTime?> updatedAt;
   const TransactionDetailTableCompanion({
     this.id = const Value.absent(),
     this.peopleId = const Value.absent(),
     this.transactionId = const Value.absent(),
     this.amount = const Value.absent(),
+    this.date = const Value.absent(),
     this.description = const Value.absent(),
-    this.attachment = const Value.absent(),
+    this.attachmentPath = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
@@ -997,32 +1073,33 @@ class TransactionDetailTableCompanion
     this.peopleId = const Value.absent(),
     this.transactionId = const Value.absent(),
     required int amount,
-    required String description,
-    required Uint8List attachment,
+    required DateTime date,
+    this.description = const Value.absent(),
+    this.attachmentPath = const Value.absent(),
     required DateTime createdAt,
-    required DateTime updatedAt,
+    this.updatedAt = const Value.absent(),
   })  : amount = Value(amount),
-        description = Value(description),
-        attachment = Value(attachment),
-        createdAt = Value(createdAt),
-        updatedAt = Value(updatedAt);
+        date = Value(date),
+        createdAt = Value(createdAt);
   static Insertable<TransactionDetailTableData> custom({
     Expression<String>? id,
     Expression<String>? peopleId,
     Expression<String>? transactionId,
     Expression<int>? amount,
-    Expression<String>? description,
-    Expression<Uint8List>? attachment,
+    Expression<DateTime>? date,
+    Expression<String?>? description,
+    Expression<String?>? attachmentPath,
     Expression<DateTime>? createdAt,
-    Expression<DateTime>? updatedAt,
+    Expression<DateTime?>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (peopleId != null) 'people_id': peopleId,
       if (transactionId != null) 'transaction_id': transactionId,
       if (amount != null) 'amount': amount,
+      if (date != null) 'date': date,
       if (description != null) 'description': description,
-      if (attachment != null) 'attachment': attachment,
+      if (attachmentPath != null) 'attachment_path': attachmentPath,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -1033,17 +1110,19 @@ class TransactionDetailTableCompanion
       Value<String>? peopleId,
       Value<String>? transactionId,
       Value<int>? amount,
-      Value<String>? description,
-      Value<Uint8List>? attachment,
+      Value<DateTime>? date,
+      Value<String?>? description,
+      Value<String?>? attachmentPath,
       Value<DateTime>? createdAt,
-      Value<DateTime>? updatedAt}) {
+      Value<DateTime?>? updatedAt}) {
     return TransactionDetailTableCompanion(
       id: id ?? this.id,
       peopleId: peopleId ?? this.peopleId,
       transactionId: transactionId ?? this.transactionId,
       amount: amount ?? this.amount,
+      date: date ?? this.date,
       description: description ?? this.description,
-      attachment: attachment ?? this.attachment,
+      attachmentPath: attachmentPath ?? this.attachmentPath,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -1064,17 +1143,20 @@ class TransactionDetailTableCompanion
     if (amount.present) {
       map['amount'] = Variable<int>(amount.value);
     }
-    if (description.present) {
-      map['description'] = Variable<String>(description.value);
+    if (date.present) {
+      map['date'] = Variable<DateTime>(date.value);
     }
-    if (attachment.present) {
-      map['attachment'] = Variable<Uint8List>(attachment.value);
+    if (description.present) {
+      map['description'] = Variable<String?>(description.value);
+    }
+    if (attachmentPath.present) {
+      map['attachment_path'] = Variable<String?>(attachmentPath.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
     if (updatedAt.present) {
-      map['updated_at'] = Variable<DateTime>(updatedAt.value);
+      map['updated_at'] = Variable<DateTime?>(updatedAt.value);
     }
     return map;
   }
@@ -1086,8 +1168,9 @@ class TransactionDetailTableCompanion
           ..write('peopleId: $peopleId, ')
           ..write('transactionId: $transactionId, ')
           ..write('amount: $amount, ')
+          ..write('date: $date, ')
           ..write('description: $description, ')
-          ..write('attachment: $attachment, ')
+          ..write('attachmentPath: $attachmentPath, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -1123,24 +1206,30 @@ class $TransactionDetailTableTable extends TransactionDetailTable
       'transaction_id', aliasedName, false,
       type: const StringType(),
       requiredDuringInsert: false,
-      defaultConstraints: 'REFERENCES "transaction" (id) ON DELETE CASCADE',
+      defaultConstraints: 'REFERENCES transaction_table (id) ON DELETE CASCADE',
       clientDefault: () => const Uuid().v4());
   final VerificationMeta _amountMeta = const VerificationMeta('amount');
   @override
   late final GeneratedColumn<int?> amount = GeneratedColumn<int?>(
       'amount', aliasedName, false,
       type: const IntType(), requiredDuringInsert: true);
+  final VerificationMeta _dateMeta = const VerificationMeta('date');
+  @override
+  late final GeneratedColumn<DateTime?> date = GeneratedColumn<DateTime?>(
+      'date', aliasedName, false,
+      type: const IntType(), requiredDuringInsert: true);
   final VerificationMeta _descriptionMeta =
       const VerificationMeta('description');
   @override
   late final GeneratedColumn<String?> description = GeneratedColumn<String?>(
-      'description', aliasedName, false,
-      type: const StringType(), requiredDuringInsert: true);
-  final VerificationMeta _attachmentMeta = const VerificationMeta('attachment');
+      'description', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
+  final VerificationMeta _attachmentPathMeta =
+      const VerificationMeta('attachmentPath');
   @override
-  late final GeneratedColumn<Uint8List?> attachment =
-      GeneratedColumn<Uint8List?>('attachment', aliasedName, false,
-          type: const BlobType(), requiredDuringInsert: true);
+  late final GeneratedColumn<String?> attachmentPath = GeneratedColumn<String?>(
+      'attachment_path', aliasedName, true,
+      type: const StringType(), requiredDuringInsert: false);
   final VerificationMeta _createdAtMeta = const VerificationMeta('createdAt');
   @override
   late final GeneratedColumn<DateTime?> createdAt = GeneratedColumn<DateTime?>(
@@ -1149,16 +1238,17 @@ class $TransactionDetailTableTable extends TransactionDetailTable
   final VerificationMeta _updatedAtMeta = const VerificationMeta('updatedAt');
   @override
   late final GeneratedColumn<DateTime?> updatedAt = GeneratedColumn<DateTime?>(
-      'updated_at', aliasedName, false,
-      type: const IntType(), requiredDuringInsert: true);
+      'updated_at', aliasedName, true,
+      type: const IntType(), requiredDuringInsert: false);
   @override
   List<GeneratedColumn> get $columns => [
         id,
         peopleId,
         transactionId,
         amount,
+        date,
         description,
-        attachment,
+        attachmentPath,
         createdAt,
         updatedAt
       ];
@@ -1191,21 +1281,23 @@ class $TransactionDetailTableTable extends TransactionDetailTable
     } else if (isInserting) {
       context.missing(_amountMeta);
     }
+    if (data.containsKey('date')) {
+      context.handle(
+          _dateMeta, date.isAcceptableOrUnknown(data['date']!, _dateMeta));
+    } else if (isInserting) {
+      context.missing(_dateMeta);
+    }
     if (data.containsKey('description')) {
       context.handle(
           _descriptionMeta,
           description.isAcceptableOrUnknown(
               data['description']!, _descriptionMeta));
-    } else if (isInserting) {
-      context.missing(_descriptionMeta);
     }
-    if (data.containsKey('attachment')) {
+    if (data.containsKey('attachment_path')) {
       context.handle(
-          _attachmentMeta,
-          attachment.isAcceptableOrUnknown(
-              data['attachment']!, _attachmentMeta));
-    } else if (isInserting) {
-      context.missing(_attachmentMeta);
+          _attachmentPathMeta,
+          attachmentPath.isAcceptableOrUnknown(
+              data['attachment_path']!, _attachmentPathMeta));
     }
     if (data.containsKey('created_at')) {
       context.handle(_createdAtMeta,
@@ -1216,14 +1308,12 @@ class $TransactionDetailTableTable extends TransactionDetailTable
     if (data.containsKey('updated_at')) {
       context.handle(_updatedAtMeta,
           updatedAt.isAcceptableOrUnknown(data['updated_at']!, _updatedAtMeta));
-    } else if (isInserting) {
-      context.missing(_updatedAtMeta);
     }
     return context;
   }
 
   @override
-  Set<GeneratedColumn> get $primaryKey => <GeneratedColumn>{};
+  Set<GeneratedColumn> get $primaryKey => {id};
   @override
   TransactionDetailTableData map(Map<String, dynamic> data,
       {String? tablePrefix}) {

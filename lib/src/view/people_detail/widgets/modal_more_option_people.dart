@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import '../../../utils/utils.dart';
 import '../../welcome/widgets/option_tile.dart';
 
-class ModalMoreOptionUser extends StatelessWidget {
-  const ModalMoreOptionUser({
+class ModalMoreOptionPeople extends StatelessWidget {
+  const ModalMoreOptionPeople({
     Key? key,
   }) : super(key: key);
 

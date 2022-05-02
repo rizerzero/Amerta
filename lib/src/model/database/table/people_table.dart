@@ -8,9 +8,12 @@ class PeoplesTable extends Table {
 
   TextColumn get name => text()();
 
-  BlobColumn get imagePath => blob()();
+  TextColumn get imagePath => text().nullable()();
 
-  DateTimeColumn get createdAt => dateTime()();
+  DateTimeColumn get createdAt => dateTime().nullable()();
 
-  DateTimeColumn get updatedA => dateTime()();
+  DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

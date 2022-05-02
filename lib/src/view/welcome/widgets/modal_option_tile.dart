@@ -37,7 +37,7 @@ class ModalOptionTile extends StatelessWidget {
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => const ModalFormPeople(
-                  userId: "",
+                  peopleId: "",
                 ),
               );
             },

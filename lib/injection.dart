@@ -1,38 +1,69 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hive_flutter/hive_flutter.dart';
 
-import 'src/model/model/people/people_model.dart';
-import 'src/model/model/transaction/transaction_model.dart';
-import 'src/model/model/transaction_detail/transaction_detail_model.dart';
+import 'src/model/database/query/people_query.dart';
+import 'src/model/database/query/transaction_detail_query.dart';
+import 'src/model/database/query/transaction_query.dart';
+import 'src/model/repository/people_repository.dart';
+import 'src/model/repository/transaction_detail_repository.dart';
+import 'src/model/repository/transaction_repository.dart';
 import 'src/model/service/local/people_local_service.dart';
-import 'src/utils/utils.dart';
+import 'src/model/service/local/transaction_detail_local_service.dart';
+import 'src/model/service/local/transaction_local_service.dart';
+import 'src/view_model/people/people_action_notifier.dart';
+import 'src/view_model/people/people_detail_notifier.dart';
+import 'src/view_model/transaction/transaction_action_notifier.dart';
+import 'src/view_model/transaction_detail/transaction_detail_action_notifier.dart';
 
-/// People Section
+///* [Transaction Detail Section]
 
-final peopleDetailNotifier = StateNotifierProvider<PeopleDetailNotifier, PeopleDetailState>(
-  (ref) => PeopleDetailNotifier(peopleRepository: ref.watch(_peopleRepository)),
+final transactionDetailLocalService = Provider(
+  (ref) => TransactionDetailLocalService(query: ref.watch(transactionDetailTableQuery)),
 );
 
-final peoplesNotifier = StateNotifierProvider<PeoplesNotifier, PeopleState>((ref) {
-  return PeoplesNotifier(peopleRepository: ref.watch(_peopleRepository));
-});
-final _peopleRepository = Provider<PeopleRepository>((ref) {
-  return PeopleRepositoryImplement(
-    peopleLocalService: ref.watch(_peopleService),
-  );
-});
-final _peopleService = Provider<PeopleLocalService>((ref) {
-  return PeopleLocalService(peopleBox: ref.watch(_peopleBox));
+final transactionDetailRepository = Provider(
+  (ref) => TransactionDetailRepository(
+      transactionDetailLocalService: ref.watch(transactionDetailLocalService)),
+);
+
+final transactionDetailActionNotifier =
+    StateNotifierProvider<TransactionDetailActionNotifier, TransactionDetailActionState>(
+  (ref) => TransactionDetailActionNotifier(repository: ref.watch(transactionDetailRepository)),
+);
+
+///* [Transaction Section]
+
+final transactionLocalService = Provider((ref) {
+  return TransactionLocalService(query: ref.watch(transactionTableQuery));
 });
 
-final _peopleBox = Provider<Box<PeopleModel>>((ref) {
-  return Hive.box<PeopleModel>(kHivePeopleBox);
+final transactionRepository = Provider((ref) {
+  return TransactionRepository(transactionLocalService: ref.watch(transactionLocalService));
 });
 
-final _transactionBox = Provider<Box<TransactionModel>>((ref) {
-  return Hive.box<TransactionModel>(kHiveTransactionBox);
+final transactionActionNotifier = StateNotifierProvider((ref) {
+  return TransactionActionNotifier(repository: ref.watch(transactionRepository));
 });
 
-final _transactionDetailBox = Provider<Box<TransactionDetailModel>>((ref) {
-  return Hive.box<TransactionDetailModel>(kHiveTransactionDetailBox);
+///* [People Section]
+
+final peopleLocalService = Provider<PeopleLocalService>(
+  (ref) => PeopleLocalService(query: ref.watch(peopleTableQuery)),
+);
+
+final peopleRepository = Provider(
+  (ref) => PeopleRepository(peopleLocalService: ref.watch(peopleLocalService)),
+);
+
+final peopleActionNotifier = StateNotifierProvider<PeopleActionNotifier, PeopleActionState>((ref) {
+  return PeopleActionNotifier(ref.watch(peopleRepository));
 });
+
+final peopleDetailNotifier = StateNotifierProvider<PeopleDetailNotifier, PeopleDetailState>((ref) {
+  return PeopleDetailNotifier(repository: ref.watch(peopleRepository));
+});
+
+///* [Query Section]
+final peopleTableQuery = Provider<PeopleTableQuery>((ref) => PeopleTableQuery());
+final transactionTableQuery = Provider<TransactionTableQuery>((ref) => TransactionTableQuery());
+final transactionDetailTableQuery =
+    Provider<TransactionDetailTableQuery>((ref) => TransactionDetailTableQuery());

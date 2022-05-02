@@ -1,18 +1,22 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../injection.dart';
+import '../../../model/model/people/people_form_parameter.dart';
+import '../../../model/model/people/people_model.dart';
 import '../../../utils/utils.dart';
 
 class ModalFormPeople extends ConsumerStatefulWidget {
   const ModalFormPeople({
     Key? key,
-    required this.userId,
+    required this.peopleId,
   }) : super(key: key);
 
-  final String userId;
+  final String peopleId;
   @override
   _ModalFormPeopleState createState() => _ModalFormPeopleState();
 }
@@ -20,23 +24,31 @@ class ModalFormPeople extends ConsumerStatefulWidget {
 class _ModalFormPeopleState extends ConsumerState<ModalFormPeople> {
   final _nameController = TextEditingController();
   File? _selectedFile;
-  Widget errorWidget = const SizedBox();
+  Widget? errorWidget;
 
   @override
   void initState() {
     super.initState();
-
-    Future.microtask(() => _initPeople());
-  }
-
-  Future<void> _initPeople() async {
-    final people = (await ref.read(peopleDetailNotifier.notifier).getById(widget.userId)).people;
-    setState(() {
-      _nameController.text = people.name;
-      if (people.imagePath != null) {
-        _selectedFile = File(people.imagePath!);
-      }
-    });
+    Future.microtask(
+      () => ref.read(peopleDetailNotifier.notifier).getById(widget.peopleId).then(
+        (state) {
+          state.item.when(
+            data: (data) {
+              setState(() {
+                _nameController.text = data?.name ?? '';
+                if (data?.imagePath != null) File(data!.imagePath!);
+              });
+            },
+            error: (error, trace) {
+              setState(() => errorWidget = _ErrorWidget(message: error.toString()));
+            },
+            loading: () {
+              log('loading');
+            },
+          );
+        },
+      ),
+    );
   }
 
   final inputDecoration = InputDecoration(
@@ -52,7 +64,7 @@ class _ModalFormPeopleState extends ConsumerState<ModalFormPeople> {
     return AlertDialog(
       scrollable: true,
       title: Text(
-        "Tambah Orang",
+        "Form Orang",
         style: bodyFont.copyWith(
           fontWeight: FontWeight.bold,
         ),
@@ -61,7 +73,7 @@ class _ModalFormPeopleState extends ConsumerState<ModalFormPeople> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: [
-          errorWidget,
+          if (errorWidget != null) errorWidget!,
           ...[
             Text('Nama', style: bodyFont),
             const SizedBox(height: 8.0),
@@ -116,42 +128,35 @@ class _ModalFormPeopleState extends ConsumerState<ModalFormPeople> {
       actions: [
         Consumer(
           builder: (_, ref, child) {
-            final peopleState = ref.watch(
-              peoplesNotifier.select((value) => value.createOrUpdate),
-            );
+            final saveState =
+                ref.watch(peopleActionNotifier.select((value) => value.insertOrUpdateAsync));
 
-            ref.listen<AsyncValue>(
-              peoplesNotifier.select((value) => value.createOrUpdate),
-              (_, state) {
-                state.whenOrNull(
-                  data: (_) {
-                    setState(() {
-                      errorWidget = const SizedBox();
-                      _nameController.clear();
-                      _selectedFile = null;
-                    });
-                  },
-                  error: (error, stackTrace) {
-                    setState(() => errorWidget = _ErrorWidget(message: error.toString()));
-                  },
-                );
-              },
-            );
+            ref.listen<AsyncValue<void>>(
+                peopleActionNotifier.select((value) => value.insertOrUpdateAsync), (_, state) {
+              state.whenOrNull(
+                data: (_) => setState(() => errorWidget = null),
+                error: (error, trace) =>
+                    setState(() => errorWidget = _ErrorWidget(message: "$error")),
+              );
+            });
 
-            if (peopleState is AsyncLoading) {
+            if (saveState is AsyncLoading) {
               return const CircularProgressIndicator();
             }
 
             return ElevatedButton(
               onPressed: () async {
-                final people = ref.read(peopleDetailNotifier).people.copyWith(
-                      name: _nameController.text,
-                      imagePath: _selectedFile?.path,
-                    );
-
-                await ref.read(peoplesNotifier.notifier).createOrUpdate(
-                      people,
-                    );
+                final people = ref.read(peopleDetailNotifier).item.value;
+                final form = PeopleFormParameter(
+                  people: PeopleModel(
+                    peopleId: people?.peopleId ?? const Uuid().v4(),
+                    name: people?.name ?? '',
+                    createdAt: people?.createdAt ?? DateTime.now(),
+                    updatedAt: DateTime.now(),
+                    imagePath: _selectedFile == null ? null : _selectedFile!.path,
+                  ),
+                );
+                await ref.read(peopleActionNotifier.notifier).insertOrUpdate(form);
               },
               style: ElevatedButton.styleFrom(
                 primary: secondaryDark,

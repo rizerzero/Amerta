@@ -1,3 +1,4 @@
+import 'package:drift/native.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class Failure extends Equatable {
@@ -37,4 +38,17 @@ class UncaughtFailure extends Failure {
   const UncaughtFailure({
     String message = "Uncaught Failure",
   }) : super(message);
+}
+
+class SqliteFailure extends Failure {
+  SqliteFailure({
+    required this.exception,
+  }) : super("""
+Causing Statement : ${exception.causingStatement}\n
+Explanation       : ${exception.explanation}\n
+Message           : ${exception.message}\n
+Result Code       : ${exception.resultCode}\n
+""");
+
+  final SqliteException exception;
 }

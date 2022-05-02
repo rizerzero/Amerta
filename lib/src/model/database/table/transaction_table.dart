@@ -1,9 +1,8 @@
 part of '../config_database.dart';
 
-@DataClassName("transaction")
 class TransactionTable extends Table {
   @override
-  String get tableName => "transaction";
+  String get tableName => "transaction_table";
 
   TextColumn get id => text().clientDefault(() => const Uuid().v4())();
 
@@ -15,17 +14,22 @@ class TransactionTable extends Table {
 
   IntColumn get amount => integer()();
 
-  DateTimeColumn get date => dateTime()();
+  DateTimeColumn get loanDate => dateTime()();
 
-  TextColumn get description => text()();
+  DateTimeColumn get returnDate => dateTime().nullable()();
 
-  BlobColumn get attachment => blob()();
+  TextColumn get description => text().nullable()();
 
-  TextColumn get paymentStatus => text()();
+  TextColumn get attachmentPath => text().nullable()();
 
-  TextColumn get transactionType => text()();
+  TextColumn get paymentStatus => text().named('payment_status')();
 
-  DateTimeColumn get createdAt => dateTime()();
+  TextColumn get transactionType => text().named("transaction_type")();
 
-  DateTimeColumn get updatedAt => dateTime()();
+  DateTimeColumn get createdAt => dateTime().named("created_at")();
+
+  DateTimeColumn get updatedAt => dateTime().nullable()();
+
+  @override
+  Set<Column> get primaryKey => {id};
 }

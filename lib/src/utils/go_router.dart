@@ -3,22 +3,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../view/form_transaction/form_transaction_page.dart';
+import '../view/people_detail/people_detail_page.dart';
+import '../view/people_transaction/people_transaction_page.dart';
+import '../view/peoples/peoples_page.dart';
 import '../view/splash/splash_page.dart';
-import '../view/user_detail/user_detail_page.dart';
-import '../view/user_transaction/user_transaction_page.dart';
-import '../view/users/users_page.dart';
 import '../view/welcome/welcome_page.dart';
 import 'utils.dart';
 
 const splashRouteNamed = 'splash';
 const appRouteNamed = 'welcome';
 
-/// User Section
-const userFormNewRouteNamed = 'user-form-new';
-const userFormEditRouteNamed = 'user-form-edit';
-const userTransactionRouteNamed = 'user-transaction';
-const userDetailRouteNamed = 'user-detail';
-const userListRouteNamed = 'user-list';
+/// people Section
+const peopleFormNewRouteNamed = 'people-form-new';
+const peopleFormEditRouteNamed = 'people-form-edit';
+const peopleTransactionRouteNamed = 'people-transaction';
+const peopleDetailRouteNamed = 'people-detail';
+const peopleListRouteNamed = 'people-list';
 
 /// Transaction Section
 const transactionFormNewRouteNamed = 'transaction-form-new';
@@ -66,30 +66,30 @@ final goRouter = Provider<GoRouter>(
           ],
         ),
         GoRoute(
-          path: "/user",
-          name: userListRouteNamed,
-          builder: (ctx, state) => const UsersPage(),
+          path: "/people",
+          name: peopleListRouteNamed,
+          builder: (ctx, state) => const PeoplesPage(),
           routes: [
-            /// [user/$userId/transaction]
+            /// [people/$peopleId/transaction]
             GoRoute(
-              path: ':userId/transaction',
-              name: userDetailRouteNamed,
+              path: ':peopleId/transaction',
+              name: peopleDetailRouteNamed,
               builder: (ctx, state) {
-                final userId = state.params['userId'] ?? "-";
-                return UserDetailPage(userId: userId);
+                final peopleId = state.params['peopleId'] ?? "-";
+                return PeopleDetailPage(peopleId: peopleId);
               },
               routes: [
-                /// [user/$userId/transaction/$transactionId]
+                /// [people/$peopleId/transaction/$transactionId]
                 GoRoute(
                   path: ":transactionId",
-                  name: userTransactionRouteNamed,
+                  name: peopleTransactionRouteNamed,
                   builder: (ctx, state) {
                     final transactionId = state.params["transactionId"] ?? "-";
-                    final userId = state.params['userId'] ?? "-";
+                    final peopleId = state.params['peopleId'] ?? "-";
 
-                    return UserTransactionPage(
+                    return PeopleTransactionPage(
                       transactionId: transactionId,
-                      userId: userId,
+                      peopleId: peopleId,
                     );
                   },
                 ),

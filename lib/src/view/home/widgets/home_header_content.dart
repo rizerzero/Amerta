@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../utils/utils.dart';
+import '../../../view_model/people/future_provider.dart';
+import '../../../view_model/transaction/future_provider.dart';
 import 'summary_amount.dart';
 
 class HomeHeaderContent extends StatelessWidget {
@@ -26,18 +29,33 @@ class HomeHeaderContent extends StatelessWidget {
                 color: primary,
                 child: Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "Hutang : ${fn.rupiahCurrency.format(250000)}",
-                        style: bodyFont.copyWith(fontSize: 12.0),
-                      ),
-                      Text(
-                        "Piutang : ${fn.rupiahCurrency.format(250000)}",
-                        style: bodyFont.copyWith(fontSize: 12.0),
-                      ),
-                    ],
+                  child: Consumer(
+                    builder: (context, ref, child) {
+                      final _future = ref.watch(getMySummaryTransaction);
+                      return _future.when(
+                        data: (data) {
+                          return Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Hutang : ${fn.rupiahCurrency.format(250000)}",
+                                style: bodyFont.copyWith(fontSize: 12.0),
+                              ),
+                              Text(
+                                "Piutang : ${fn.rupiahCurrency.format(250000)}",
+                                style: bodyFont.copyWith(fontSize: 12.0),
+                              ),
+                            ],
+                          );
+                        },
+                        error: (error, trace) {
+                          return Center(
+                            child: Text("$error"),
+                          );
+                        },
+                        loading: () => const Center(child: CircularProgressIndicator()),
+                      );
+                    },
                   ),
                 ),
               );
@@ -47,16 +65,31 @@ class HomeHeaderContent extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: const [
-                    Expanded(
-                      child: SummaryAmount(amount: 0),
-                    ),
-                    Expanded(
-                      child: SummaryAmount(title: "Piutang"),
-                    ),
-                  ],
+                child: Consumer(
+                  builder: (context, ref, child) {
+                    final _future = ref.watch(getMySummaryTransaction);
+                    return _future.when(
+                      data: (items) {
+                        return Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: const [
+                            Expanded(
+                              child: SummaryAmount(amount: 0),
+                            ),
+                            Expanded(
+                              child: SummaryAmount(title: "Piutang"),
+                            ),
+                          ],
+                        );
+                      },
+                      error: (error, trace) {
+                        return Center(child: Text("$error"));
+                      },
+                      loading: () => const Center(
+                        child: CircularProgressIndicator(color: Colors.white),
+                      ),
+                    );
+                  },
                 ),
               ),
               Column(
@@ -79,7 +112,7 @@ class HomeHeaderContent extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            context.pushNamed(userListRouteNamed);
+                            context.pushNamed(peopleListRouteNamed);
                           },
                           child: Text(
                             "Selengkapnya",
@@ -95,55 +128,70 @@ class HomeHeaderContent extends StatelessWidget {
                   ),
                   SizedBox(
                     height: fn.vh(context) / 5,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      shrinkWrap: true,
-                      itemCount: 10,
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-                      itemBuilder: (ctx, index) {
-                        return SizedBox(
-                          width: width / 3.5,
-                          child: Card(
-                            margin: const EdgeInsets.only(right: 16.0),
-                            child: InkWell(
-                              onTap: () {
-                                context.pushNamed(
-                                  userDetailRouteNamed,
-                                  params: {
-                                    "userId": index.toString(),
-                                  },
-                                );
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.all(16.0),
-                                child: Column(
-                                  children: [
-                                    Expanded(
-                                      child: Hero(
-                                        tag: index.toString(),
-                                        child: const CircleAvatar(),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      child: Align(
-                                        child: Text(
-                                          index.isEven
-                                              ? "zeffry reynando sad ada dsadasd"
-                                              : "nakia",
-                                          textAlign: TextAlign.center,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: bodyFont.copyWith(
-                                            fontSize: 10.0,
-                                            color: grey,
-                                          ),
+                    child: Consumer(
+                      builder: (context, ref, child) {
+                        final _future = ref.watch(getLatestTenPeople);
+                        return _future.when(
+                          data: (data) {
+                            return ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              shrinkWrap: true,
+                              itemCount: 10,
+                              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                              itemBuilder: (ctx, index) {
+                                return SizedBox(
+                                  width: width / 3.5,
+                                  child: Card(
+                                    margin: const EdgeInsets.only(right: 16.0),
+                                    child: InkWell(
+                                      onTap: () {
+                                        context.pushNamed(
+                                          peopleDetailRouteNamed,
+                                          params: {
+                                            "peopleId": index.toString(),
+                                          },
+                                        );
+                                      },
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(16.0),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                              child: Hero(
+                                                tag: index.toString(),
+                                                child: const CircleAvatar(),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: Align(
+                                                child: Text(
+                                                  index.isEven
+                                                      ? "zeffry reynando sad ada dsadasd"
+                                                      : "nakia",
+                                                  textAlign: TextAlign.center,
+                                                  maxLines: 2,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: bodyFont.copyWith(
+                                                    fontSize: 10.0,
+                                                    color: grey,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
-                                  ],
-                                ),
-                              ),
-                            ),
+                                  ),
+                                );
+                              },
+                            );
+                          },
+                          error: (error, trace) {
+                            return Center(child: Text("$error", style: bodyFontWhite));
+                          },
+                          loading: () => const Center(
+                            child: CircularProgressIndicator(color: Colors.white),
                           ),
                         );
                       },

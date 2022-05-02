@@ -1,136 +1,92 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+import '../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../utils/utils.dart';
+import '../../view_model/people/future_provider.dart';
+import '../../view_model/transaction/future_provider.dart';
 import 'widgets/home_header_content.dart';
+import 'widgets/home_tabbar_item.dart';
 import 'widgets/home_tabbar_persistent_header.dart';
-import 'widgets/transaction_tile.dart';
 
-class HomePage extends StatelessWidget {
+class HomePage extends ConsumerWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final appBarHeight = fn.vh(context) / 2;
 
     return DefaultTabController(
       length: TransactionType.values.length,
-      child: NestedScrollView(
-        headerSliverBuilder: (context, innerBoxIsScrolled) {
-          return [
-            SliverOverlapAbsorber(
-              handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-              sliver: MultiSliver(
-                pushPinnedChildren: false,
-                children: [
-                  SliverAppBar(
-                    elevation: 0,
-                    automaticallyImplyLeading: false,
-                    pinned: true,
-                    expandedHeight: appBarHeight,
-                    forceElevated: innerBoxIsScrolled,
-                    flexibleSpace: const HomeHeaderContent(),
-                  ),
-                  SliverPersistentHeader(
-                    pinned: true,
-                    delegate: HomeTabBarPersistentHeader(
-                      tabbar: TabBar(
-                        labelColor: Colors.white,
-                        unselectedLabelColor: Colors.white54,
-                        onTap: (index) {},
-                        indicator: const BoxDecoration(
-                          color: primary,
-                          border: Border(
-                            bottom: BorderSide(
-                              color: Colors.white,
-                              width: 2,
-                            ),
-                          ),
-                        ),
-                        tabs: TransactionType.values
-                            .map(
-                              (e) => Tab(text: e.name.toUpperCase()),
-                            )
-                            .toList(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ];
+      child: RefreshIndicator(
+        onRefresh: () async {
+          ref.refresh(getLatestTenPeople);
+
+          ref.refresh(getMySummaryTransaction);
+
+          ref.refresh(
+            getRecentTransaction(const RecentTransactionParameter(type: TransactionType.hutang)),
+          );
+
+          ref.refresh(
+            getRecentTransaction(const RecentTransactionParameter(type: TransactionType.piutang)),
+          );
         },
-        body: TabBarView(
-          children: TransactionType.values
-              .map(
-                (e) => Builder(
-                  builder: (context) {
-                    return RefreshIndicator(
-                      onRefresh: () async => log("tes"),
-                      child: CustomScrollView(
-                        /// Untuk menyimpan last scroll position
-                        key: PageStorageKey(e),
-                        primary: true,
-                        slivers: [
-                          /// Akumulasi jarak/space berdasarkan jumlah sliver yang berada didalam [SliverOverlapAbsorber]
-                          SliverOverlapInjector(
-                            handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                          ),
-                          SliverPadding(
-                            padding: const EdgeInsets.symmetric(vertical: 40.0, horizontal: 16.0),
-                            sliver: SliverList(
-                              delegate: SliverChildBuilderDelegate(
-                                (ctx, index) => const TransactionTile(),
-                                childCount: 20000,
+        notificationPredicate: (notification) => notification.depth == 2,
+        child: NestedScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          headerSliverBuilder: (context, innerBoxIsScrolled) {
+            return [
+              SliverOverlapAbsorber(
+                handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                sliver: MultiSliver(
+                  pushPinnedChildren: false,
+                  children: [
+                    SliverAppBar(
+                      elevation: 0,
+                      automaticallyImplyLeading: false,
+                      pinned: true,
+                      expandedHeight: appBarHeight,
+                      forceElevated: innerBoxIsScrolled,
+                      flexibleSpace: const HomeHeaderContent(),
+                    ),
+                    SliverPersistentHeader(
+                      pinned: true,
+                      delegate: HomeTabBarPersistentHeader(
+                        tabbar: TabBar(
+                          labelColor: Colors.white,
+                          unselectedLabelColor: Colors.white54,
+                          onTap: (index) {},
+                          indicator: const BoxDecoration(
+                            color: primary,
+                            border: Border(
+                              bottom: BorderSide(
+                                color: Colors.white,
+                                width: 2,
                               ),
                             ),
-                          )
-                        ],
+                          ),
+                          tabs: TransactionType.values
+                              .map(
+                                (e) => Tab(text: e.name.toUpperCase()),
+                              )
+                              .toList(),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              )
-              .toList(),
+              ),
+            ];
+          },
+          body: TabBarView(
+            children: TransactionType.values
+                .map((transactionType) => HomeTabBarItem(transactionType: transactionType))
+                .toList(),
+          ),
         ),
       ),
-      // child: CustomScrollView(
-      //   slivers: [
-      //     SliverAppBar(
-      //       automaticallyImplyLeading: false,
-      //       elevation: 0,
-      //       pinned: true,
-      //       expandedHeight: appBarHeight,
-      //       flexibleSpace: const HomeHeaderContent(),
-      //     ),
-      //     SliverPersistentHeader(
-      //       pinned: true,
-      //       delegate: HomeTabBarPersistentHeader(
-      //         tabbar: TabBar(
-      //           labelColor: Colors.white,
-      //           unselectedLabelColor: Colors.white54,
-      //           onTap: (index) {},
-      //           indicator: const BoxDecoration(
-      //             color: primary,
-      //             border: Border(
-      //               bottom: BorderSide(
-      //                 color: Colors.white,
-      //                 width: 2,
-      //               ),
-      //             ),
-      //           ),
-      //           tabs: TransactionType.values
-      //               .map(
-      //                 (e) => Tab(text: e.name.toUpperCase()),
-      //               )
-      //               .toList(),
-      //         ),
-      //       ),
-      //     ),
-      //   ],
-      // ),
     );
   }
 }

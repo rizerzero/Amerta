@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../../utils/utils.dart';
 
-class SliverTabBarTransactionType extends SliverPersistentHeaderDelegate {
-  const SliverTabBarTransactionType({
+class PeopleDetailSliverTabBar extends SliverPersistentHeaderDelegate {
+  const PeopleDetailSliverTabBar({
     required this.tabBar,
   });
   final TabBar tabBar;

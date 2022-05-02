@@ -119,7 +119,7 @@ class _FormTransactionPageState extends State<FormTransactionPage> {
                                   await showDialog(
                                     context: context,
                                     builder: (ctx) => const ModalFormPeople(
-                                      userId: "",
+                                      peopleId: "",
                                     ),
                                   );
                                 },
