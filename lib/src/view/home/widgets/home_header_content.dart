@@ -1,11 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../model/model/people/people_top_ten_model.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/people/future_provider.dart';
-import '../../../view_model/transaction/future_provider.dart';
+import '../../../view_model/people/people_latest_ten_notifier.dart';
+import '../../../view_model/transaction/people_summary_notifier.dart';
 import 'summary_amount.dart';
+
+part 'home_people_item.dart';
 
 class HomeHeaderContent extends StatelessWidget {
   const HomeHeaderContent({
@@ -17,7 +22,6 @@ class HomeHeaderContent extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final height = constraints.maxHeight;
-        final width = constraints.maxWidth;
 
         final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
         return FlexibleSpaceBar(
@@ -31,18 +35,18 @@ class HomeHeaderContent extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Consumer(
                     builder: (context, ref, child) {
-                      final _future = ref.watch(getMySummaryTransaction);
+                      final _future = ref.watch(getPeopleSummaryTransaction(null));
                       return _future.when(
                         data: (data) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Hutang : ${fn.rupiahCurrency.format(250000)}",
+                                "Hutang : ${fn.rupiahCurrency(data.totalHutang)}",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                               Text(
-                                "Piutang : ${fn.rupiahCurrency.format(250000)}",
+                                "Piutang : ${fn.rupiahCurrency(data.totalPiutang)}",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                             ],
@@ -67,18 +71,26 @@ class HomeHeaderContent extends StatelessWidget {
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    final _future = ref.watch(getMySummaryTransaction);
+                    final _future = ref.watch(getPeopleSummaryTransaction(null));
                     return _future.when(
-                      data: (items) {
+                      data: (data) {
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
-                          children: const [
+                          children: [
+                            const SizedBox(width: 16.0),
                             Expanded(
-                              child: SummaryAmount(amount: 0),
+                              child: SummaryAmount(
+                                title: "Hutang",
+                                amount: data.totalHutang,
+                              ),
                             ),
                             Expanded(
-                              child: SummaryAmount(title: "Piutang"),
+                              child: SummaryAmount(
+                                title: "Piutang",
+                                amount: data.totalPiutang,
+                              ),
                             ),
+                            const SizedBox(width: 16.0),
                           ],
                         );
                       },
@@ -112,7 +124,7 @@ class HomeHeaderContent extends StatelessWidget {
                         ),
                         InkWell(
                           onTap: () {
-                            context.pushNamed(peopleListRouteNamed);
+                            context.pushNamed(peoplesSummaryRouteNamed);
                           },
                           child: Text(
                             "Selengkapnya",
@@ -133,57 +145,25 @@ class HomeHeaderContent extends StatelessWidget {
                         final _future = ref.watch(getLatestTenPeople);
                         return _future.when(
                           data: (data) {
+                            if (data.isEmpty) {
+                              return Center(
+                                child: Text(
+                                  "Daftar orang masih kosong",
+                                  style: headerFontWhite.copyWith(
+                                    fontSize: 20.0,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            }
                             return ListView.builder(
                               scrollDirection: Axis.horizontal,
                               shrinkWrap: true,
-                              itemCount: 10,
+                              itemCount: data.length,
                               padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                               itemBuilder: (ctx, index) {
-                                return SizedBox(
-                                  width: width / 3.5,
-                                  child: Card(
-                                    margin: const EdgeInsets.only(right: 16.0),
-                                    child: InkWell(
-                                      onTap: () {
-                                        context.pushNamed(
-                                          peopleDetailRouteNamed,
-                                          params: {
-                                            "peopleId": index.toString(),
-                                          },
-                                        );
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(16.0),
-                                        child: Column(
-                                          children: [
-                                            Expanded(
-                                              child: Hero(
-                                                tag: index.toString(),
-                                                child: const CircleAvatar(),
-                                              ),
-                                            ),
-                                            Expanded(
-                                              child: Align(
-                                                child: Text(
-                                                  index.isEven
-                                                      ? "zeffry reynando sad ada dsadasd"
-                                                      : "nakia",
-                                                  textAlign: TextAlign.center,
-                                                  maxLines: 2,
-                                                  overflow: TextOverflow.ellipsis,
-                                                  style: bodyFont.copyWith(
-                                                    fontSize: 10.0,
-                                                    color: grey,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                );
+                                final item = data[index];
+                                return _HomePeopleItem(item: item);
                               },
                             );
                           },

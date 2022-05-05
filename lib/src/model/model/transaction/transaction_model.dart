@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
 import '../../../utils/enums.dart';
+import '../people/people_model.dart';
 
 class TransactionModel extends Equatable {
   const TransactionModel({
@@ -16,6 +17,7 @@ class TransactionModel extends Equatable {
     this.type = TransactionType.piutang,
     required this.createdAt,
     this.updatedAt,
+    this.people,
   });
 
   final String id;
@@ -30,7 +32,7 @@ class TransactionModel extends Equatable {
   final TransactionType type;
   final DateTime createdAt;
   final DateTime? updatedAt;
-
+  final PeopleModel? people;
   @override
   List<Object?> get props {
     return [
@@ -46,12 +48,13 @@ class TransactionModel extends Equatable {
       type,
       createdAt,
       updatedAt,
+      people,
     ];
   }
 
   @override
   String toString() {
-    return 'TransactionModel(id: $id, peopleId: $peopleId, title: $title, amount: $amount, loanDate: $loanDate, returnDate: $returnDate, description: $description, attachmentPath: $attachmentPath, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'TransactionModel(id: $id, peopleId: $peopleId, title: $title, amount: $amount, loanDate: $loanDate, returnDate: $returnDate, description: $description, attachmentPath: $attachmentPath, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, people: $people)';
   }
 
   TransactionModel copyWith({
@@ -67,6 +70,7 @@ class TransactionModel extends Equatable {
     TransactionType? type,
     DateTime? createdAt,
     DateTime? updatedAt,
+    PeopleModel? people,
   }) {
     return TransactionModel(
       id: id ?? this.id,
@@ -81,6 +85,7 @@ class TransactionModel extends Equatable {
       type: type ?? this.type,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      people: people ?? this.people,
     );
   }
 }

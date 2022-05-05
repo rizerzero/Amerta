@@ -1,16 +1,37 @@
+import 'dart:developer';
+
 import 'package:drift/drift.dart';
 
 import '../../../utils/utils.dart';
-import '../../model/people/people_form_parameter.dart';
+import '../../model/people/form_people_parameter.dart';
+import '../../model/people/people_insertorupdate_response.dart';
 import '../../model/people/people_model.dart';
+import '../../model/people/people_summary_model.dart';
 import '../../model/people/people_top_ten_model.dart';
-import '../../model/people/peoples_model.dart';
 import '../config_database.dart';
 
 class PeopleTableQuery extends MyDatabase {
   ///* [People Section]
 
-  Future<PeopleModel?> getById(String peopleId) async {
+  Future<List<PeopleModel>> get() async {
+    final query = select(peoplesTable);
+    final result = await query
+        .map(
+          (row) => PeopleModel(
+            createdAt: row.createdAt,
+            imagePath: row.imagePath,
+            name: row.name,
+            peopleId: row.id,
+            updatedAt: row.updatedAt,
+          ),
+        )
+        .get();
+    return result;
+  }
+
+  Future<PeopleModel?> getById(String? peopleId) async {
+    if (peopleId == null) return null;
+
     final query = select(peoplesTable)..where((people) => people.id.equals(peopleId));
 
     final result = await query
@@ -32,74 +53,85 @@ class PeopleTableQuery extends MyDatabase {
     var query = select(peoplesTable)
       ..orderBy(
         [
-          (people) => OrderingTerm(expression: people.name, mode: OrderingMode.asc),
+          (people) => OrderingTerm(expression: people.createdAt, mode: OrderingMode.desc),
         ],
-      )
-      ..limit(10);
+      );
     final result = await query
         .map(
           (row) => PeopleTopTenModel(
-            id: row.name,
+            id: row.id,
             imagePath: row.imagePath,
             name: row.name,
           ),
         )
         .get();
+
     return result;
   }
 
-  Future<List<PeoplesModel>> getPeoples() async {
+  Future<List<PeopleSummaryModel>> getPeopleSummary() async {
     final query = customSelect("""
-    SELECT
-      t1.*,
-      COUNT(t2.id) AS total_transaksi,
-      ( SELECT COALESCE(SUM(amount),0) 
-        FROM ${transactionTable.tableName} 
-        WHERE `people_id` = t1.`id`
-        AND `transaction_type` = 'hutang'
-      ) AS totalHutang,
-
-      ( SELECT COALESCE(SUM(amount),0)
-        FROM ${transactionTable.tableName}
-        WHERE `people_id` = t1.`id`
-        AND `transaction_type` = 'piutang'
-      ) AS totalPiutang
-    FROM
-      ${peoplesTable.tableName} AS t1
-      LEFT JOIN ${transactionTable.tableName} AS t2
-        ON (t1.`id` = t2.people_id)
-      LEFT JOIN ${transactionDetailTable.tableName} AS t3
-        ON (t2.`id` = t3.transaction_id)
-    GROUP BY t1.id
+          SELECT
+            t1.*,
+            COUNT(t2.`id`) AS total_transaksi,
+            COALESCE(SUM(CASE WHEN t2.`transaction_type` = 'piutang' THEN t2.amount ELSE 0 END),0) AS total_piutang,
+            COALESCE(SUM(CASE WHEN t2.`transaction_type` = 'hutang' THEN t2.amount ELSE 0 END),0) AS total_hutang 
+          FROM
+            ${peoplesTable.tableName} AS t1
+            LEFT JOIN ${transactionTable.tableName} AS t2
+              ON (t1.`id` = t2.`people_id`)
+          GROUP BY t1.`id`
+          ORDER BY total_transaksi DESC
 """);
 
-    final result = await query
-        .map(
-          (row) => PeoplesModel(
-            people: PeopleModel(
-              peopleId: row.read("id"),
-              name: row.read("name"),
-              imagePath: row.read("image_path"),
-              createdAt: fn.dateTimeFromUnix(row.read<int?>("created_at")),
-              updatedAt: fn.dateTimeFromUnix(row.read<int?>("updated_at")),
-            ),
+    final result = await query.map(
+      (row) {
+        return PeopleSummaryModel(
+          totalHutang: row.read("total_hutang"),
+          totalPiutang: row.read("total_piutang"),
+          totalTransaksi: row.read("total_transaksi"),
+          people: PeopleModel(
+            peopleId: row.read("id"),
+            name: row.read("name"),
+            imagePath: row.read("image_path"),
+            createdAt: fn.dateTimeFromUnix(row.read<int?>("created_at")),
+            updatedAt: fn.dateTimeFromUnix(row.read<int?>("updated_at")),
           ),
-        )
-        .get();
+        );
+      },
+    ).get();
     return result;
   }
 
-  Future<int> insertOrUpdatePeople(PeopleFormParameter form) async {
-    final query = await into(peoplesTable).insertOnConflictUpdate(
-      PeoplesTableCompanion(
-        id: Value(form.people.peopleId),
-        name: Value(form.people.name),
-        imagePath: Value(form.people.imagePath),
-        createdAt: Value(form.people.createdAt),
-        updatedAt: Value(form.people.updatedAt),
-      ),
+  /// TODO: Save Image to documentDirectory when success create people
+  Future<PeopleInsertOrUpdateResponse> insertOrUpdatePeople(FormPeopleParameter form) async {
+    log("form ${form.id}");
+    final people = await (select(peoplesTable)..where((people) => people.id.equals(form.id)))
+        .getSingleOrNull();
+
+    await transaction(() async {
+      await into(peoplesTable).insertOnConflictUpdate(
+        PeoplesTableCompanion(
+          id: Value(form.id),
+          name: Value(form.name),
+          imagePath: Value(form.image?.path),
+          createdAt: Value(form.createdAt),
+          updatedAt: Value(form.updatedAt),
+        ),
+      );
+    });
+
+    if (people == null) {
+      return PeopleInsertOrUpdateResponse(
+        message: "Berhasil membuat ${form.name}",
+        isNewPeople: true,
+      );
+    }
+
+    return PeopleInsertOrUpdateResponse(
+      message: "Berhasil mengupdate ${form.name}",
+      isNewPeople: false,
     );
-    return query;
   }
 
   Future<int> deletePeople(String id) async {

@@ -7,3 +7,4 @@ export 'failure.dart';
 export 'fonts.dart';
 export 'go_router.dart';
 export 'shared_function.dart';
+export 'text_input_formatter.dart';

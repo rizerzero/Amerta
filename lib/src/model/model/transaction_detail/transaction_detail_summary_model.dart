@@ -3,28 +3,32 @@ import 'package:equatable/equatable.dart';
 import '../people/people_model.dart';
 
 class TransactionDetailSummaryModel extends Equatable {
-  final PeopleModel people;
-  final int? currentTotalPayment;
-  final String transactionId;
-  final String title;
-  final DateTime loanDate;
-  final DateTime? returnDate;
   const TransactionDetailSummaryModel({
     required this.people,
-    this.currentTotalPayment,
-    this.transactionId = '',
-    this.title = '',
+    required this.transactionId,
+    required this.amountPayment,
+    required this.title,
+    required this.amount,
     required this.loanDate,
     this.returnDate,
   });
+
+  final PeopleModel people;
+  final String transactionId;
+  final int? amountPayment;
+  final String title;
+  final int amount;
+  final DateTime loanDate;
+  final DateTime? returnDate;
 
   @override
   List<Object?> get props {
     return [
       people,
-      currentTotalPayment,
       transactionId,
+      amountPayment,
       title,
+      amount,
       loanDate,
       returnDate,
     ];
@@ -32,22 +36,24 @@ class TransactionDetailSummaryModel extends Equatable {
 
   @override
   String toString() {
-    return 'TransactionDetailSummaryModel(people: $people, currentTotalPayment: $currentTotalPayment, transactionId: $transactionId, title: $title, loanDate: $loanDate, returnDate: $returnDate)';
+    return 'TransactionDetailSummaryModel(people: $people, transactionId: $transactionId, amountPayment: $amountPayment, title: $title, amount: $amount, loanDate: $loanDate, returnDate: $returnDate)';
   }
 
   TransactionDetailSummaryModel copyWith({
     PeopleModel? people,
-    int? currentTotalPayment,
     String? transactionId,
+    int? amountPayment,
     String? title,
+    int? amount,
     DateTime? loanDate,
     DateTime? returnDate,
   }) {
     return TransactionDetailSummaryModel(
       people: people ?? this.people,
-      currentTotalPayment: currentTotalPayment ?? this.currentTotalPayment,
       transactionId: transactionId ?? this.transactionId,
+      amountPayment: amountPayment ?? this.amountPayment,
       title: title ?? this.title,
+      amount: amount ?? this.amount,
       loanDate: loanDate ?? this.loanDate,
       returnDate: returnDate ?? this.returnDate,
     );

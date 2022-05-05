@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/transaction/future_provider.dart';
+import '../../../view_model/transaction/recent_transaction_notifier.dart';
 import '../../home/widgets/transaction_tile.dart';
 
 class PeopleDetailTabBarItem extends StatefulWidget {
@@ -29,17 +29,26 @@ class _PeopleDetailTabBarItemState extends State<PeopleDetailTabBarItem>
       builder: (context) {
         return Consumer(
           builder: (_, ref, __) {
-            final _future = ref.watch(
-              getRecentTransaction(
-                RecentTransactionParameter(
-                  type: widget.transactionType,
-                  peopleId: widget.peopleId,
-                ),
-              ),
+            final param = RecentTransactionParameter(
+              type: widget.transactionType,
+              peopleId: widget.peopleId,
             );
+
+            final _future = ref.watch(getRecentTransaction(param));
 
             return _future.when(
               data: (data) {
+                if (data.isEmpty) {
+                  return Center(
+                    child: Text(
+                      "Transaksi ${widget.transactionType.name.toUpperCase()} masih kosong",
+                      style: headerFont.copyWith(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0,
+                      ),
+                    ),
+                  );
+                }
                 return CustomScrollView(
                   key: PageStorageKey(widget.transactionType),
                   slivers: [
@@ -50,8 +59,11 @@ class _PeopleDetailTabBarItemState extends State<PeopleDetailTabBarItem>
                       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 32.0),
                       sliver: SliverList(
                         delegate: SliverChildBuilderDelegate(
-                          (ctx, index) => const TransactionTile(),
-                          childCount: 1000,
+                          (ctx, index) {
+                            final item = data[index];
+                            return TransactionTile(transaction: item);
+                          },
+                          childCount: data.length,
                         ),
                       ),
                     ),

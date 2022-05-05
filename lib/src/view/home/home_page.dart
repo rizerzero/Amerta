@@ -4,8 +4,9 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../utils/utils.dart';
-import '../../view_model/people/future_provider.dart';
-import '../../view_model/transaction/future_provider.dart';
+import '../../view_model/people/people_latest_ten_notifier.dart';
+import '../../view_model/transaction/people_summary_notifier.dart';
+import '../../view_model/transaction/recent_transaction_notifier.dart';
 import 'widgets/home_header_content.dart';
 import 'widgets/home_tabbar_item.dart';
 import 'widgets/home_tabbar_persistent_header.dart';
@@ -16,14 +17,13 @@ class HomePage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final appBarHeight = fn.vh(context) / 2;
-
     return DefaultTabController(
       length: TransactionType.values.length,
       child: RefreshIndicator(
         onRefresh: () async {
           ref.refresh(getLatestTenPeople);
 
-          ref.refresh(getMySummaryTransaction);
+          ref.refresh(getPeopleSummaryTransaction(null));
 
           ref.refresh(
             getRecentTransaction(const RecentTransactionParameter(type: TransactionType.hutang)),
@@ -33,7 +33,11 @@ class HomePage extends ConsumerWidget {
             getRecentTransaction(const RecentTransactionParameter(type: TransactionType.piutang)),
           );
         },
-        notificationPredicate: (notification) => notification.depth == 2,
+        notificationPredicate: (notification) {
+          return true;
+          // log("notification ${notification.depth}");
+          // return notification.depth == 2;
+        },
         child: NestedScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           headerSliverBuilder: (context, innerBoxIsScrolled) {

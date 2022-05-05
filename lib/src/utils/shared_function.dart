@@ -4,17 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
-import 'fonts.dart';
+import 'utils.dart';
 
 class SharedFunction {
   SharedFunction._();
   static final instance = SharedFunction._();
 
-  final rupiahCurrency = NumberFormat.simpleCurrency(
-    locale: "id_ID",
-    decimalDigits: 0,
-    name: "Rp. ",
-  );
+  bool isNullOrEmpty(dynamic val) => [null, ""].contains(val);
+
+  DateTime? dateTimeFromUnix(int? unixtime) {
+    if (unixtime == null) return null;
+    return DateTime.fromMillisecondsSinceEpoch(unixtime * 1000);
+  }
 
   double vw(BuildContext context) => MediaQuery.of(context).size.width;
   double vh(BuildContext context) => MediaQuery.of(context).size.height;
@@ -22,19 +23,37 @@ class SharedFunction {
       vh(context) - (const NavigationBarThemeData().height ?? 80.0);
   double notchTop(BuildContext context) => MediaQuery.of(context).padding.top;
 
-  /// currentValue   =  125000
-  /// boundaryValue  =  250000
-  /// result         =  (currentValue * 100) / boundaryValue
-  ///                =  12500000 / 250000
-  ///                =  50 %
-  double formulaPercentage(double currentValue, double upperValue) {
-    return (currentValue * 100) / upperValue;
+  double getPercentage(int value, int from) {
+    if (value <= 0) return 0;
+    return (value * 100) / from;
   }
 
-  DateTime? dateTimeFromUnix(int? unixtime) {
-    if (unixtime == null) return null;
-    return DateTime.fromMillisecondsSinceEpoch(unixtime);
+  InputDecoration defaultInputDecoration = InputDecoration(
+    hintText: "Judul",
+    hintStyle: bodyFont.copyWith(color: grey),
+    border: OutlineInputBorder(
+      borderRadius: BorderRadius.circular(8.0),
+    ),
+  );
+
+  int? unformatNumber(String number) {
+    final format = NumberFormat();
+    final separator = format.symbols.GROUP_SEP;
+
+    final result = number.replaceAll(separator, "");
+    return int.tryParse(result);
   }
+
+  String rupiahCurrency(
+    int number, {
+    String? prefix,
+    String? locale,
+  }) =>
+      NumberFormat.simpleCurrency(
+        locale: locale ?? "id_ID",
+        decimalDigits: 0,
+        name: prefix,
+      ).format(number);
 
   Future<DateTime?> showDateTimePicker(BuildContext context, {bool withTimePicker = true}) async {
     DateTime? _date;
@@ -93,6 +112,7 @@ class SharedFunction {
     required String title,
     Color? color,
   }) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

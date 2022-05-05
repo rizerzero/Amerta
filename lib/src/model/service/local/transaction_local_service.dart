@@ -1,8 +1,12 @@
+import 'package:flutter/material.dart';
+
 import '../../../utils/enums.dart';
 import '../../database/query/transaction_query.dart';
+import '../../model/transaction/form_transaction_parameter.dart';
 import '../../model/transaction/recent_transaction_model.dart';
 import '../../model/transaction/summary_transaction_model.dart';
-import '../../model/transaction/transaction_form_parameter.dart';
+import '../../model/transaction/transaction_insertorupdate_response.dart';
+import '../../model/transaction/transaction_model.dart';
 
 class TransactionLocalService {
   const TransactionLocalService({
@@ -12,6 +16,7 @@ class TransactionLocalService {
   final TransactionTableQuery query;
 
   Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.getSummaryTransaction(peopleId);
     return result;
   }
@@ -21,7 +26,7 @@ class TransactionLocalService {
     String? peopleId,
     int? limit,
   }) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.getRecentTransaction(
       type: type,
       limit: limit,
@@ -30,7 +35,14 @@ class TransactionLocalService {
     return result;
   }
 
-  Future<int> insertOrUpdateTransaction(TransactionFormParameter form) async {
+  Future<TransactionModel?> getById(String? id) async {
+    final result = await query.getById(id);
+    return result;
+  }
+
+  Future<TransactionInsertOrUpdateResponse> insertOrUpdateTransaction(
+      FormTransactionParameter form) async {
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.insertOrUpdateTransaction(form);
     return result;
   }

@@ -1,7 +1,8 @@
 import 'package:collection/collection.dart';
 
 import '../../database/query/transaction_detail_query.dart';
-import '../../model/transaction_detail/transaction_detail_form_parameter.dart';
+import '../../model/transaction_detail/form_transaction_detail_parameter.dart';
+import '../../model/transaction_detail/transaction_detail_insertorupdate_response.dart';
 import '../../model/transaction_detail/transaction_detail_model.dart';
 import '../../model/transaction_detail/transaction_detail_summary_model.dart';
 
@@ -11,6 +12,11 @@ class TransactionDetailLocalService {
   });
 
   final TransactionDetailTableQuery query;
+
+  Future<TransactionDetailModel?> getById(String? id) async {
+    final result = await query.getById(id);
+    return result;
+  }
 
   Future<TransactionDetailSummaryModel?> getTransactionDetailSummary({
     required String peopleId,
@@ -38,12 +44,15 @@ class TransactionDetailLocalService {
     return groupedList;
   }
 
-  Future<int> insertOrUpdateTransactionDetail(TransactionDetailFormParameter form) async {
+  Future<TransactionDetailInsertOrUpdateResponse> insertOrUpdateTransactionDetail(
+      FormTransactionDetailParameter form) async {
+    await Future.delayed(const Duration(seconds: 1));
     final result = await query.insertOrUpdateTransactionDetail(form);
     return result;
   }
 
   Future<int> deleteTransactionDetail(String id) async {
+    await Future.delayed(const Duration(seconds: 1));
     final result = await query.deleteTransactionDetail(id);
     return result;
   }

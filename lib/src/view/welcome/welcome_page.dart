@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../../utils/utils.dart';
 import '../home/home_page.dart';
+import '../modal/modal_option_home/modal_option_home.dart';
 import '../setting/setting_page.dart';
-import 'widgets/modal_option_tile.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({
@@ -29,15 +29,6 @@ class _WelcomePageState extends State<WelcomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _pages.elementAt(_selectedIndex),
-      floatingActionButton: FloatingActionButton(
-        child: const Icon(Icons.add_outlined),
-        onPressed: () async {
-          await showModalBottomSheet(
-            context: context,
-            builder: (ctx) => const ModalOptionTile(),
-          );
-        },
-      ),
       bottomNavigationBar: Theme(
         data: Theme.of(context).copyWith(
           navigationBarTheme: NavigationBarThemeData(
@@ -85,6 +76,15 @@ class _WelcomePageState extends State<WelcomePage> {
             ),
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        child: const Icon(Icons.add_outlined),
+        onPressed: () async {
+          await showModalBottomSheet(
+            context: context,
+            builder: (ctx) => const ModalOptionHome(),
+          );
+        },
       ),
     );
   }

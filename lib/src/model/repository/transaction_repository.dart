@@ -2,9 +2,11 @@ import 'package:dartz/dartz.dart';
 import 'package:drift/native.dart';
 
 import '../../utils/utils.dart';
+import '../model/transaction/form_transaction_parameter.dart';
 import '../model/transaction/recent_transaction_model.dart';
 import '../model/transaction/summary_transaction_model.dart';
-import '../model/transaction/transaction_form_parameter.dart';
+import '../model/transaction/transaction_insertorupdate_response.dart';
+import '../model/transaction/transaction_model.dart';
 import '../service/local/transaction_local_service.dart';
 
 class TransactionRepository {
@@ -44,7 +46,19 @@ class TransactionRepository {
     }
   }
 
-  Future<Either<Failure, int>> insertOrUpdateTransaction(TransactionFormParameter form) async {
+  Future<Either<Failure, TransactionModel?>> getById(String? id) async {
+    try {
+      final result = await transactionLocalService.getById(id);
+      return Right(result);
+    } on SqliteException catch (exception, _) {
+      return Left(SqliteFailure(exception: exception));
+    } catch (e) {
+      return Left(UncaughtFailure(message: e.toString()));
+    }
+  }
+
+  Future<Either<Failure, TransactionInsertOrUpdateResponse>> insertOrUpdateTransaction(
+      FormTransactionParameter form) async {
     try {
       final result = await transactionLocalService.insertOrUpdateTransaction(form);
       return Right(result);

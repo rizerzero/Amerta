@@ -1,21 +1,22 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../model/model/transaction_detail/transaction_detail_form_parameter.dart';
+import '../../model/model/transaction_detail/form_transaction_detail_parameter.dart';
+import '../../model/model/transaction_detail/transaction_detail_insertorupdate_response.dart';
 import '../../model/repository/transaction_detail_repository.dart';
 
 part 'transaction_detail_action_state.dart';
 
 class TransactionDetailActionNotifier extends StateNotifier<TransactionDetailActionState> {
-  TransactionDetailActionNotifier({required this.repository})
-      : super(const TransactionDetailActionState());
+  TransactionDetailActionNotifier({
+    required this.repository,
+  }) : super(const TransactionDetailActionState());
 
   final TransactionDetailRepository repository;
 
   Future<TransactionDetailActionState> insertOrUpdateTransactionDetail(
-    TransactionDetailFormParameter form,
+    FormTransactionDetailParameter form,
   ) async {
-    await Future.delayed(const Duration(seconds: 1));
     state = state.copyWith(insertOrUpdate: const AsyncLoading());
     final result = await repository.insertOrUpdateTransactionDetail(form);
     return result.fold(
@@ -25,7 +26,6 @@ class TransactionDetailActionNotifier extends StateNotifier<TransactionDetailAct
   }
 
   Future<TransactionDetailActionState> deleteTransactionDetail(String id) async {
-    await Future.delayed(const Duration(seconds: 1));
     state = state.copyWith(delete: const AsyncLoading());
     final result = await repository.deleteTransactionDetail(id);
     return result.fold(

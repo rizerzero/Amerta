@@ -5,7 +5,8 @@ class TransactionDetailActionState extends Equatable {
     this.insertOrUpdate = const AsyncData(null),
     this.delete = const AsyncData(null),
   });
-  final AsyncValue<void> insertOrUpdate;
+
+  final AsyncValue<TransactionDetailInsertOrUpdateResponse?> insertOrUpdate;
   final AsyncValue<void> delete;
 
   @override
@@ -16,7 +17,7 @@ class TransactionDetailActionState extends Equatable {
       'TransactionDetailActionState(insertOrUpdate: $insertOrUpdate, delete: $delete)';
 
   TransactionDetailActionState copyWith({
-    AsyncValue<void>? insertOrUpdate,
+    AsyncValue<TransactionDetailInsertOrUpdateResponse?>? insertOrUpdate,
     AsyncValue<void>? delete,
   }) {
     return TransactionDetailActionState(

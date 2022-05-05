@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../view/form_transaction/form_transaction_page.dart';
 import '../view/people_detail/people_detail_page.dart';
 import '../view/people_transaction/people_transaction_page.dart';
-import '../view/peoples/peoples_page.dart';
+import '../view/peoples_summary/peoples_summary_page.dart';
 import '../view/splash/splash_page.dart';
 import '../view/welcome/welcome_page.dart';
 import 'utils.dart';
@@ -18,7 +18,7 @@ const peopleFormNewRouteNamed = 'people-form-new';
 const peopleFormEditRouteNamed = 'people-form-edit';
 const peopleTransactionRouteNamed = 'people-transaction';
 const peopleDetailRouteNamed = 'people-detail';
-const peopleListRouteNamed = 'people-list';
+const peoplesSummaryRouteNamed = 'peoples-summary';
 
 /// Transaction Section
 const transactionFormNewRouteNamed = 'transaction-form-new';
@@ -46,52 +46,40 @@ final goRouter = Provider<GoRouter>(
         GoRoute(
           path: '/app',
           name: appRouteNamed,
-
-          /// [0]  = Home
-          /// [1]  = Setting
-          redirect: (state) => "/app/${AppBottomNavigationMenu.home.toStr()}",
+          builder: (ctx, state) => const WelcomePage(
+            appBottomNavigationMenu: AppBottomNavigationMenu.home,
+          ),
           routes: [
+            /// [/app/peoples-summary]
             GoRoute(
-              path: ":section",
-              builder: (ctx, state) {
-                final param = state.params['section'];
-                return WelcomePage(
-                  appBottomNavigationMenu: AppBottomNavigationMenu.values.firstWhere(
-                    (element) => element.toStr() == param,
-                    orElse: () => AppBottomNavigationMenu.unknown,
-                  ),
-                );
-              },
-            ),
-          ],
-        ),
-        GoRoute(
-          path: "/people",
-          name: peopleListRouteNamed,
-          builder: (ctx, state) => const PeoplesPage(),
-          routes: [
-            /// [people/$peopleId/transaction]
-            GoRoute(
-              path: ':peopleId/transaction',
-              name: peopleDetailRouteNamed,
-              builder: (ctx, state) {
-                final peopleId = state.params['peopleId'] ?? "-";
-                return PeopleDetailPage(peopleId: peopleId);
-              },
+              path: "peoples-summary",
+              name: peoplesSummaryRouteNamed,
+              builder: (ctx, state) => const PeoplesSummaryPage(),
               routes: [
-                /// [people/$peopleId/transaction/$transactionId]
+                /// [/app/peoples-summary/:peopleId/transaction]
                 GoRoute(
-                  path: ":transactionId",
-                  name: peopleTransactionRouteNamed,
+                  path: ':peopleId/transaction',
+                  name: peopleDetailRouteNamed,
                   builder: (ctx, state) {
-                    final transactionId = state.params["transactionId"] ?? "-";
                     final peopleId = state.params['peopleId'] ?? "-";
-
-                    return PeopleTransactionPage(
-                      transactionId: transactionId,
-                      peopleId: peopleId,
-                    );
+                    return PeopleDetailPage(peopleId: peopleId);
                   },
+                  routes: [
+                    /// [people/$peopleId/transaction/$transactionId]
+                    GoRoute(
+                      path: ":transactionId",
+                      name: peopleTransactionRouteNamed,
+                      builder: (ctx, state) {
+                        final transactionId = state.params["transactionId"] ?? "-";
+                        final peopleId = state.params['peopleId'] ?? "-";
+
+                        return PeopleTransactionPage(
+                          transactionId: transactionId,
+                          peopleId: peopleId,
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -106,8 +94,8 @@ final goRouter = Provider<GoRouter>(
               path: ":transactionId",
               name: transactionFormEditRouteNamed,
               builder: (ctx, state) {
-                // final transactionId = state.params['transactionId']!;
-                return const FormTransactionPage();
+                final transactionId = state.params['transactionId'];
+                return FormTransactionPage(transactionId: transactionId);
               },
             )
           ],

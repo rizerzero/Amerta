@@ -4,7 +4,9 @@ import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../utils/utils.dart';
-import '../../view_model/transaction/future_provider.dart';
+
+import '../../view_model/transaction/people_summary_notifier.dart';
+import '../../view_model/transaction/recent_transaction_notifier.dart';
 import 'widgets/people_detail_sliver_appbar.dart';
 import 'widgets/people_detail_sliver_tabbar.dart';
 import 'widgets/people_detail_tabbar_item.dart';
@@ -31,10 +33,11 @@ class PeopleDetailPage extends ConsumerWidget {
               peopleId: peopleId,
             );
 
+            /// Refresh [RecentTransaction]
             ref.refresh(getRecentTransaction(param));
             ref.refresh(getRecentTransaction(param.copyWith(type: TransactionType.piutang)));
           },
-          notificationPredicate: (notification) => notification.depth == 2,
+          notificationPredicate: (notification) => true,
           child: NestedScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             headerSliverBuilder: (context, innerBoxIsScrolled) => [
@@ -62,9 +65,7 @@ class PeopleDetailPage extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(60.0),
                           ),
                           tabs: TransactionType.values
-                              .map(
-                                (e) => Tab(text: e.name.toUpperCase()),
-                              )
+                              .map((e) => Tab(text: e.name.toUpperCase()))
                               .toList(),
                         ),
                       ),

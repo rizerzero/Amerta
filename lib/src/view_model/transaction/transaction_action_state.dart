@@ -6,8 +6,8 @@ class TransactionActionState extends Equatable {
     this.delete = const AsyncData(null),
   });
 
-  final AsyncValue<void> insertOrUpdate;
-  final AsyncValue<void> delete;
+  final AsyncValue<TransactionInsertOrUpdateResponse?> insertOrUpdate;
+  final AsyncValue<int?> delete;
 
   @override
   List<Object> get props => [insertOrUpdate, delete];
@@ -16,8 +16,8 @@ class TransactionActionState extends Equatable {
   String toString() => 'TransactionActionState(insertOrUpdate: $insertOrUpdate, delete: $delete)';
 
   TransactionActionState copyWith({
-    AsyncValue<void>? insertOrUpdate,
-    AsyncValue<void>? delete,
+    AsyncValue<TransactionInsertOrUpdateResponse?>? insertOrUpdate,
+    AsyncValue<int?>? delete,
   }) {
     return TransactionActionState(
       insertOrUpdate: insertOrUpdate ?? this.insertOrUpdate,

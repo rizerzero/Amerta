@@ -1,12 +1,19 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../model/model/transaction/summary_transaction_model.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/transaction/future_provider.dart';
+import '../../../view_model/transaction/people_summary_notifier.dart';
 import '../../home/widgets/summary_amount.dart';
-import 'modal_more_option_people.dart';
+import '../../modal/modal_option_people/modal_option_people.dart';
 
-class PeopleDetailSliverAppbar extends StatelessWidget {
+part 'image_flexible_appbar.dart';
+part 'title_flexible_appbar.dart';
+
+class PeopleDetailSliverAppbar extends ConsumerWidget {
   const PeopleDetailSliverAppbar({
     Key? key,
     required this.peopleId,
@@ -15,7 +22,7 @@ class PeopleDetailSliverAppbar extends StatelessWidget {
   final String peopleId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Consumer(
       builder: (context, ref, child) {
         final _future = ref.watch(getPeopleSummaryTransaction(peopleId));
@@ -27,47 +34,27 @@ class PeopleDetailSliverAppbar extends StatelessWidget {
                 final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
 
                 final iconBackButton = IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(
-                    Icons.arrow_back,
-                    color: Colors.white,
-                  ),
+                  onPressed: () => context.goNamed(appRouteNamed),
+                  icon: const Icon(Icons.arrow_back, color: Colors.white),
                 );
 
                 final iconMoreButton = IconButton(
                   onPressed: () async => await showModalBottomSheet(
                     context: context,
-                    builder: (context) => const ModalMoreOptionPeople(),
+                    builder: (context) => ModalOptionPeople(data: data),
                   ),
-                  icon: const Icon(
-                    Icons.more_vert_outlined,
-                    color: Colors.white,
-                  ),
+                  icon: const Icon(Icons.more_vert_outlined, color: Colors.white),
                 );
 
                 return FlexibleSpaceBar(
                   titlePadding: const EdgeInsets.only(bottom: 8.0),
-                  title: Builder(
-                    builder: (context) {
-                      if (!isCollapse) return const SizedBox();
-                      return Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          iconBackButton,
-                          Expanded(
-                            child: Text(
-                              "Zeffry Reynando",
-                              style: bodyFontWhite.copyWith(fontWeight: FontWeight.bold),
-                              maxLines: 1,
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
-                          iconMoreButton,
-                        ],
-                      );
-                    },
-                  ),
                   centerTitle: true,
+                  title: _TitleFlexibleSpaceBar(
+                    item: data,
+                    isCollapse: isCollapse,
+                    iconBackButton: iconBackButton,
+                    iconMoreButton: iconMoreButton,
+                  ),
                   background: SafeArea(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -86,32 +73,35 @@ class PeopleDetailSliverAppbar extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 ...[
-                                  Hero(
-                                    tag: peopleId,
-                                    child: const Center(
-                                      child: CircleAvatar(radius: 40.0),
-                                    ),
-                                  ),
+                                  _ImageFlexibleAppBar(item: data),
                                   const SizedBox(height: 8.0),
                                   Text(
-                                    "Zeffry Reynando",
+                                    data.people.name,
+                                    textAlign: TextAlign.center,
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
                                     style: bodyFontWhite.copyWith(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 20.0,
                                     ),
-                                    textAlign: TextAlign.center,
                                   ),
                                   const SizedBox(height: 16.0),
                                 ],
                                 Expanded(
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
-                                    children: const [
+                                    children: [
                                       Expanded(
-                                        child: SummaryAmount(),
+                                        child: SummaryAmount(
+                                          title: "Hutang",
+                                          amount: data.totalHutang,
+                                        ),
                                       ),
                                       Expanded(
-                                        child: SummaryAmount(title: "Piutang"),
+                                        child: SummaryAmount(
+                                          title: "Piutang",
+                                          amount: data.totalPiutang,
+                                        ),
                                       ),
                                     ],
                                   ),

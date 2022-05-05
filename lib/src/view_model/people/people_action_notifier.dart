@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../model/model/people/people_form_parameter.dart';
+import '../../model/model/people/form_people_parameter.dart';
+import '../../model/model/people/people_insertorupdate_response.dart';
 import '../../model/repository/people_repository.dart';
 
 part 'people_action_state.dart';
@@ -24,7 +25,7 @@ class PeopleActionNotifier extends StateNotifier<PeopleActionState> {
     );
   }
 
-  Future<PeopleActionState> insertOrUpdate(PeopleFormParameter form) async {
+  Future<PeopleActionState> insertOrUpdate(FormPeopleParameter form) async {
     state = state.copyWith(insertOrUpdateAsync: const AsyncLoading());
     await Future.delayed(const Duration(seconds: 1));
     final result = await repository.insertOrUpdate(form);

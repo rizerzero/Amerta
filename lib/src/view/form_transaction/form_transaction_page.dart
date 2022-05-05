@@ -1,379 +1,188 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../../injection.dart';
+import '../../model/model/people/people_model.dart';
+import '../../model/model/transaction/transaction_insertorupdate_response.dart';
+import '../../model/model/transaction/transaction_model.dart';
 import '../../utils/utils.dart';
-import 'widgets/modal_form_people.dart';
+import '../../view_model/global/global_notifier.dart';
+import '../../view_model/people/people_dropdown_notifier.dart';
+import '../form_people/form_people_modal.dart';
+import '../widgets/modal_loading.dart';
+import '../widgets/modal_success.dart';
 
-class FormTransactionPage extends StatefulWidget {
+part 'widgets/amount.dart';
+part 'widgets/attachment.dart';
+part 'widgets/description.dart';
+part 'widgets/dropdown_people.dart';
+part 'widgets/loan_date.dart';
+part 'widgets/payment_status.dart';
+part 'widgets/return_date.dart';
+part 'widgets/title.dart';
+part 'widgets/transaction_type.dart';
+part 'widgets/button_submit.dart';
+
+final _formKey = GlobalKey<FormState>();
+
+class FormTransactionPage extends ConsumerStatefulWidget {
   const FormTransactionPage({
     Key? key,
+    required this.transactionId,
   }) : super(key: key);
 
+  final String? transactionId;
+
   @override
-  State<FormTransactionPage> createState() => _FormTransactionPageState();
+  _FormTransactionPageState createState() => _FormTransactionPageState();
 }
 
-class _FormTransactionPageState extends State<FormTransactionPage> {
-  String? _selectedPerson;
-  TransactionType _selectedTransactionType = TransactionType.piutang;
-  PaymentStatus _selectedPaymentStatus = PaymentStatus.notPaidOff;
-
-  final _titleController = TextEditingController();
-  final _amountController = TextEditingController();
-  final _loanDateController = TextEditingController();
-  final _returnDateController = TextEditingController();
-  final _descriptionController = TextEditingController();
-
-  final inputDecoration = InputDecoration(
-    hintText: "Judul",
-    hintStyle: bodyFont.copyWith(color: grey),
-    border: OutlineInputBorder(
-      borderRadius: BorderRadius.circular(8.0),
-    ),
-  );
-
+class _FormTransactionPageState extends ConsumerState<FormTransactionPage> {
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      /// Jike menekan ke sembarang tempat, non-aktifkan focus input
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          leading: IconButton(
-            onPressed: () {
-              Navigator.of(context).pop();
+    /// Listen [transactionNotifier]
+    /// Ketika berhasil load [transactionNotifier]
+    /// Set initial [formTransactionParameter]
+    ref.listen<AsyncValue<TransactionModel?>>(
+      transactionNotifier(widget.transactionId).select((value) => value.item),
+      (_, state) {
+        state.whenOrNull(
+          data: (item) {
+            /// Update [form transaction state]
+            ref.watch(formTransactionParameter.notifier).update(
+                  (state) => state.copyWith(
+                    transactionId: fn.isNullOrEmpty(item?.id) ? const Uuid().v4() : item!.id,
+                    title: item?.title,
+                    amount: item?.amount ?? 0,
+                    description: item?.description,
+                    loanDate: item?.loanDate == null ? DateTime.now() : item!.loanDate,
+                    returnDate: item?.returnDate,
+                    selectedPeople: item?.people,
+                    attachment: item?.attachmentPath == null ? null : File(item!.attachmentPath!),
+                    createdAt: item?.createdAt,
+                    paymentStatus: item?.status,
+                    transactionType: item?.type,
+                    updatedAt: item?.updatedAt,
+                  ),
+                );
+          },
+        );
+      },
+    );
+
+    /// Listen [Save State]
+    ref.listen<AsyncValue<TransactionInsertOrUpdateResponse?>>(
+      transactionActionNotifier.select((value) => value.insertOrUpdate),
+      (_, state) async {
+        if (state is AsyncLoading) {
+          await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (ctx) => const ModalLoadingWidget(),
+          );
+        } else {
+          Navigator.pop(context);
+
+          state.whenOrNull(
+            /// Ketika berhasil save transaction
+            /// 1. Reset [formTransactionParameter]
+            /// 2. Reset Textfield
+            data: (response) async {
+              if (response!.isNewTransaction) {
+                /// Jika sukses reset [state,form] dan munculkan alert success
+                _formKey.currentState?.reset();
+                ref.invalidate(formTransactionParameter);
+              }
+
+              /// Show success modal
+              showDialog(
+                context: context,
+                builder: (context) => ModalSuccessWidget(
+                  message: response.message,
+                ),
+              );
             },
-            icon: const Icon(
-              Icons.arrow_back,
-              color: secondaryDark,
-            ),
-          ),
-          title: Text(
-            "Catat Hutang/Piutang",
-            style: headerFont.copyWith(
-              fontWeight: FontWeight.bold,
-              color: secondaryDark,
-            ),
-          ),
-          centerTitle: true,
-        ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      const SizedBox(height: 40.0),
-                      ...[
-                        Text('Orang', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            Expanded(
-                              flex: 4,
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                decoration: BoxDecoration(
-                                  border: Border.all(color: grey),
-                                  borderRadius: BorderRadius.circular(8.0),
-                                ),
-                                child: DropdownButton<String>(
-                                  value: _selectedPerson,
-                                  isDense: true,
-                                  isExpanded: true,
-                                  underline: const SizedBox(),
-                                  hint: Padding(
-                                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                    child: Text(
-                                      "Pilih orang",
-                                      style: bodyFont.copyWith(color: grey),
-                                    ),
-                                  ),
-                                  items: ["Annisa Nakia", "Rifda", "Fani", "Icha", "Kurniati"]
-                                      .map(
-                                        (e) => DropdownMenuItem(
-                                          child: Padding(
-                                            padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                                            child: Text(e),
-                                          ),
-                                          value: e,
-                                        ),
-                                      )
-                                      .toList(),
-                                  onChanged: (val) {
-                                    setState(() => _selectedPerson = val);
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: IconButton(
-                                onPressed: () async {
-                                  await showDialog(
-                                    context: context,
-                                    builder: (ctx) => const ModalFormPeople(
-                                      peopleId: "",
-                                    ),
-                                  );
-                                },
-                                icon: const Icon(
-                                  Icons.add,
-                                  color: secondaryDark,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Judul', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _titleController,
-                          decoration: inputDecoration,
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Nominal', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _amountController,
-                          keyboardType: TextInputType.number,
-                          decoration: inputDecoration.copyWith(
-                            hintText: "Nominal",
-                            prefix: const Text("Rp."),
-                          ),
-                          inputFormatters: [
-                            FilteringTextInputFormatter.digitsOnly,
-                          ],
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Tanggal Peminjaman', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _loanDateController,
-                          readOnly: true,
-                          keyboardType: TextInputType.text,
-                          decoration: inputDecoration.copyWith(
-                            hintText: "Tanggal Peminjaman",
-                            prefixIcon: const Icon(Icons.calendar_today_outlined),
-                          ),
-                          onTap: () async {
-                            fn.showDateTimePicker(
-                              context,
-                              withTimePicker: false,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Tanggal Pengembalian (optional)', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _returnDateController,
-                          readOnly: true,
-                          keyboardType: TextInputType.text,
-                          decoration: inputDecoration.copyWith(
-                            hintText: "Tanggal Pengembalian",
-                            prefixIcon: const Icon(Icons.calendar_month_outlined),
-                          ),
-                          onTap: () async {
-                            fn.showDateTimePicker(
-                              context,
-                              withTimePicker: false,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Deskripsi', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        TextFormField(
-                          controller: _descriptionController,
-                          minLines: 3,
-                          maxLines: 3,
-                          keyboardType: TextInputType.text,
-                          decoration: inputDecoration.copyWith(
-                            hintText: "Deskripsi",
-                          ),
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Tipe Transaksi', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(
-                                      () => _selectedTransactionType = TransactionType.piutang);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.all(8.0),
-                                  side: const BorderSide(color: secondaryDark),
-                                  backgroundColor:
-                                      _selectedTransactionType == TransactionType.piutang
-                                          ? secondaryDark
-                                          : null,
-                                ),
-                                child: Text(
-                                  "Piutang",
-                                  style: bodyFont.copyWith(
-                                      color: _selectedTransactionType == TransactionType.piutang
-                                          ? Colors.white
-                                          : secondaryDark),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 24.0),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() => _selectedTransactionType = TransactionType.hutang);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.all(8.0),
-                                  side: const BorderSide(color: secondaryDark),
-                                  backgroundColor:
-                                      _selectedTransactionType == TransactionType.hutang
-                                          ? secondaryDark
-                                          : null,
-                                ),
-                                child: Text(
-                                  "Hutang",
-                                  style: bodyFont.copyWith(
-                                    color: _selectedTransactionType == TransactionType.hutang
-                                        ? Colors.white
-                                        : secondaryDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Status', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() => _selectedPaymentStatus = PaymentStatus.paidOff);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.all(8.0),
-                                  side: const BorderSide(color: secondaryDark),
-                                  backgroundColor: _selectedPaymentStatus == PaymentStatus.paidOff
-                                      ? secondaryDark
-                                      : null,
-                                ),
-                                child: Text(
-                                  "Lunas",
-                                  style: bodyFont.copyWith(
-                                    color: _selectedPaymentStatus == PaymentStatus.paidOff
-                                        ? Colors.white
-                                        : secondaryDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 24.0),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: () {
-                                  setState(() => _selectedPaymentStatus = PaymentStatus.notPaidOff);
-                                },
-                                style: OutlinedButton.styleFrom(
-                                  padding: const EdgeInsets.all(8.0),
-                                  side: const BorderSide(color: secondaryDark),
-                                  backgroundColor:
-                                      _selectedPaymentStatus == PaymentStatus.notPaidOff
-                                          ? secondaryDark
-                                          : null,
-                                ),
-                                child: Text(
-                                  "Belum Lunas",
-                                  style: bodyFont.copyWith(
-                                    color: _selectedPaymentStatus == PaymentStatus.notPaidOff
-                                        ? Colors.white
-                                        : secondaryDark,
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24.0),
-                      ],
-                      ...[
-                        Text('Lampiran (optional)', style: bodyFont),
-                        const SizedBox(height: 8.0),
-                        Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(color: grey),
-                          ),
-                          child: TextButton.icon(
-                            onPressed: () {},
-                            icon: const Icon(
-                              Icons.image,
-                              color: black,
-                            ),
-                            label: FittedBox(
-                              fit: BoxFit.fitWidth,
-                              child: Text(
-                                "Tekan untuk menambahkan lampiran",
-                                style: bodyFont.copyWith(
-                                  color: black,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                      const SizedBox(height: 40.0),
-                    ],
-                  ),
+            error: (error, trace) => fn.showSnackbar(context, title: "$error", color: Colors.red),
+          );
+        }
+      },
+    );
+
+    final _state = ref.watch(transactionNotifier(widget.transactionId));
+
+    return _state.item.when(
+      data: (data) {
+        return GestureDetector(
+          /// Jike menekan ke sembarang tempat, non-aktifkan focus input
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: Scaffold(
+            backgroundColor: Colors.white,
+            appBar: AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: IconButton(
+                onPressed: () => Navigator.of(context).pop(),
+                icon: const Icon(Icons.arrow_back, color: secondaryDark),
+              ),
+              title: Text(
+                data == null ? "Catat Hutang/Piutang" : "Edit Hutang/Piutang",
+                style: headerFont.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: secondaryDark,
                 ),
               ),
+              centerTitle: true,
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  primary: secondaryDark,
-                  padding: const EdgeInsets.all(24.0),
-                ),
-                child: Text(
-                  "Submit",
-                  style: bodyFontWhite.copyWith(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16.0,
+            body: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: const [
+                            SizedBox(height: 40.0),
+                            _DropdownPeople(),
+                            SizedBox(height: 16.0),
+                            _Title(),
+                            SizedBox(height: 16.0),
+                            _Amount(),
+                            SizedBox(height: 16.0),
+                            _LoanDate(),
+                            SizedBox(height: 16.0),
+                            _ReturnDate(),
+                            SizedBox(height: 16.0),
+                            _Description(),
+                            SizedBox(height: 16.0),
+                            _TransactionType(),
+                            SizedBox(height: 16.0),
+                            _PaymentStatus(),
+                            SizedBox(height: 16.0),
+                            _Attachment(),
+                            SizedBox(height: 40.0),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  const _ButtonSubmit()
+                ],
               ),
-            )
-          ],
-        ),
-      ),
+            ),
+          ),
+        );
+      },
+      error: (error, trace) => Scaffold(body: Center(child: Text("$error"))),
+      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
     );
   }
 }

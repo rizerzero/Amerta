@@ -6,7 +6,7 @@ class PeopleActionState extends Equatable {
     this.insertOrUpdateAsync = const AsyncData(null),
   });
   final AsyncValue<int?> deleteAsync;
-  final AsyncValue<int?> insertOrUpdateAsync;
+  final AsyncValue<PeopleInsertOrUpdateResponse?> insertOrUpdateAsync;
 
   @override
   List<Object> get props => [deleteAsync, insertOrUpdateAsync];
@@ -17,7 +17,7 @@ class PeopleActionState extends Equatable {
 
   PeopleActionState copyWith({
     AsyncValue<int?>? deleteAsync,
-    AsyncValue<int?>? insertOrUpdateAsync,
+    AsyncValue<PeopleInsertOrUpdateResponse?>? insertOrUpdateAsync,
   }) {
     return PeopleActionState(
       deleteAsync: deleteAsync ?? this.deleteAsync,

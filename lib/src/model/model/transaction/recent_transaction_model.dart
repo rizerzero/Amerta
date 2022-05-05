@@ -1,68 +1,57 @@
-import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 
 import '../../../utils/utils.dart';
+import '../people/people_model.dart';
 
 class RecentTransactionModel extends Equatable {
   final String transactionId;
-  final String peopleId;
   final String title;
   final TransactionType type;
   final int amount;
-  final int currentAmount;
+  final int? amountPayment;
+  final PeopleModel people;
 
   const RecentTransactionModel({
-    this.transactionId = '',
-    this.peopleId = '',
-    this.title = '',
-    this.type = TransactionType.hutang,
-    this.amount = 0,
-    this.currentAmount = 0,
+    required this.transactionId,
+    required this.title,
+    required this.type,
+    required this.amount,
+    required this.amountPayment,
+    required this.people,
   });
 
-  factory RecentTransactionModel.fromQueryRow(QueryRow row) {
-    return RecentTransactionModel(
-      amount: row.read<int>("amount"),
-      currentAmount: row.read<int>("current_amount"),
-      peopleId: row.read("people_id"),
-      title: row.read("title"),
-      transactionId: row.read("id"),
-      type: TransactionType.values.byName(row.read<String>("transaction_type")),
-    );
-  }
-
   @override
-  List<Object> get props {
+  List<Object?> get props {
     return [
       transactionId,
-      peopleId,
       title,
       type,
       amount,
-      currentAmount,
+      amountPayment,
+      people,
     ];
   }
 
   @override
   String toString() {
-    return 'RecentTransactionModel(transactionId: $transactionId, peopleId: $peopleId, title: $title, type: $type, amount: $amount, currentAmount: $currentAmount)';
+    return 'RecentTransactionModel(transactionId: $transactionId, title: $title, type: $type, amount: $amount, amountPayment: $amountPayment, people: $people)';
   }
 
   RecentTransactionModel copyWith({
     String? transactionId,
-    String? peopleId,
     String? title,
     TransactionType? type,
     int? amount,
-    int? currentAmount,
+    int? amountPayment,
+    PeopleModel? people,
   }) {
     return RecentTransactionModel(
       transactionId: transactionId ?? this.transactionId,
-      peopleId: peopleId ?? this.peopleId,
       title: title ?? this.title,
       type: type ?? this.type,
       amount: amount ?? this.amount,
-      currentAmount: currentAmount ?? this.currentAmount,
+      amountPayment: amountPayment ?? this.amountPayment,
+      people: people ?? this.people,
     );
   }
 }

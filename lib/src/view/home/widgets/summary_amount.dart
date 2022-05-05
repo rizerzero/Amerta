@@ -33,7 +33,7 @@ class SummaryAmount extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Text(
-                fn.rupiahCurrency.format(amount),
+                fn.rupiahCurrency(amount, prefix: "Rp."),
                 style: headerFontWhite.copyWith(
                   fontSize: 40.0,
                   fontWeight: FontWeight.bold,
