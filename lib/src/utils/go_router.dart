@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../view/form_transaction/form_transaction_page.dart';
 import '../view/people_detail/people_detail_page.dart';
-import '../view/people_transaction/people_transaction_page.dart';
+import '../view/people_payment/people_payment_page.dart';
 import '../view/peoples_summary/peoples_summary_page.dart';
 import '../view/splash/splash_page.dart';
 import '../view/welcome/welcome_page.dart';
@@ -73,7 +73,7 @@ final goRouter = Provider<GoRouter>(
                         final transactionId = state.params["transactionId"] ?? "-";
                         final peopleId = state.params['peopleId'] ?? "-";
 
-                        return PeopleTransactionPage(
+                        return PeoplePaymentPage(
                           transactionId: transactionId,
                           peopleId: peopleId,
                         );

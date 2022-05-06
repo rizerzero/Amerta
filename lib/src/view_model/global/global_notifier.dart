@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../model/model/payment/form_payment_parameter.dart';
 import '../../model/model/people/form_people_parameter.dart';
 import '../../model/model/transaction/form_transaction_parameter.dart';
-import '../../model/model/transaction_detail/form_transaction_detail_parameter.dart';
 import '../../utils/utils.dart';
 
 final formPeopleParameter = StateProvider.autoDispose(
@@ -24,9 +24,8 @@ final formTransactionParameter = StateProvider.autoDispose((ref) {
   );
 });
 
-final formTransactionDetailParameter =
-    StateProvider.autoDispose<FormTransactionDetailParameter>((ref) {
-  return FormTransactionDetailParameter(
+final formPaymentParameter = StateProvider.autoDispose<FormPaymentParameter>((ref) {
+  return FormPaymentParameter(
     id: const Uuid().v4(),
     transactionId: "",
     peopleId: "",

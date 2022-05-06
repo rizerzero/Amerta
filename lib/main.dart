@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'src/app.dart';
-import 'src/model/database/config_database.dart';
+import 'src/model/database/my_database.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

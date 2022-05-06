@@ -1,4 +1,4 @@
-part of '../config_database.dart';
+part of '../my_database.dart';
 
 class PeoplesTable extends Table {
   @override

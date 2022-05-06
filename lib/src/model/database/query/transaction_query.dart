@@ -7,7 +7,7 @@ import '../../model/transaction/recent_transaction_model.dart';
 import '../../model/transaction/summary_transaction_model.dart';
 import '../../model/transaction/transaction_insertorupdate_response.dart';
 import '../../model/transaction/transaction_model.dart';
-import '../config_database.dart';
+import '../my_database.dart';
 import 'people_query.dart';
 
 class TransactionTableQuery extends MyDatabase {
@@ -82,7 +82,7 @@ class TransactionTableQuery extends MyDatabase {
     final query = """
                 SELECT t1.id, t1.title, t1.amount, t1.transaction_type,
                 t2.id as people_id, t2.name as people_name, t2.image_path as people_image_path,
-                (SELECT SUM(amount) FROM ${transactionDetailTable.tableName} WHERE transaction_id = t1.id ) as amount_payment
+                (SELECT SUM(amount) FROM ${paymentTable.tableName} WHERE transaction_id = t1.id ) as amount_payment
 
                 FROM ${transactionTable.tableName} as t1
                 JOIN ${peoplesTable.tableName} as t2 ON (t2.id = t1.people_id)

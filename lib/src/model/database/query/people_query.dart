@@ -8,7 +8,7 @@ import '../../model/people/people_insertorupdate_response.dart';
 import '../../model/people/people_model.dart';
 import '../../model/people/people_summary_model.dart';
 import '../../model/people/people_top_ten_model.dart';
-import '../config_database.dart';
+import '../my_database.dart';
 
 class PeopleTableQuery extends MyDatabase {
   ///* [People Section]

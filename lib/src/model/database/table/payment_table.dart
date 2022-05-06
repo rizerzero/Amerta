@@ -1,8 +1,8 @@
 part of '../my_database.dart';
 
-class TransactionTable extends Table {
+class PaymentTable extends Table {
   @override
-  String get tableName => "transaction_table";
+  String get tableName => "payment";
 
   TextColumn get id => text().clientDefault(() => const Uuid().v4())();
 
@@ -10,23 +10,19 @@ class TransactionTable extends Table {
       .references(PeoplesTable, #id, onDelete: KeyAction.cascade)
       .clientDefault(() => const Uuid().v4())();
 
-  TextColumn get title => text()();
+  TextColumn get transactionId => text()
+      .references(TransactionTable, #id, onDelete: KeyAction.cascade)
+      .clientDefault(() => const Uuid().v4())();
 
   IntColumn get amount => integer()();
 
-  DateTimeColumn get loanDate => dateTime()();
-
-  DateTimeColumn get returnDate => dateTime().nullable()();
+  DateTimeColumn get date => dateTime()();
 
   TextColumn get description => text().nullable()();
 
   TextColumn get attachmentPath => text().nullable()();
 
-  TextColumn get paymentStatus => text().named('payment_status')();
-
-  TextColumn get transactionType => text().named("transaction_type")();
-
-  DateTimeColumn get createdAt => dateTime().named("created_at")();
+  DateTimeColumn get createdAt => dateTime()();
 
   DateTimeColumn get updatedAt => dateTime().nullable()();
 
