@@ -6,5 +6,6 @@ export 'extensions.dart';
 export 'failure.dart';
 export 'fonts.dart';
 export 'go_router.dart';
+export 'pdf/pdf_widget.dart';
 export 'shared_function.dart';
 export 'text_input_formatter.dart';
