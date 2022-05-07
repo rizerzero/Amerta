@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
 import '../../view_model/transaction/print_transaction_notifier.dart';
@@ -11,11 +12,15 @@ class PreviewPdfPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final now = DateTime.now();
+    final _formatDate = DateFormat.yMMMMEEEEd().format(now);
+    final _formatTime = DateFormat.Hms().format(now);
+    final namePdf = "Amerta Transaction History - $_formatDate - $_formatTime";
     return Scaffold(
       body: SafeArea(
         child: Builder(builder: (context) {
           return PdfPreview(
-            pdfFileName: "transaksi.pdf",
+            pdfFileName: namePdf,
             canChangeOrientation: false,
             canChangePageFormat: false,
             allowPrinting: false,
