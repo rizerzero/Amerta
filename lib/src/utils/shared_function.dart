@@ -25,7 +25,8 @@ class SharedFunction {
 
   double getPercentage(int value, int from) {
     if (value <= 0) return 0;
-    return (value * 100) / from;
+    final result = (value * 100) / from;
+    return result.roundToDouble();
   }
 
   InputDecoration defaultInputDecoration = InputDecoration(

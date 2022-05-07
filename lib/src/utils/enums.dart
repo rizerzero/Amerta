@@ -7,3 +7,9 @@ enum PaymentStatus {
   notPaidOff,
   unknown,
 }
+
+enum PrintTransactionType {
+  hutang,
+  piutang,
+  hutangDanPiutang,
+}

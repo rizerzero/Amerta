@@ -5,6 +5,7 @@ import '../../model/payment/form_payment_parameter.dart';
 import '../../model/payment/payment_insertorupdate_response.dart';
 import '../../model/payment/payment_model.dart';
 import '../../model/payment/payment_summary_model.dart';
+import '../../model/payment/payments_parameter.dart';
 
 class PaymentLocalService {
   const PaymentLocalService({
@@ -30,13 +31,13 @@ class PaymentLocalService {
   }
 
   Future<Map<DateTime, List<PaymentModel>>> getPayments(
-    String transactionId,
+    PaymentsParameter param,
   ) async {
-    final result = await query.getPayments(transactionId);
+    final result = await query.getPayments(param);
     final groupedList = groupBy<PaymentModel, DateTime>(
       result,
       (trx) {
-        final date = trx.date;
+        final date = trx.date!;
         return DateTime(date.year, date.month, date.day);
       },
     );

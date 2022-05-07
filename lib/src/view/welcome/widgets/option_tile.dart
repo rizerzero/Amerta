@@ -7,7 +7,7 @@ class OptionTile extends StatelessWidget {
     Key? key,
     this.title = '-',
     this.subtitle = '-',
-    this.icon = Icons.home,
+    this.icon,
     this.sideColor,
     this.padding,
     this.onTap,
@@ -15,7 +15,7 @@ class OptionTile extends StatelessWidget {
 
   final String title;
   final String subtitle;
-  final IconData icon;
+  final IconData? icon;
   final Color? sideColor;
   final EdgeInsetsGeometry? padding;
   final VoidCallback? onTap;
@@ -53,12 +53,14 @@ class OptionTile extends StatelessWidget {
             child: ListTile(
               onTap: onTap,
               contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-              leading: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(icon, color: sideColor),
-                ],
-              ),
+              leading: icon != null
+                  ? Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(icon, color: sideColor),
+                      ],
+                    )
+                  : null,
               title: Text(
                 title,
                 style: bodyFont,

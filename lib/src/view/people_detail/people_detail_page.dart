@@ -34,8 +34,8 @@ class PeopleDetailPage extends ConsumerWidget {
             );
 
             /// Refresh [RecentTransaction]
-            ref.refresh(getRecentTransaction(param));
-            ref.refresh(getRecentTransaction(param.copyWith(type: TransactionType.piutang)));
+            ref.refresh(getTransactions(param));
+            ref.refresh(getTransactions(param.copyWith(type: TransactionType.piutang)));
           },
           notificationPredicate: (notification) => true,
           child: NestedScrollView(

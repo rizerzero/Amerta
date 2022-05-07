@@ -13,6 +13,10 @@ extension AppBottomNavigationMenuMenuExt on AppBottomNavigationMenu {
         return -1;
     }
   }
+
+  bool toBool() {
+    return true;
+  }
 }
 
 extension TransactionTypeExt on TransactionType {
@@ -24,6 +28,32 @@ extension TransactionTypeExt on TransactionType {
         return 1;
       default:
         return -1;
+    }
+  }
+}
+
+extension PrintTransactionTypeExt on PrintTransactionType {
+  TransactionType toTransactionType() {
+    switch (this) {
+      case PrintTransactionType.hutang:
+        return TransactionType.hutang;
+      case PrintTransactionType.piutang:
+        return TransactionType.piutang;
+      default:
+        return TransactionType.piutang;
+    }
+  }
+
+  String toReadableString() {
+    switch (this) {
+      case PrintTransactionType.hutang:
+        return "Hutang";
+      case PrintTransactionType.piutang:
+        return "Piutang";
+      case PrintTransactionType.hutangDanPiutang:
+        return "Hutang & Piutang";
+      default:
+        return "-";
     }
   }
 }

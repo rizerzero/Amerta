@@ -30,7 +30,7 @@ class _HomeTabBarItemState extends State<HomeTabBarItem> with AutomaticKeepAlive
         return Consumer(
           builder: (_, ref, __) {
             final param = RecentTransactionParameter(type: widget.transactionType);
-            final _future = ref.watch(getRecentTransaction(param));
+            final _future = ref.watch(getTransactions(param));
             return _future.when(
               data: (data) {
                 if (data.isEmpty) {

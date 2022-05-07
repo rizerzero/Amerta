@@ -1,27 +1,31 @@
 import 'package:equatable/equatable.dart';
 
+import '../transaction/transaction_model.dart';
+
 class PaymentModel extends Equatable {
   const PaymentModel({
     this.id = '',
     this.transactionId = '',
     this.peopleId = '',
     this.amount = 0,
-    required this.date,
+    this.date,
     this.description,
     this.attachmentPath,
-    required this.createdAt,
+    this.createdAt,
     this.updatedAt,
+    this.transaction,
   });
 
   final String id;
   final String transactionId;
   final String peopleId;
   final int amount;
-  final DateTime date;
+  final DateTime? date;
   final String? description;
   final String? attachmentPath;
-  final DateTime createdAt;
+  final DateTime? createdAt;
   final DateTime? updatedAt;
+  final TransactionModel? transaction;
 
   @override
   List<Object?> get props {
@@ -35,12 +39,13 @@ class PaymentModel extends Equatable {
       attachmentPath,
       createdAt,
       updatedAt,
+      transaction,
     ];
   }
 
   @override
   String toString() {
-    return 'PaymentModel(id: $id, transactionId: $transactionId, peopleId: $peopleId, amount: $amount, date: $date, description: $description, attachmentPath: $attachmentPath, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'PaymentModel(id: $id, transactionId: $transactionId, peopleId: $peopleId, amount: $amount, date: $date, description: $description, attachmentPath: $attachmentPath, createdAt: $createdAt, updatedAt: $updatedAt, transaction: $transaction)';
   }
 
   PaymentModel copyWith({
@@ -53,6 +58,7 @@ class PaymentModel extends Equatable {
     String? attachmentPath,
     DateTime? createdAt,
     DateTime? updatedAt,
+    TransactionModel? transaction,
   }) {
     return PaymentModel(
       id: id ?? this.id,
@@ -64,6 +70,7 @@ class PaymentModel extends Equatable {
       attachmentPath: attachmentPath ?? this.attachmentPath,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
+      transaction: transaction ?? this.transaction,
     );
   }
 }

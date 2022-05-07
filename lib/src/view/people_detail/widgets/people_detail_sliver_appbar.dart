@@ -9,6 +9,7 @@ import '../../../utils/utils.dart';
 import '../../../view_model/transaction/people_summary_notifier.dart';
 import '../../home/widgets/summary_amount.dart';
 import '../../modal/modal_option_people/modal_option_people.dart';
+import '../../modal/modal_print_transaction/modal_print_transaction.dart';
 
 part 'image_flexible_appbar.dart';
 part 'title_flexible_appbar.dart';
@@ -46,6 +47,15 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                   icon: const Icon(Icons.more_vert_outlined, color: Colors.white),
                 );
 
+                final iconPrint = IconButton(
+                  onPressed: () async {
+                    showModalBottomSheet(
+                      context: context,
+                      builder: (context) => ModalOptionPrintTransaction(data: data),
+                    );
+                  },
+                  icon: const Icon(Icons.print_outlined, color: Colors.white),
+                );
                 return FlexibleSpaceBar(
                   titlePadding: const EdgeInsets.only(bottom: 8.0),
                   centerTitle: true,
@@ -63,6 +73,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                           elevation: 0,
                           leading: iconBackButton,
                           actions: [
+                            iconPrint,
                             iconMoreButton,
                           ],
                         ),
@@ -97,6 +108,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                                           amount: data.totalHutang,
                                         ),
                                       ),
+                                      const SizedBox(width: 24.0),
                                       Expanded(
                                         child: SummaryAmount(
                                           title: "Piutang",

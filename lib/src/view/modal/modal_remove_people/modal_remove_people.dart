@@ -47,36 +47,39 @@ class ModalRemovePeople extends ConsumerWidget {
       }
     });
 
-    return AlertDialog(
-      title: Text("Konfirmasi Hapus", style: bodyFont.copyWith(color: Colors.red)),
-      content: Builder(
-        builder: (context) {
-          return SizedBox(
-            width: 300,
-            height: 100,
-            child: Text(
-              "Menghapus profile ${data.people.name} akan ikut menghapus semua history transaksi beserta detailnya",
-              style: bodyFont.copyWith(fontSize: 16.0, color: grey),
-              textAlign: TextAlign.justify,
-            ),
-          );
-        },
-      ),
-      actions: [
-        ElevatedButton(
-          onPressed: () async =>
-              await ref.read(peopleActionNotifier.notifier).delete(data.people.peopleId),
-          style: ElevatedButton.styleFrom(primary: Colors.red),
-          child: Text("Hapus", style: bodyFontWhite),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: AlertDialog(
+        title: Text("Konfirmasi Hapus", style: bodyFont.copyWith(color: Colors.red)),
+        content: Builder(
+          builder: (context) {
+            return SizedBox(
+              width: 300,
+              height: 100,
+              child: Text(
+                "Menghapus profile ${data.people.name} akan ikut menghapus semua history transaksi beserta detailnya",
+                style: bodyFont.copyWith(fontSize: 16.0, color: grey),
+                textAlign: TextAlign.justify,
+              ),
+            );
+          },
         ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(
-            "Batal",
-            style: bodyFont.copyWith(color: grey),
+        actions: [
+          ElevatedButton(
+            onPressed: () async =>
+                await ref.read(peopleActionNotifier.notifier).delete(data.people.peopleId),
+            style: ElevatedButton.styleFrom(primary: Colors.red),
+            child: Text("Hapus", style: bodyFontWhite),
           ),
-        ),
-      ],
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              "Batal",
+              style: bodyFont.copyWith(color: grey),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

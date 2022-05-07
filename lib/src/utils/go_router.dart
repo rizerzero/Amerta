@@ -6,6 +6,7 @@ import '../view/form_transaction/form_transaction_page.dart';
 import '../view/people_detail/people_detail_page.dart';
 import '../view/people_payment/people_payment_page.dart';
 import '../view/peoples_summary/peoples_summary_page.dart';
+import '../view/preview_pdf/preview_pdf_page.dart';
 import '../view/splash/splash_page.dart';
 import '../view/welcome/welcome_page.dart';
 import 'utils.dart';
@@ -23,6 +24,9 @@ const peoplesSummaryRouteNamed = 'peoples-summary';
 /// Transaction Section
 const transactionFormNewRouteNamed = 'transaction-form-new';
 const transactionFormEditRouteNamed = 'transaction-form-edit';
+
+/// Preview PDF
+const previewPDFRouteNamed = 'preview-pdf';
 
 final goRouter = Provider<GoRouter>(
   (ref) {
@@ -86,6 +90,11 @@ final goRouter = Provider<GoRouter>(
           ],
         ),
         GoRoute(
+          path: "/preview-pdf",
+          name: previewPDFRouteNamed,
+          builder: (context, state) => const PreviewPdfPage(),
+        ),
+        GoRoute(
           path: "/transaction/form",
           name: transactionFormNewRouteNamed,
           redirect: (state) => "/transaction/form/new",
@@ -94,6 +103,7 @@ final goRouter = Provider<GoRouter>(
               path: ":transactionId",
               name: transactionFormEditRouteNamed,
               builder: (ctx, state) {
+                state.extra;
                 final transactionId = state.params['transactionId'];
                 return FormTransactionPage(transactionId: transactionId);
               },

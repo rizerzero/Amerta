@@ -84,6 +84,7 @@ class HomeHeaderContent extends StatelessWidget {
                                 amount: data.totalHutang,
                               ),
                             ),
+                            const SizedBox(width: 24.0),
                             Expanded(
                               child: SummaryAmount(
                                 title: "Piutang",

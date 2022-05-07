@@ -26,11 +26,11 @@ class HomePage extends ConsumerWidget {
           ref.refresh(getPeopleSummaryTransaction(null));
 
           ref.refresh(
-            getRecentTransaction(const RecentTransactionParameter(type: TransactionType.hutang)),
+            getTransactions(const RecentTransactionParameter(type: TransactionType.hutang)),
           );
 
           ref.refresh(
-            getRecentTransaction(const RecentTransactionParameter(type: TransactionType.piutang)),
+            getTransactions(const RecentTransactionParameter(type: TransactionType.piutang)),
           );
         },
         notificationPredicate: (notification) {

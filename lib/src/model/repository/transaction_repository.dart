@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:dartz/dartz.dart';
 import 'package:drift/native.dart';
 
 import '../../utils/utils.dart';
 import '../model/transaction/form_transaction_parameter.dart';
+import '../model/transaction/print_transaction_parameter.dart';
 import '../model/transaction/recent_transaction_model.dart';
 import '../model/transaction/summary_transaction_model.dart';
 import '../model/transaction/transaction_insertorupdate_response.dart';
@@ -27,13 +30,14 @@ class TransactionRepository {
     }
   }
 
-  Future<Either<Failure, List<RecentTransactionModel>>> getRecentTransaction({
+  Future<Either<Failure, List<RecentTransactionModel>>> getTransactions({
     required TransactionType type,
     String? peopleId,
+    PaymentStatus? paymentStatus,
     int? limit,
   }) async {
     try {
-      final result = await transactionLocalService.getRecentTransaction(
+      final result = await transactionLocalService.getTransactions(
         type: type,
         limit: limit,
         peopleId: peopleId,
@@ -72,6 +76,17 @@ class TransactionRepository {
   Future<Either<Failure, int>> deleteTransaction(String id) async {
     try {
       final result = await transactionLocalService.deleteTransaction(id);
+      return Right(result);
+    } on SqliteException catch (exception, _) {
+      return Left(SqliteFailure(exception: exception));
+    } catch (e) {
+      return Left(UncaughtFailure(message: e.toString()));
+    }
+  }
+
+  Future<Either<Failure, Uint8List>> printTransaction(PrintTransactionParameter parameter) async {
+    try {
+      final result = await transactionLocalService.printTransaction(parameter);
       return Right(result);
     } on SqliteException catch (exception, _) {
       return Left(SqliteFailure(exception: exception));

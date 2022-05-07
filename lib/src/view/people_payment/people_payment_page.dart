@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../model/model/payment/payment_model.dart';
 import '../../model/model/payment/payment_summary_parameter.dart';
+import '../../model/model/payment/payments_parameter.dart';
 import '../../utils/utils.dart';
 import '../../view_model/payment/payment_summary_notifier.dart';
 import '../../view_model/payment/payments_notifier.dart';
@@ -43,7 +44,7 @@ class PeoplePaymentPage extends ConsumerWidget {
         child: RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(getPaymentSummary(param));
-            ref.invalidate(getPayments(transactionId));
+            ref.invalidate(getPayments(PaymentsParameter(transactionId: transactionId)));
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),

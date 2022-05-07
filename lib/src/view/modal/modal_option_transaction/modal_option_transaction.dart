@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../model/model/transaction/recent_transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../welcome/widgets/option_tile.dart';
+import '../modal_remove_transaction/modal_remove_transaction.dart';
 
 class ModalOptionTransaction extends StatelessWidget {
   const ModalOptionTransaction({
@@ -33,18 +34,23 @@ class ModalOptionTransaction extends StatelessWidget {
             ),
           ),
           OptionTile(
-            padding: EdgeInsets.only(bottom: 16.0),
+            padding: const EdgeInsets.only(bottom: 16.0),
             icon: Icons.delete_outline,
             title: "Hapus Transaksi",
             subtitle: "Menghapus transaksi akan menghapus detail transaksinya juga",
             sideColor: Colors.red,
+            onTap: () async => await showDialog(
+              barrierDismissible: false,
+              context: context,
+              builder: (context) =>
+                  ModalRemoveTransaction(transactionId: transaction.transactionId),
+            ),
           ),
           OptionTile(
-            padding: EdgeInsets.only(bottom: 16.0),
-            icon: Icons.picture_as_pdf_outlined,
+            padding: const EdgeInsets.only(bottom: 16.0),
+            icon: Icons.print_outlined,
             title: "Cetak Transaksi",
-            subtitle:
-                "Mencetak transaksi yang akan digenerate menjadi pdf yang siap untuk di share",
+            subtitle: "Cetak transaksi dengan kode ${transaction.transactionId}",
             sideColor: secondaryLight,
           ),
         ],

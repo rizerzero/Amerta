@@ -12,7 +12,7 @@ class _DetailTransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final _future = ref.watch(getPayments(transactionId));
+        final _future = ref.watch(getPayments(PaymentsParameter(transactionId: transactionId)));
         return _future.when(
           data: (data) {
             return Column(

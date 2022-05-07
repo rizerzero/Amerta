@@ -31,6 +31,7 @@ class __InputAmountState extends ConsumerState<_InputAmount> {
         Text('Nominal', style: bodyFont),
         const SizedBox(height: 8.0),
         TextFormField(
+          autofocus: true,
           controller: controller,
           keyboardType: TextInputType.number,
           decoration: fn.defaultInputDecoration.copyWith(

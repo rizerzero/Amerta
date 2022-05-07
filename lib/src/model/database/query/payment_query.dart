@@ -1,11 +1,13 @@
 import 'package:drift/drift.dart';
 
-import '../../../utils/shared_function.dart';
+import '../../../utils/utils.dart';
 import '../../model/payment/form_payment_parameter.dart';
 import '../../model/payment/payment_insertorupdate_response.dart';
 import '../../model/payment/payment_model.dart';
 import '../../model/payment/payment_summary_model.dart';
+import '../../model/payment/payments_parameter.dart';
 import '../../model/people/people_model.dart';
+import '../../model/transaction/transaction_model.dart';
 import '../my_database.dart';
 
 class PaymentTableQuery extends MyDatabase {
@@ -85,24 +87,53 @@ class PaymentTableQuery extends MyDatabase {
     return result;
   }
 
-  Future<List<PaymentModel>> getPayments(String transactionId) async {
-    final query = select(paymentTable)
-      ..where((payment) => payment.transactionId.equals(transactionId));
-    final result = await query
-        .map(
-          (row) => PaymentModel(
-            amount: row.amount,
-            attachmentPath: row.attachmentPath,
-            createdAt: row.createdAt,
-            description: row.description,
-            id: row.id,
-            transactionId: row.transactionId,
-            updatedAt: row.updatedAt,
-            peopleId: row.peopleId,
-            date: row.date,
-          ),
-        )
-        .get();
+  Future<List<PaymentModel>> getPayments(PaymentsParameter param) async {
+    final query = select(paymentTable).join(
+      [
+        innerJoin(
+          transactionTable,
+          transactionTable.id.equalsExp(paymentTable.transactionId),
+        ),
+      ],
+    );
+
+    if (param.transactionId != null) {
+      query.where(paymentTable.transactionId.equals(param.transactionId));
+    }
+
+    if (param.peopleId != null) {
+      query.where(paymentTable.peopleId.equals(param.peopleId));
+    }
+
+    final result = await query.map((row) {
+      final transaction = row.readTable(transactionTable);
+      final payment = row.readTable(paymentTable);
+      return PaymentModel(
+        id: payment.id,
+        createdAt: payment.createdAt,
+        date: payment.date,
+        amount: payment.amount,
+        updatedAt: payment.updatedAt,
+        attachmentPath: payment.attachmentPath,
+        description: payment.description,
+        peopleId: payment.peopleId,
+        transactionId: payment.transactionId,
+        transaction: TransactionModel(
+          id: transaction.id,
+          amount: transaction.amount,
+          attachmentPath: transaction.attachmentPath,
+          description: transaction.description,
+          peopleId: transaction.peopleId,
+          updatedAt: transaction.updatedAt,
+          returnDate: transaction.returnDate,
+          status: PaymentStatus.values.byName(transaction.paymentStatus),
+          title: transaction.title,
+          type: TransactionType.values.byName(transaction.transactionType),
+          loanDate: transaction.loanDate,
+          createdAt: transaction.createdAt,
+        ),
+      );
+    }).get();
 
     return result;
   }

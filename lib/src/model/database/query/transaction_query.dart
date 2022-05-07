@@ -68,8 +68,9 @@ class TransactionTableQuery extends MyDatabase {
     return result;
   }
 
-  Future<List<RecentTransactionModel>> getRecentTransaction({
+  Future<List<RecentTransactionModel>> getTransactions({
     required TransactionType type,
+    PaymentStatus? paymentStatus,
     String? peopleId,
     int? limit,
   }) async {
@@ -77,10 +78,12 @@ class TransactionTableQuery extends MyDatabase {
     String qLimit = "";
 
     if (peopleId != null) where += " AND t1.people_id = ? ";
+    if (paymentStatus != null) where += " AND t1.payment_status = ?";
     if (limit != null) qLimit += "LIMIT $limit";
 
     final query = """
-                SELECT t1.id, t1.title, t1.amount, t1.transaction_type,
+                SELECT t1.id, t1.title, t1.amount, t1.transaction_type, t1.loan_date, t1.return_date,
+                t1.description, t1.payment_status,
                 t2.id as people_id, t2.name as people_name, t2.image_path as people_image_path,
                 (SELECT SUM(amount) FROM ${paymentTable.tableName} WHERE transaction_id = t1.id ) as amount_payment
 
@@ -95,6 +98,7 @@ class TransactionTableQuery extends MyDatabase {
         Variable.withString(type.name),
         if (peopleId != null) Variable.withString(peopleId),
         if (limit != null) Variable.withInt(limit),
+        if (paymentStatus != null) Variable.withString(paymentStatus.name)
       ],
       readsFrom: {
         transactionTable,
@@ -107,6 +111,10 @@ class TransactionTableQuery extends MyDatabase {
         amountPayment: row.read<int?>("amount_payment"),
         title: row.read<String>("title"),
         type: TransactionType.values.byName(row.read<String>("transaction_type")),
+        paymentStatus: PaymentStatus.values.byName(row.read<String>("payment_status")),
+        loanDate: fn.dateTimeFromUnix(row.read("loan_date"))!,
+        returnDate: fn.dateTimeFromUnix(row.read("return_date")),
+        description: row.read("description"),
         people: PeopleModel(
           peopleId: row.read<String>("people_id"),
           name: row.read<String>("people_name"),

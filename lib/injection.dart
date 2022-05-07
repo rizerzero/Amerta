@@ -43,7 +43,10 @@ final paymentActionNotifier =
 ///* [Transaction Section]
 
 final transactionLocalService = Provider((ref) {
-  return TransactionLocalService(query: ref.watch(transactionTableQuery));
+  return TransactionLocalService(
+    query: ref.watch(transactionTableQuery),
+    paymentQuery: ref.watch(paymentTableQuery),
+  );
 });
 
 final transactionRepository = Provider((ref) {

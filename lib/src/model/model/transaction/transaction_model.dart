@@ -33,6 +33,7 @@ class TransactionModel extends Equatable {
   final DateTime createdAt;
   final DateTime? updatedAt;
   final PeopleModel? people;
+
   @override
   List<Object?> get props {
     return [

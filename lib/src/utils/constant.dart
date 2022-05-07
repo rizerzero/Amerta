@@ -1,3 +1,5 @@
+const kDeveloper = "Zeffry Reynando";
+
 const kLogo = "assets/images/logo.png";
 
 /// Table Name

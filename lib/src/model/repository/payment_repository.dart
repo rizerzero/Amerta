@@ -6,6 +6,7 @@ import '../model/payment/form_payment_parameter.dart';
 import '../model/payment/payment_insertorupdate_response.dart';
 import '../model/payment/payment_model.dart';
 import '../model/payment/payment_summary_model.dart';
+import '../model/payment/payments_parameter.dart';
 import '../service/local/payment_local_service.dart';
 
 class PaymentRepository {
@@ -68,10 +69,10 @@ class PaymentRepository {
   }
 
   Future<Either<Failure, Map<DateTime, List<PaymentModel>>>> getPayments(
-    String transactionId,
+    PaymentsParameter param,
   ) async {
     try {
-      final result = await localService.getPayments(transactionId);
+      final result = await localService.getPayments(param);
       return Right(result);
     } on SqliteException catch (exception, _) {
       throw Left(SqliteFailure(exception: exception));
