@@ -1,4 +1,5 @@
 import 'package:collection/collection.dart';
+import 'package:flutter/material.dart';
 
 import '../../database/query/payment_query.dart';
 import '../../model/payment/form_payment_parameter.dart';
@@ -46,13 +47,13 @@ class PaymentLocalService {
   }
 
   Future<PaymentInsertOrUpdateResponse> insertOrUpdatePayment(FormPaymentParameter form) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.insertOrUpdatePayment(form);
     return result;
   }
 
   Future<int> deletePayment(String id) async {
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.deletePayment(id);
     return result;
   }

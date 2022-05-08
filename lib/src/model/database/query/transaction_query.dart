@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
 
 import '../../../utils/utils.dart';
@@ -19,51 +20,67 @@ class TransactionTableQuery extends MyDatabase {
 
   final PeopleTableQuery peopleQuery;
 
-  Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
+  Future<List<SummaryTransactionModel>> getSummaryTransaction(String? peopleId) async {
     String query = "";
 
     if (peopleId != null) {
       /// Transaction Summary for specific people
       query = """
-        SELECT 
-            t1.*,
-            COALESCE(SUM(CASE WHEN t2.`transaction_type` = 'piutang' THEN t2.amount ELSE 0 END),0) AS total_piutang,
-            COALESCE(SUM(CASE WHEN t2.`transaction_type` = 'hutang' THEN t2.amount ELSE 0 END),0) AS total_hutang
-        FROM 
-          ${peoplesTable.tableName} as t1
-          LEFT JOIN ${transactionTable.tableName} as t2 ON (t1.id = t2.people_id)
-        WHERE t1.id = '$peopleId'
+        SELECT
+          t1.`transaction_type`,
+          t1.`amount` AS total_amount,
+          (SELECT
+            SUM(amount)
+          FROM
+            ${paymentTable.tableName}
+          WHERE `transaction_id` = t1.id) AS total_amount_payment
+        FROM
+          ${transactionTable.tableName} AS t1
+        WHERE t1.`people_id` = ?
+        GROUP BY
+          t1.`transaction_type`,
+          t1.`amount`,
+          `total_amount_payment`
         """;
     } else {
       /// Transaction summary for owner application
       query = """
         SELECT
-            COALESCE(SUM(CASE WHEN t1.`transaction_type` = 'piutang' THEN t1.amount ELSE 0 END),0) AS total_piutang,
-            COALESCE(SUM(CASE WHEN t1.`transaction_type` = 'hutang' THEN t1.amount ELSE 0 END),0) AS total_hutang
+          t1.`transaction_type`,
+          SUM(`amount`) AS total_amount,
+          (SELECT
+            SUM(sub1.amount)
+          FROM
+            ${paymentTable.tableName} AS sub1
+            JOIN ${transactionTable.tableName} AS sub2
+              ON (sub1.transaction_id = sub2.id)
+          WHERE sub2.transaction_type = t1.`transaction_type`) AS total_amount_payment
         FROM
-            ${transactionTable.tableName} AS t1
-            LEFT JOIN ${peoplesTable.tableName} AS t2 ON (t2.`id` = t1.people_id) 
+          ${transactionTable.tableName} AS t1
+        GROUP BY t1.`transaction_type` 
        """;
     }
 
-    final result = customSelect(query, readsFrom: {
-      transactionTable,
-      peoplesTable,
-    }).map(
+    final result = customSelect(
+      query,
+      readsFrom: {
+        transactionTable,
+        peoplesTable,
+      },
+      variables: [
+        if (peopleId != null) Variable.withString(peopleId),
+      ],
+    ).map(
       (row) {
         return SummaryTransactionModel(
-          totalPiutang: row.read("total_piutang") ?? 0,
-          totalHutang: row.read("total_hutang") ?? 0,
-          people: PeopleModel(
-            peopleId: row.read<String?>("id") ?? '',
-            name: row.read<String?>("name") ?? '',
-            imagePath: row.read<String?>("image_path"),
-            createdAt: fn.dateTimeFromUnix(row.read<int?>("created_at")),
-            updatedAt: fn.dateTimeFromUnix(row.read<int?>("updated_at")),
+          totalAmount: row.read<int?>("total_amount"),
+          totalAmountPayment: row.read<int?>("total_amount_payment"),
+          transactionType: TransactionType.values.firstWhereOrNull(
+            (element) => element.name == row.read<String?>("transaction_type"),
           ),
         );
       },
-    ).getSingle();
+    ).get();
 
     return result;
   }

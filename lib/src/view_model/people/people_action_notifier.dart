@@ -16,7 +16,6 @@ class PeopleActionNotifier extends StateNotifier<PeopleActionState> {
 
   Future<PeopleActionState> delete(String peopleId) async {
     state = state.copyWith(deleteAsync: const AsyncLoading());
-    await Future.delayed(const Duration(seconds: 1));
 
     final result = await repository.delete(peopleId);
     return result.fold(
@@ -27,7 +26,6 @@ class PeopleActionNotifier extends StateNotifier<PeopleActionState> {
 
   Future<PeopleActionState> insertOrUpdate(FormPeopleParameter form) async {
     state = state.copyWith(insertOrUpdateAsync: const AsyncLoading());
-    await Future.delayed(const Duration(seconds: 1));
     final result = await repository.insertOrUpdate(form);
     return result.fold(
       (failure) => state = state.copyWith(insertOrUpdateAsync: AsyncError(failure.message)),

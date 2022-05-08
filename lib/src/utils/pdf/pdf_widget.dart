@@ -139,7 +139,7 @@ class PDFWidget {
             "${item.title} ",
             style: pw.TextStyle(
               color: PdfColors.white.shade(.4),
-              fontSize: 16.0,
+              fontSize: 20.0,
               fontWeight: pw.FontWeight.bold,
             ),
           ),

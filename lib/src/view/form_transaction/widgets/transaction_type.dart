@@ -19,29 +19,6 @@ class _TransactionType extends ConsumerWidget {
               child: OutlinedButton(
                 onPressed: () {
                   ref.read(formTransactionParameter.notifier).update(
-                        (state) => state = state.copyWith(transactionType: TransactionType.piutang),
-                      );
-                },
-                style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.all(8.0),
-                  side: const BorderSide(color: secondaryDark),
-                  backgroundColor:
-                      selectedTransactionType == TransactionType.piutang ? secondaryDark : null,
-                ),
-                child: Text(
-                  "Piutang",
-                  style: bodyFont.copyWith(
-                      color: selectedTransactionType == TransactionType.piutang
-                          ? Colors.white
-                          : secondaryDark),
-                ),
-              ),
-            ),
-            const SizedBox(width: 24.0),
-            Expanded(
-              child: OutlinedButton(
-                onPressed: () {
-                  ref.read(formTransactionParameter.notifier).update(
                         (state) => state = state.copyWith(transactionType: TransactionType.hutang),
                       );
                 },
@@ -58,6 +35,29 @@ class _TransactionType extends ConsumerWidget {
                         ? Colors.white
                         : secondaryDark,
                   ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 24.0),
+            Expanded(
+              child: OutlinedButton(
+                onPressed: () {
+                  ref.read(formTransactionParameter.notifier).update(
+                        (state) => state = state.copyWith(transactionType: TransactionType.piutang),
+                      );
+                },
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.all(8.0),
+                  side: const BorderSide(color: secondaryDark),
+                  backgroundColor:
+                      selectedTransactionType == TransactionType.piutang ? secondaryDark : null,
+                ),
+                child: Text(
+                  "Piutang",
+                  style: bodyFont.copyWith(
+                      color: selectedTransactionType == TransactionType.piutang
+                          ? Colors.white
+                          : secondaryDark),
                 ),
               ),
             ),

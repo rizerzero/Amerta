@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
-import '../../../model/model/transaction/summary_transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../widgets/modal_error.dart';
 import '../../widgets/modal_loading.dart';
@@ -11,10 +10,10 @@ import '../../widgets/modal_loading.dart';
 class ModalRemovePeople extends ConsumerWidget {
   const ModalRemovePeople({
     Key? key,
-    required this.data,
+    required this.peopleId,
   }) : super(key: key);
 
-  final SummaryTransactionModel data;
+  final String peopleId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -34,7 +33,7 @@ class ModalRemovePeople extends ConsumerWidget {
             fn.showSnackbar(
               context,
               color: Colors.green,
-              title: "Berhasil menghapus ${data.people.name}",
+              title: "Berhasil menghapus data orang dengan id $peopleId",
             );
 
             context.goNamed(appRouteNamed);
@@ -57,7 +56,7 @@ class ModalRemovePeople extends ConsumerWidget {
               width: 300,
               height: 100,
               child: Text(
-                "Menghapus profile ${data.people.name} akan ikut menghapus semua history transaksi beserta detailnya",
+                "Menghapus profile akan ikut menghapus semua history transaksi beserta detail pembayarannya",
                 style: bodyFont.copyWith(fontSize: 16.0, color: grey),
                 textAlign: TextAlign.justify,
               ),
@@ -66,8 +65,7 @@ class ModalRemovePeople extends ConsumerWidget {
         ),
         actions: [
           ElevatedButton(
-            onPressed: () async =>
-                await ref.read(peopleActionNotifier.notifier).delete(data.people.peopleId),
+            onPressed: () async => await ref.read(peopleActionNotifier.notifier).delete(peopleId),
             style: ElevatedButton.styleFrom(primary: Colors.red),
             child: Text("Hapus", style: bodyFontWhite),
           ),

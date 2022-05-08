@@ -6,14 +6,14 @@ class _TitleFlexibleSpaceBar extends StatelessWidget {
     required this.isCollapse,
     required this.iconBackButton,
     required this.iconMoreButton,
-    required this.item,
+    required this.peopleName,
   }) : super(key: key);
 
   final bool isCollapse;
   final IconButton iconBackButton;
   final IconButton iconMoreButton;
 
-  final SummaryTransactionModel item;
+  final String peopleName;
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +26,7 @@ class _TitleFlexibleSpaceBar extends StatelessWidget {
             iconBackButton,
             Expanded(
               child: Text(
-                item.people.name,
+                peopleName,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 textAlign: TextAlign.center,

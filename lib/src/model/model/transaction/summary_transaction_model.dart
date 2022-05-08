@@ -1,33 +1,36 @@
 import 'package:equatable/equatable.dart';
 
-import '../people/people_model.dart';
+import '../../../utils/enums.dart';
 
 class SummaryTransactionModel extends Equatable {
   const SummaryTransactionModel({
-    required this.people,
-    this.totalHutang = 0,
-    this.totalPiutang = 0,
+    required this.transactionType,
+    required this.totalAmount,
+    required this.totalAmountPayment,
   });
 
-  final PeopleModel people;
-  final int totalHutang;
-  final int totalPiutang;
+  final TransactionType? transactionType;
+  final int? totalAmount;
+  final int? totalAmountPayment;
+
+  int get balance => (totalAmount ?? 0) - (totalAmountPayment ?? 0);
+
   @override
-  List<Object> get props => [people, totalHutang, totalPiutang];
+  List<Object?> get props => [transactionType, totalAmount, totalAmountPayment];
 
   @override
   String toString() =>
-      'SummaryTransactionModel(people: $people, totalHutang: $totalHutang, totalPiutang: $totalPiutang)';
+      'SummaryTransactionModel(transactionType: $transactionType, totalAmount: $totalAmount, totalAmountPayment: $totalAmountPayment)';
 
   SummaryTransactionModel copyWith({
-    PeopleModel? people,
-    int? totalHutang,
-    int? totalPiutang,
+    TransactionType? transactionType,
+    int? totalAmount,
+    int? totalAmountPayment,
   }) {
     return SummaryTransactionModel(
-      people: people ?? this.people,
-      totalHutang: totalHutang ?? this.totalHutang,
-      totalPiutang: totalPiutang ?? this.totalPiutang,
+      transactionType: transactionType ?? this.transactionType,
+      totalAmount: totalAmount ?? this.totalAmount,
+      totalAmountPayment: totalAmountPayment ?? this.totalAmountPayment,
     );
   }
 }

@@ -21,6 +21,7 @@ final formTransactionParameter = StateProvider.autoDispose((ref) {
     paymentStatus: PaymentStatus.notPaidOff,
     transactionType: TransactionType.piutang,
     createdAt: DateTime.now(),
+    amount: 0,
   );
 });
 

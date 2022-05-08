@@ -14,6 +14,7 @@ import 'src/view_model/payment/payment_notifier.dart';
 import 'src/view_model/people/people_action_notifier.dart';
 import 'src/view_model/people/people_notifier.dart';
 import 'src/view_model/people/peoples_summary_notifier.dart';
+import 'src/view_model/transaction/people_summary_transaction_notifier.dart';
 import 'src/view_model/transaction/transaction_action_notifier.dart';
 import 'src/view_model/transaction/transaction_notifier.dart';
 
@@ -65,6 +66,28 @@ final transactionNotifier = StateNotifierProvider.family
     id: id,
   );
 });
+
+final peopleSummaryTransactionNotifier = StateNotifierProvider.autoDispose
+    .family<PeopleSummaryTransactionNotifier, PeopleSummaryTransactionState, String?>(
+  (ref, peopleId) {
+    /// Every [add / update / delete] transaction, refresh this provider
+    ref.listen<TransactionActionState>(transactionActionNotifier, (_, state) {
+      state.insertOrUpdate.whenData((_) => ref.invalidateSelf());
+      state.delete.whenData((_) => ref.invalidateSelf());
+    });
+
+    /// Every [add / update / delete] payment, refresh this provider
+    ref.listen<PaymentActionState>(paymentActionNotifier, (_, state) {
+      state.insertOrUpdate.whenData((_) => ref.invalidateSelf());
+      state.delete.whenData((_) => ref.invalidateSelf());
+    });
+
+    return PeopleSummaryTransactionNotifier(
+      peopleId: peopleId,
+      repository: ref.watch(transactionRepository),
+    );
+  },
+);
 
 ///* [People Section]
 

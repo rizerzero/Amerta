@@ -26,13 +26,13 @@ class PeopleLocalService {
   }
 
   Future<List<PeopleSummaryModel>> getPeopleSummary() async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(kThemeAnimationDuration);
     final result = await query.getPeopleSummary();
     return result;
   }
 
   Future<PeopleModel?> getById(String? peopleId) async {
-    await Future.delayed(const Duration(milliseconds: 500));
+    await Future.delayed(kThemeAnimationDuration);
 
     final result = await query.getById(peopleId);
     return result;

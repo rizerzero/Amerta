@@ -18,7 +18,6 @@ class TransactionNotifier extends StateNotifier<TransactionState> {
   final String? id;
   Future<TransactionState> getById(String? transactionId) async {
     state = state.copyWith(item: const AsyncLoading());
-    await Future.delayed(const Duration(seconds: 1));
     final result = await repository.getById(transactionId);
 
     return result.fold(

@@ -27,7 +27,7 @@ class TransactionLocalService {
   final TransactionTableQuery query;
   final PaymentTableQuery paymentQuery;
 
-  Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
+  Future<List<SummaryTransactionModel>> getSummaryTransaction(String? peopleId) async {
     await Future.delayed(kThemeAnimationDuration);
     final result = await query.getSummaryTransaction(peopleId);
     return result;
@@ -81,19 +81,19 @@ class TransactionLocalService {
       if (isHutangAndPiutang) {
         final hutang = await query.getTransactions(
           type: TransactionType.hutang,
-          peopleId: parameter.people.peopleId,
+          peopleId: parameter.peopleId,
           paymentStatus: parameter.paymentStatus,
         );
         final piutang = await query.getTransactions(
           type: TransactionType.piutang,
-          peopleId: parameter.people.peopleId,
+          peopleId: parameter.peopleId,
           paymentStatus: parameter.paymentStatus,
         );
         transactions = [...hutang, ...piutang];
       } else {
         final _items = await query.getTransactions(
           type: parameter.printTransactionType.toTransactionType(),
-          peopleId: parameter.people.peopleId,
+          peopleId: parameter.peopleId,
           paymentStatus: parameter.paymentStatus,
         );
 

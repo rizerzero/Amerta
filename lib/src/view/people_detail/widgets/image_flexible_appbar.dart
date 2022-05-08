@@ -3,15 +3,17 @@ part of 'people_detail_sliver_appbar.dart';
 class _ImageFlexibleAppBar extends StatelessWidget {
   const _ImageFlexibleAppBar({
     Key? key,
-    required this.item,
+    required this.peopleId,
+    this.imagePath,
   }) : super(key: key);
 
-  final SummaryTransactionModel item;
+  final String peopleId;
+  final String? imagePath;
 
   @override
   Widget build(BuildContext context) {
     return Hero(
-      tag: item.people.peopleId,
+      tag: peopleId,
       child: Center(
         child: DecoratedBox(
           decoration: BoxDecoration(
@@ -25,7 +27,7 @@ class _ImageFlexibleAppBar extends StatelessWidget {
           ),
           child: ClipOval(
             child: Image.file(
-              File(item.people.imagePath ?? ''),
+              File(imagePath ?? ''),
               width: 80,
               height: 80,
               fit: BoxFit.cover,

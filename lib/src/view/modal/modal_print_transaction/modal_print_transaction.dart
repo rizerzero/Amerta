@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../model/model/transaction/print_transaction_parameter.dart';
-import '../../../model/model/transaction/summary_transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/transaction/print_transaction_notifier.dart';
 import '../../welcome/widgets/option_tile.dart';
@@ -15,10 +14,10 @@ import '../../widgets/modal_loading.dart';
 class ModalOptionPrintTransaction extends ConsumerWidget {
   const ModalOptionPrintTransaction({
     Key? key,
-    required this.data,
+    required this.peopleId,
   }) : super(key: key);
 
-  final SummaryTransactionModel data;
+  final String peopleId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,12 +48,12 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
         children: [
           OptionTile(
             title: "Cetak Hutang",
-            subtitle: "Mencetak semua transaksi Hutang ${data.people.name}",
+            subtitle: "Mencetak semua transaksi Hutang",
             padding: const EdgeInsets.only(bottom: 16.0),
             onTap: () async {
               await ref.watch(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
-                      people: data.people,
+                      peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutang,
                       paymentStatus: PaymentStatus.notPaidOff,
                     ),
@@ -63,13 +62,13 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
           ),
           OptionTile(
             title: "Cetak Piutang",
-            subtitle: "Mencetak semua transaksi Piutang ${data.people.name}",
+            subtitle: "Mencetak semua transaksi Piutang ",
             padding: const EdgeInsets.only(bottom: 16.0),
             sideColor: primaryShade2,
             onTap: () async {
               await ref.watch(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
-                      people: data.people,
+                      peopleId: peopleId,
                       printTransactionType: PrintTransactionType.piutang,
                       paymentStatus: PaymentStatus.notPaidOff,
                     ),
@@ -78,12 +77,12 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
           ),
           OptionTile(
             title: "Cetak Hutang & Piutang",
-            subtitle: "Mencetak semua transaksi Hutang dan Piutang ${data.people.name}",
+            subtitle: "Mencetak semua transaksi Hutang dan Piutang",
             sideColor: primaryShade4,
             onTap: () async {
               await ref.watch(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
-                      people: data.people,
+                      peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutangDanPiutang,
                       paymentStatus: PaymentStatus.notPaidOff,
                     ),

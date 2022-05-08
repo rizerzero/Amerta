@@ -19,14 +19,15 @@ class TransactionRepository {
 
   final TransactionLocalService transactionLocalService;
 
-  Future<Either<Failure, SummaryTransactionModel>> getSummaryTransaction(String? peopleId) async {
+  Future<Either<Failure, List<SummaryTransactionModel>>> getSummaryTransaction(
+      String? peopleId) async {
     try {
       final result = await transactionLocalService.getSummaryTransaction(peopleId);
       return Right(result);
     } on SqliteException catch (exception, _) {
-      throw Left(SqliteFailure(exception: exception));
+      return Left(SqliteFailure(exception: exception));
     } catch (e) {
-      throw Left(UncaughtFailure(message: e.toString()));
+      return Left(UncaughtFailure(message: e.toString()));
     }
   }
 

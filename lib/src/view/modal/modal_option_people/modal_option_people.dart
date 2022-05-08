@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../model/model/transaction/summary_transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../form_people/form_people_modal.dart';
 import '../../welcome/widgets/option_tile.dart';
@@ -10,10 +9,10 @@ import '../modal_remove_people/modal_remove_people.dart';
 class ModalOptionPeople extends ConsumerWidget {
   const ModalOptionPeople({
     Key? key,
-    required this.data,
+    required this.peopleId,
   }) : super(key: key);
 
-  final SummaryTransactionModel data;
+  final String peopleId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -33,7 +32,7 @@ class ModalOptionPeople extends ConsumerWidget {
               final successSavePeople = await showDialog<bool>(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) => FormPeopleModal(id: data.people.peopleId),
+                builder: (context) => FormPeopleModal(id: peopleId),
               );
 
               if (successSavePeople ?? false) {}
@@ -48,7 +47,7 @@ class ModalOptionPeople extends ConsumerWidget {
               await showDialog(
                 context: context,
                 barrierDismissible: false,
-                builder: (context) => ModalRemovePeople(data: data),
+                builder: (context) => ModalRemovePeople(peopleId: peopleId),
               );
             },
           )
