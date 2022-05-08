@@ -9,8 +9,15 @@ class PeopleSummaryTransactionState extends Equatable {
 
   int balance(TransactionType type) {
     final _items = items.value ?? [];
-    final transaction = _items.firstWhereOrNull((element) => element.transactionType == type);
-    return transaction?.balance ?? 0;
+    final transaction = _items.where((element) => element.transactionType == type).toList();
+    return transaction.fold<int>(
+      0,
+      (previousValue, element) {
+        final amount = element.totalAmount ?? 0;
+        final amountPayment = element.totalAmountPayment ?? 0;
+        return previousValue + (amount - amountPayment);
+      },
+    );
   }
 
   @override

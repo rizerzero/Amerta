@@ -13,8 +13,6 @@ class SummaryTransactionModel extends Equatable {
   final int? totalAmount;
   final int? totalAmountPayment;
 
-  int get balance => (totalAmount ?? 0) - (totalAmountPayment ?? 0);
-
   @override
   List<Object?> get props => [transactionType, totalAmount, totalAmountPayment];
 

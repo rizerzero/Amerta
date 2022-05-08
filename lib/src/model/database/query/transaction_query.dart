@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -30,6 +31,7 @@ class TransactionTableQuery extends MyDatabase {
       /// Transaction Summary for specific people
       query = """
         SELECT
+          t1.`id`,
           t1.`transaction_type`,
           t1.`amount` AS total_amount,
           (SELECT
@@ -41,9 +43,10 @@ class TransactionTableQuery extends MyDatabase {
           ${transactionTable.tableName} AS t1
         WHERE t1.`people_id` = ?
         GROUP BY
+          t1.id,
           t1.`transaction_type`,
-          t1.`amount`,
-          `total_amount_payment`
+          `total_amount_payment`,
+          t1.`amount`
         """;
     } else {
       /// Transaction summary for owner application
@@ -64,11 +67,12 @@ class TransactionTableQuery extends MyDatabase {
        """;
     }
 
-    final result = customSelect(
+    final result = await customSelect(
       query,
       readsFrom: {
         transactionTable,
         peoplesTable,
+        paymentTable,
       },
       variables: [
         if (peopleId != null) Variable.withString(peopleId),
