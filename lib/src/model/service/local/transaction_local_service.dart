@@ -162,7 +162,6 @@ class TransactionLocalService {
                         ),
                       );
                     }
-
                     return pdfWidget.historyPaymentTable(
                       amount: values[index].amount,
                       payments: peoplePayments!,

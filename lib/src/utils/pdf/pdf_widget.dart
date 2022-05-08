@@ -206,207 +206,152 @@ class PDFWidget {
       child: pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
         children: [
-          pw.Text(
-            "Progress Pembayaran",
-            style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16.0),
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            decoration: const pw.BoxDecoration(color: _primaryColor),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Expanded(
+                  flex: 1,
+                  child: pw.Text(
+                    "No",
+                    style: const pw.TextStyle(color: PdfColors.white),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+                pw.Expanded(
+                  flex: 6,
+                  child: pw.Text(
+                    "Deskripsi",
+                    style: const pw.TextStyle(color: PdfColors.white),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+                pw.Expanded(
+                  flex: 5,
+                  child: pw.Text(
+                    "Nominal",
+                    style: const pw.TextStyle(color: PdfColors.white),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ),
+              ],
+            ),
           ),
-          pw.SizedBox(height: 16.0),
-          pw.Table(
-            columnWidths: {
-              0: const pw.FlexColumnWidth(1),
-              1: const pw.FlexColumnWidth(6),
-              2: const pw.FlexColumnWidth(5),
-            },
-            children: [
-              pw.TableRow(
-                decoration: pw.BoxDecoration(color: _primaryColor.shade(.4)),
-                children: [
-                  pw.Column(
-                    children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8.0),
-                        child: pw.Text(
-                          "No",
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  pw.Column(
-                    children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8.0),
-                        child: pw.Text(
-                          "Deskripsi",
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  pw.Column(
-                    children: [
-                      pw.Padding(
-                        padding: const pw.EdgeInsets.all(8.0),
-                        child: pw.Text(
-                          "Nominal",
-                          style: pw.TextStyle(
-                            color: PdfColors.white,
-                            fontWeight: pw.FontWeight.bold,
-                            fontSize: 16.0,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+          for (int i = 0; i < payments.length; i++)
+            pw.Container(
+              padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+              decoration: const pw.BoxDecoration(
+                border: pw.Border(
+                  bottom: pw.BorderSide(color: PdfColors.grey400),
+                ),
               ),
-              for (int j = 0; j < payments.length; j++)
-                pw.TableRow(
-                  decoration: const pw.BoxDecoration(
-                    border: pw.Border(
-                      bottom: pw.BorderSide(color: PdfColors.grey800),
+              child: pw.Row(
+                children: [
+                  pw.Expanded(
+                    flex: 1,
+                    child: pw.Text(
+                      "${i + 1}",
+                      textAlign: pw.TextAlign.center,
                     ),
                   ),
-                  children: [
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8.0),
-                      child: pw.Column(
+                  pw.Expanded(
+                    flex: 6,
+                    child: pw.Builder(builder: (context) {
+                      final payment = payments[i];
+                      final _formatDate = DateFormat.yMMMMEEEEd().format(payment.createdAt!);
+                      final _formatTime = DateFormat.Hms().format(payment.createdAt!);
+                      final description = payment.description;
+                      return pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-                        mainAxisAlignment: pw.MainAxisAlignment.center,
                         children: [
-                          pw.SizedBox(height: 8.0),
                           pw.Text(
-                            "${j + 1}",
-                            textAlign: pw.TextAlign.center,
-                            style: const pw.TextStyle(
-                              fontSize: 12.0,
-                            ),
+                            "$_formatDate $_formatTime",
+                            textAlign: pw.TextAlign.left,
                           ),
-                        ],
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8.0),
-                      child: pw.Column(
-                        mainAxisAlignment: pw.MainAxisAlignment.center,
-                        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-                        children: [
-                          pw.SizedBox(height: 8.0),
-                          pw.Builder(builder: (context) {
-                            final _formatDate =
-                                DateFormat.yMMMMEEEEd().format(payments[j].createdAt!);
-                            final _formatTime = DateFormat.Hms().format(payments[j].createdAt!);
-                            return pw.Text(
-                              "$_formatDate $_formatTime",
+                          if (description != null || (description?.isNotEmpty ?? false)) ...[
+                            pw.SizedBox(height: 4.0),
+                            pw.Text(
+                              "$description",
+                              textAlign: pw.TextAlign.left,
                               style: const pw.TextStyle(
-                                fontSize: 12.0,
+                                fontSize: 10.0,
+                                color: PdfColors.grey800,
                               ),
-                            );
-                          }),
-                          pw.SizedBox(height: 8.0),
-                          pw.Text(
-                            "${payments[j].description}",
-                            style: const pw.TextStyle(
-                              fontSize: 10.0,
                             ),
-                          ),
+                          ],
                         ],
-                      ),
-                    ),
-                    pw.Padding(
-                      padding: const pw.EdgeInsets.all(8.0),
-                      child: pw.Column(
-                        crossAxisAlignment: pw.CrossAxisAlignment.stretch,
-                        mainAxisAlignment: pw.MainAxisAlignment.center,
-                        children: [
-                          pw.SizedBox(height: 8.0),
-                          pw.Text(
-                            fn.rupiahCurrency(payments[j].amount),
-                            textAlign: pw.TextAlign.right,
-                            style: const pw.TextStyle(
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              pw.TableRow(
-                decoration: const pw.BoxDecoration(
-                  color: _secondaryDarkColor,
-                  border: pw.Border(
-                    bottom: pw.BorderSide(color: PdfColors.grey800),
+                      );
+                    }),
                   ),
-                ),
-                children: [
-                  pw.SizedBox(),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(16.0),
+                  pw.Expanded(
+                    flex: 5,
                     child: pw.Text(
-                      "Total Pembayaran",
-                      style: pw.TextStyle(
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(16.0),
-                    child: pw.Text(
-                      fn.rupiahCurrency(totalPayment),
+                      fn.rupiahCurrency(payments[i].amount),
                       textAlign: pw.TextAlign.right,
-                      style: pw.TextStyle(
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        fontSize: 16.0,
-                      ),
                     ),
                   ),
                 ],
               ),
-              pw.TableRow(
-                decoration: const pw.BoxDecoration(
-                  color: _secondaryDarkColor,
-                  border: pw.Border(
-                    bottom: pw.BorderSide(color: PdfColors.grey800),
+            ),
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            decoration: const pw.BoxDecoration(color: _secondaryDarkColor),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Expanded(
+                  flex: 8,
+                  child: pw.Text(
+                    "Total Pembayaran",
+                    style: const pw.TextStyle(color: PdfColors.white),
+                    textAlign: pw.TextAlign.right,
                   ),
                 ),
-                children: [
-                  pw.SizedBox(),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(16.0),
-                    child: pw.Text(
-                      "Sisa Pembayaran",
-                      style: pw.TextStyle(
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                      ),
+                pw.Expanded(
+                  flex: 4,
+                  child: pw.Text(
+                    fn.rupiahCurrency(totalPayment),
+                    style: pw.TextStyle(
+                      color: PdfColors.white,
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 16.0,
                     ),
+                    textAlign: pw.TextAlign.right,
                   ),
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(16.0),
-                    child: pw.Text(
-                      fn.rupiahCurrency(remainingPayment),
-                      textAlign: pw.TextAlign.right,
-                      style: pw.TextStyle(
-                        color: PdfColors.white,
-                        fontWeight: pw.FontWeight.bold,
-                        fontSize: 16.0,
-                      ),
+                ),
+              ],
+            ),
+          ),
+          pw.Container(
+            padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
+            decoration: const pw.BoxDecoration(color: _secondaryDarkColor),
+            child: pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Expanded(
+                  flex: 8,
+                  child: pw.Text(
+                    "Sisa Pembayaran",
+                    style: const pw.TextStyle(color: PdfColors.white),
+                    textAlign: pw.TextAlign.right,
+                  ),
+                ),
+                pw.Expanded(
+                  flex: 4,
+                  child: pw.Text(
+                    fn.rupiahCurrency(remainingPayment),
+                    style: pw.TextStyle(
+                      color: PdfColors.white,
+                      fontWeight: pw.FontWeight.bold,
+                      fontSize: 16.0,
                     ),
+                    textAlign: pw.TextAlign.right,
                   ),
-                ],
-              ),
-            ],
+                ),
+              ],
+            ),
           ),
         ],
       ),
