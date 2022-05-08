@@ -15,7 +15,7 @@ class PreviewPdfPage extends ConsumerWidget {
     final now = DateTime.now();
     final _formatDate = DateFormat.yMMMMEEEEd().format(now);
     final _formatTime = DateFormat.Hms().format(now);
-    final namePdf = "Amerta Transaction History - $_formatDate - $_formatTime";
+    final namePdf = "Amerta Transaction History - $_formatDate - $_formatTime.pdf";
     return Scaffold(
       body: SafeArea(
         child: Builder(builder: (context) {
