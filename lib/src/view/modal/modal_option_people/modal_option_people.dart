@@ -29,13 +29,11 @@ class ModalOptionPeople extends ConsumerWidget {
             sideColor: primary,
             padding: const EdgeInsets.only(bottom: 16.0),
             onTap: () async {
-              final successSavePeople = await showDialog<bool>(
+              await showDialog<bool>(
                 context: context,
                 barrierDismissible: false,
                 builder: (context) => FormPeopleModal(id: peopleId),
               );
-
-              if (successSavePeople ?? false) {}
             },
           ),
           OptionTile(

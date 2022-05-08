@@ -13,9 +13,6 @@ Future<void> main() async {
 
   // turn off the # in the URLs on the web
   GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
-  runApp(
-    const ProviderScope(
-      child: App(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: App()));
 }

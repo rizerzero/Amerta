@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../injection.dart';
 import '../../../model/model/transaction/print_transaction_parameter.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/transaction/print_transaction_notifier.dart';
 import '../../welcome/widgets/option_tile.dart';
 import '../../widgets/modal_error.dart';
 import '../../widgets/modal_loading.dart';
@@ -40,6 +40,7 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
         );
       }
     });
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Column(
@@ -51,7 +52,7 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             subtitle: "Mencetak semua transaksi Hutang",
             padding: const EdgeInsets.only(bottom: 16.0),
             onTap: () async {
-              await ref.watch(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutang,
@@ -66,7 +67,7 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 16.0),
             sideColor: primaryShade2,
             onTap: () async {
-              await ref.watch(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.piutang,
@@ -80,7 +81,7 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             subtitle: "Mencetak semua transaksi Hutang dan Piutang",
             sideColor: primaryShade4,
             onTap: () async {
-              await ref.watch(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printTransaction(
                     PrintTransactionParameter(
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutangDanPiutang,

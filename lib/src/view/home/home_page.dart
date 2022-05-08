@@ -25,13 +25,10 @@ class HomePage extends ConsumerWidget {
 
           ref.refresh(peopleSummaryTransactionNotifier(null));
 
-          ref.refresh(
-            getTransactions(const RecentTransactionParameter(type: TransactionType.hutang)),
-          );
+          const param = RecentTransactionParameter(type: TransactionType.hutang);
+          ref.refresh(getTransactions(param));
 
-          ref.refresh(
-            getTransactions(const RecentTransactionParameter(type: TransactionType.piutang)),
-          );
+          ref.refresh(getTransactions(param.copyWith(type: TransactionType.piutang)));
         },
         notificationPredicate: (notification) {
           return true;

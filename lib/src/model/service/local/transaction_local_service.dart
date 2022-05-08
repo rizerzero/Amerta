@@ -145,35 +145,30 @@ class TransactionLocalService {
             return [
               for (int index = 0; index < values.length; index++) ...[
                 pdfWidget.information(index: index, item: values[index]),
-                pw.Padding(
-                  padding: const pw.EdgeInsets.all(16.0),
-                  child: pw.Text(
-                    "Progress Pembayaran",
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 16.0),
-                  ),
-                ),
-                pw.Builder(builder: (context) {
-                  final peoplePayments = payments[values[index].transactionId];
-                  final paymentIsEmpty = peoplePayments?.isEmpty ?? true;
-                  if (paymentIsEmpty) {
-                    return pw.Padding(
-                      padding: const pw.EdgeInsets.all(16.0),
-                      child: pw.Center(
-                        child: pw.Text(
-                          "Progress pembayaran tidak ditemukan",
-                          style: pw.TextStyle(
-                            fontWeight: pw.FontWeight.bold,
+                pw.Builder(
+                  builder: (context) {
+                    final peoplePayments = payments[values[index].transactionId];
+                    final paymentIsEmpty = peoplePayments?.isEmpty ?? true;
+                    if (paymentIsEmpty) {
+                      return pw.Padding(
+                        padding: const pw.EdgeInsets.all(16.0),
+                        child: pw.Center(
+                          child: pw.Text(
+                            "Progress pembayaran tidak ditemukan",
+                            style: pw.TextStyle(
+                              fontWeight: pw.FontWeight.bold,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }
+                      );
+                    }
 
-                  return pdfWidget.historyPaymentTable(
-                    amount: values[index].amount,
-                    payments: peoplePayments!,
-                  );
-                }),
+                    return pdfWidget.historyPaymentTable(
+                      amount: values[index].amount,
+                      payments: peoplePayments!,
+                    );
+                  },
+                ),
               ]
             ];
           },

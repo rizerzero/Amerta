@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -33,23 +32,34 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
   final _key = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      /// Trigger API GetById
+      ref.read(peopleNotifier(widget.id).notifier).getById(widget.id);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     /// Listen [People Detail Notifier]
     ref.listen<AsyncValue<PeopleModel?>>(
       peopleNotifier(widget.id).select((value) => value.item),
       (_, state) {
-        state.whenOrNull(data: (item) {
-          /// Update [form state]
-          ref.watch(formPeopleParameter.notifier).update(
-                (state) => state.copyWith(
-                  id: fn.isNullOrEmpty(item?.peopleId) ? const Uuid().v4() : item!.peopleId,
-                  image: item?.imagePath == null ? null : File(item!.imagePath!),
-                  name: item?.name ?? "",
-                  createdAt: item?.createdAt ?? DateTime.now(),
-                  updatedAt: item?.updatedAt,
-                ),
-              );
-        });
+        state.whenData(
+          (item) {
+            /// Update [form state]
+            ref.watch(formPeopleParameter.notifier).update(
+                  (state) => state.copyWith(
+                    id: fn.isNullOrEmpty(item?.peopleId) ? const Uuid().v4() : item!.peopleId,
+                    image: item?.imagePath == null ? null : File(item!.imagePath!),
+                    name: item?.name ?? "",
+                    createdAt: item?.createdAt ?? DateTime.now(),
+                    updatedAt: item?.updatedAt,
+                  ),
+                );
+          },
+        );
       },
     );
 
@@ -71,7 +81,6 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
             if (response!.isNewPeople) {
               _key.currentState?.reset();
               ref.invalidate(formPeopleParameter);
-              log("${ref.read(formPeopleParameter)}");
             }
 
             showDialog(
@@ -88,7 +97,6 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
     });
 
     final _state = ref.watch(peopleNotifier(widget.id)).item;
-
     return _state.when(
       data: (_) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

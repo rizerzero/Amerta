@@ -15,6 +15,7 @@ import 'src/view_model/people/people_action_notifier.dart';
 import 'src/view_model/people/people_notifier.dart';
 import 'src/view_model/people/peoples_summary_notifier.dart';
 import 'src/view_model/transaction/people_summary_transaction_notifier.dart';
+import 'src/view_model/transaction/print_transaction_notifier.dart';
 import 'src/view_model/transaction/transaction_action_notifier.dart';
 import 'src/view_model/transaction/transaction_notifier.dart';
 
@@ -89,6 +90,13 @@ final peopleSummaryTransactionNotifier = StateNotifierProvider.autoDispose
   },
 );
 
+final printTransactionNotifier =
+    StateNotifierProvider.autoDispose<PrintTransactionNotifier, PrintTransactionState>(
+  (ref) {
+    return PrintTransactionNotifier(repository: ref.watch(transactionRepository));
+  },
+);
+
 ///* [People Section]
 
 final peopleLocalService = Provider<PeopleLocalService>(
@@ -106,10 +114,12 @@ final peopleActionNotifier =
 
 final peopleNotifier =
     StateNotifierProvider.autoDispose.family<PeopleNotifier, PeopleState, String?>(
-  (ref, id) => PeopleNotifier(
-    repository: ref.watch(peopleRepository),
-    peopleId: id,
-  ),
+  (ref, id) {
+    return PeopleNotifier(
+      repository: ref.watch(peopleRepository),
+      peopleId: id,
+    );
+  },
 );
 
 final peoplesSummaryNotifier =

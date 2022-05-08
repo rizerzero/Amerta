@@ -26,16 +26,17 @@ class PeopleDetailPage extends ConsumerWidget {
       child: Scaffold(
         body: RefreshIndicator(
           onRefresh: () async {
-            ref.refresh(peopleSummaryTransactionNotifier(peopleId));
+            /// Refresh people notifier cause refresh all provider below this
+            /// [peopleSummaryTransaction]
+            ref.invalidate(peopleNotifier(peopleId));
 
             final param = RecentTransactionParameter(
               type: TransactionType.hutang,
               peopleId: peopleId,
             );
 
-            /// Refresh [RecentTransaction]
-            ref.refresh(getTransactions(param));
-            ref.refresh(getTransactions(param.copyWith(type: TransactionType.piutang)));
+            ref.invalidate(getTransactions(param));
+            ref.invalidate(getTransactions(param.copyWith(type: TransactionType.piutang)));
           },
           notificationPredicate: (notification) => true,
           child: NestedScrollView(

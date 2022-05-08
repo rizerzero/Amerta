@@ -30,6 +30,15 @@ extension TransactionTypeExt on TransactionType {
         return -1;
     }
   }
+
+  PrintTransactionType toPrintType() {
+    switch (this) {
+      case TransactionType.hutang:
+        return PrintTransactionType.hutang;
+      default:
+        return PrintTransactionType.piutang;
+    }
+  }
 }
 
 extension PrintTransactionTypeExt on PrintTransactionType {

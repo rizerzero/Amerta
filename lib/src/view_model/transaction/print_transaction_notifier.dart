@@ -2,7 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../injection.dart';
 import '../../model/model/transaction/print_transaction_parameter.dart';
 import '../../model/repository/transaction_repository.dart';
 
@@ -24,10 +23,3 @@ class PrintTransactionNotifier extends StateNotifier<PrintTransactionState> {
     );
   }
 }
-
-final printTransactionNotifier =
-    StateNotifierProvider.autoDispose<PrintTransactionNotifier, PrintTransactionState>(
-  (ref) {
-    return PrintTransactionNotifier(repository: ref.watch(transactionRepository));
-  },
-);

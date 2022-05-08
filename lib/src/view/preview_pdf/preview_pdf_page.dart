@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:printing/printing.dart';
 
-import '../../view_model/transaction/print_transaction_notifier.dart';
+import '../../../injection.dart';
 
 class PreviewPdfPage extends ConsumerWidget {
   const PreviewPdfPage({
