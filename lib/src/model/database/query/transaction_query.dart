@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:collection/collection.dart';
 import 'package:drift/drift.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../utils/utils.dart';
 import '../../model/people/people_model.dart';
@@ -171,20 +174,42 @@ class TransactionTableQuery extends MyDatabase {
     return result;
   }
 
-  /// TODO: Save Image to documentDirectory when success create transaction
   Future<TransactionInsertOrUpdateResponse> insertOrUpdateTransaction(
       FormTransactionParameter form) async {
     final trx = await (select(transactionTable)..where((t) => t.id.equals(form.transactionId)))
         .getSingleOrNull();
 
     transaction(() async {
+      File? tempFile;
+
+      /// Check if have selected file/image
+      if (form.attachment != null) {
+        /// [trx == null] => mode insert
+        /// [trx != null] => mode update
+        final filename = trx == null
+            ? form.transactionId!
+            : p.basename(trx.attachmentPath ?? form.transactionId!);
+
+        final file = File(form.attachment!.path);
+        final ext = p.extension(file.path);
+
+        /// Organize folder storage depend of [user id]
+        /// transactoin/3044939
+        final path = await fn.generatePathFile(
+          "transaction/${form.selectedPeople!.peopleId}",
+          filename + ext,
+        );
+
+        tempFile = file.copySync(path);
+      }
+
       await into(transactionTable).insertOnConflictUpdate(
         TransactionTableCompanion(
           id: Value(form.transactionId!),
           peopleId: Value(form.selectedPeople!.peopleId),
           title: Value(form.title),
           amount: Value(form.amount),
-          attachmentPath: Value(form.attachment?.path),
+          attachmentPath: Value(tempFile?.path),
           createdAt: Value(form.createdAt),
           description: Value(form.description),
           loanDate: Value(form.loanDate),
@@ -210,8 +235,22 @@ class TransactionTableQuery extends MyDatabase {
   }
 
   Future<int> deleteTransaction(String id) async {
+    final trx = await (select(transactionTable)..where((t) => t.id.equals(id))).getSingle();
+
     final query = delete(transactionTable)..where((trx) => trx.id.equals(id));
-    final result = await query.go();
-    return result;
+
+    await transaction(() async {
+      /// Operation Delete Image
+      if (trx.attachmentPath != null) {
+        final file = File(trx.attachmentPath!);
+        final fileIsExists = file.existsSync();
+        if (fileIsExists) {
+          file.deleteSync(recursive: true);
+        }
+      }
+
+      await query.go();
+    });
+    return 1;
   }
 }

@@ -1,6 +1,7 @@
-import 'dart:developer';
+import 'dart:io';
 
 import 'package:drift/drift.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../utils/utils.dart';
 import '../../model/people/form_people_parameter.dart';
@@ -103,18 +104,33 @@ class PeopleTableQuery extends MyDatabase {
     return result;
   }
 
-  /// TODO: Save Image to documentDirectory when success create people
   Future<PeopleInsertOrUpdateResponse> insertOrUpdatePeople(FormPeopleParameter form) async {
-    log("form ${form.id}");
     final people = await (select(peoplesTable)..where((people) => people.id.equals(form.id)))
         .getSingleOrNull();
 
     await transaction(() async {
+      File? tempFile;
+
+      /// Check if have selected file/image
+      if (form.image != null) {
+        /// Jika [insert], berikan default nama [id_people]
+        /// Jika [update], check apakah image path yang tersimpan sebelumnya masih null / tidak
+        /// Jika masih null, berikan default nama [id_people]
+        final filename = people == null ? form.id : p.basename(people.imagePath ?? form.id);
+        final file = File(form.image!.path);
+
+        final ext = p.extension(file.path);
+
+        final path = await fn.generatePathFile("images/people", filename + ext);
+
+        tempFile = file.copySync(path);
+      }
+
       await into(peoplesTable).insertOnConflictUpdate(
         PeoplesTableCompanion(
           id: Value(form.id),
           name: Value(form.name),
-          imagePath: Value(form.image?.path),
+          imagePath: Value(tempFile?.path),
           createdAt: Value(form.createdAt),
           updatedAt: Value(form.updatedAt),
         ),
@@ -135,8 +151,24 @@ class PeopleTableQuery extends MyDatabase {
   }
 
   Future<int> deletePeople(String id) async {
+    final people =
+        await (select(peoplesTable)..where((people) => people.id.equals(id))).getSingle();
+
     final query = delete(peoplesTable)..where((people) => people.id.equals(id));
-    final result = await query.go();
-    return result;
+    await transaction(() async {
+      /// Operation Delete Image
+      if (people.imagePath != null) {
+        final image = File(people.imagePath!);
+        final imageIsExists = image.existsSync();
+        if (imageIsExists) {
+          image.deleteSync(recursive: true);
+        }
+      }
+
+      /// Running delete Query
+      await query.go();
+    });
+
+    return 1;
   }
 }

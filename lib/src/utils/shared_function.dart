@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:path_provider/path_provider.dart';
 
 import 'utils.dart';
 
@@ -45,6 +46,25 @@ class SharedFunction {
     return int.tryParse(result);
   }
 
+  /// [path] this is sub folder
+  /// [filename] this is filename with extension
+  Future<String> generatePathFile(String path, String filename) async {
+    if (path.isEmpty) {
+      throw Exception("Path tidak boleh kosong");
+    }
+
+    final defaultPath = (await getApplicationDocumentsDirectory()).path;
+    final fullPath = defaultPath + "/" + path;
+    final dir = Directory(fullPath);
+
+    /// Jika belum ada foldernya, buatin foldernya
+    if (!dir.existsSync()) {
+      dir.createSync(recursive: true);
+    }
+
+    return fullPath + "/" + filename;
+  }
+
   String rupiahCurrency(
     int number, {
     String? prefix,
@@ -57,9 +77,6 @@ class SharedFunction {
       ).format(number);
 
   Future<DateTime?> showDateTimePicker(BuildContext context, {bool withTimePicker = true}) async {
-    DateTime? _date;
-    TimeOfDay? _time;
-
     final _datePicker = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
@@ -67,32 +84,16 @@ class SharedFunction {
       lastDate: DateTime(2100),
     );
 
-    if (_datePicker != null) {
-      _date = _datePicker;
-
-      if (withTimePicker) {
-        final _timePicker = await showTimePicker(
-          context: context,
-          initialTime: TimeOfDay.now(),
-        );
-
-        if (_timePicker != null) {
-          _time = _timePicker;
-        }
-      }
-    }
+    if (_datePicker == null) return null;
 
     if (withTimePicker) {
-      if (_date != null && _time != null) {
-        return _date.add(Duration(hours: _time.hour, minutes: _time.minute));
-      }
-    } else {
-      if (_date != null) {
-        return _date;
+      final _timePicker = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+      if (_timePicker != null) {
+        return _datePicker.add(Duration(hours: _timePicker.hour, minutes: _timePicker.minute));
       }
     }
 
-    return null;
+    return _datePicker;
   }
 
   Future<File?> takeImage({ImageSource source = ImageSource.gallery}) async {

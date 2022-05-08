@@ -48,6 +48,11 @@ class _InputAttachment extends ConsumerWidget {
                 selectedFile,
                 fit: BoxFit.cover,
                 height: 200,
+                errorBuilder: (context, error, trace) => Image.asset(
+                  kLogo,
+                  height: 200,
+                  fit: BoxFit.cover,
+                ),
               ),
             ),
           )

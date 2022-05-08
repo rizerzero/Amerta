@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:drift/drift.dart';
+import 'package:path/path.dart' as p;
 
 import '../../../utils/utils.dart';
 import '../../model/payment/form_payment_parameter.dart';
@@ -143,6 +146,27 @@ class PaymentTableQuery extends MyDatabase {
         .getSingleOrNull();
 
     await transaction(() async {
+      File? tempFile;
+
+      /// Check if have selected file/image
+      if (form.attachment != null) {
+        /// [trx == null] => mode insert
+        /// [trx != null] => mode update
+        final filename = trx == null ? form.id : p.basename(trx.attachmentPath ?? form.id);
+
+        final file = File(form.attachment!.path);
+        final ext = p.extension(file.path);
+
+        /// Organize folder storage depend of [user id]
+        /// transactoin/3044939
+        final path = await fn.generatePathFile(
+          "transaction/${form.peopleId}/payment",
+          filename + ext,
+        );
+
+        tempFile = file.copySync(path);
+      }
+
       await into(paymentTable).insertOnConflictUpdate(
         PaymentTableCompanion.insert(
           id: Value(form.id),
@@ -150,7 +174,7 @@ class PaymentTableQuery extends MyDatabase {
           transactionId: Value(form.transactionId),
           date: DateTime(form.date.year, form.date.month, form.date.day),
           amount: form.amount,
-          attachmentPath: Value(form.attachment?.path),
+          attachmentPath: Value(tempFile?.path),
           description: Value(form.description),
           createdAt: form.createdAt,
           updatedAt: Value(form.updatedAt),
@@ -171,8 +195,19 @@ class PaymentTableQuery extends MyDatabase {
   }
 
   Future<int> deletePayment(String id) async {
+    final trx = await (select(paymentTable)..where((payment) => payment.id.equals(id))).getSingle();
     final query = delete(paymentTable)..where((payment) => payment.id.equals(id));
-    final result = await query.go();
-    return result;
+    await transaction(() async {
+      if (trx.attachmentPath != null) {
+        final file = File(trx.attachmentPath!);
+        final fileIsExists = file.existsSync();
+        if (fileIsExists) {
+          file.deleteSync(recursive: true);
+        }
+      }
+
+      await query.go();
+    });
+    return 1;
   }
 }
