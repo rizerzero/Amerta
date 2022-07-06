@@ -23,17 +23,17 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _futurePeople = ref.watch(peopleNotifier(peopleId)).item;
+    final future = ref.watch(peopleNotifier(peopleId)).item;
 
-    if (_futurePeople is AsyncLoading) {
+    if (future is AsyncLoading) {
       return const Center(child: CircularProgressIndicator(color: Colors.white));
     }
 
-    if (_futurePeople is AsyncError) {
-      return _futurePeople.whenOrNull(error: (error, trace) => Text("Error $error"))!;
+    if (future is AsyncError) {
+      return future.whenOrNull(error: (error, trace) => Text("Error $error"))!;
     }
 
-    final people = _futurePeople.value!;
+    final people = future.value!;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -112,8 +112,8 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                         Expanded(
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final _future = ref.watch(peopleSummaryTransactionNotifier(peopleId));
-                              return _future.items.when(
+                              final future = ref.watch(peopleSummaryTransactionNotifier(peopleId));
+                              return future.items.when(
                                 data: (_) {
                                   return Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -121,14 +121,14 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                                       Expanded(
                                         child: SummaryAmount(
                                           title: "Hutang",
-                                          amount: _future.balance(TransactionType.hutang),
+                                          amount: future.balance(TransactionType.hutang),
                                         ),
                                       ),
                                       const SizedBox(width: 24.0),
                                       Expanded(
                                         child: SummaryAmount(
                                           title: "Piutang",
-                                          amount: _future.balance(TransactionType.piutang),
+                                          amount: future.balance(TransactionType.piutang),
                                         ),
                                       ),
                                     ],

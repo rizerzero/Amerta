@@ -24,7 +24,7 @@ class TransactionRepository {
     try {
       final result = await transactionLocalService.getSummaryTransaction(peopleId);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -44,7 +44,7 @@ class TransactionRepository {
         peopleId: peopleId,
       );
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       throw Left(SqliteFailure(exception: exception));
     } catch (e) {
       throw Left(UncaughtFailure(message: e.toString()));
@@ -55,7 +55,7 @@ class TransactionRepository {
     try {
       final result = await transactionLocalService.getById(id);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -67,7 +67,7 @@ class TransactionRepository {
     try {
       final result = await transactionLocalService.insertOrUpdateTransaction(form);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -78,7 +78,7 @@ class TransactionRepository {
     try {
       final result = await transactionLocalService.deleteTransaction(id);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -89,7 +89,7 @@ class TransactionRepository {
     try {
       final result = await transactionLocalService.printTransaction(parameter);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));

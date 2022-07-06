@@ -20,8 +20,8 @@ class PeoplesSummaryPage extends ConsumerWidget {
       appBar: const _AppBar(),
       body: Builder(
         builder: (context) {
-          final _future = ref.watch(peoplesSummaryNotifier).items;
-          return _future.when(
+          final future = ref.watch(peoplesSummaryNotifier).items;
+          return future.when(
             data: (_) {
               final items = ref.watch(filteredPeoplesSummary);
               return RefreshIndicator(

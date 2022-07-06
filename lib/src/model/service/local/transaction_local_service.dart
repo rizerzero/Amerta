@@ -91,13 +91,13 @@ class TransactionLocalService {
         );
         transactions = [...hutang, ...piutang];
       } else {
-        final _items = await query.getTransactions(
+        final items = await query.getTransactions(
           type: parameter.printTransactionType.toTransactionType(),
           peopleId: parameter.peopleId,
           paymentStatus: parameter.paymentStatus,
         );
 
-        transactions = [..._items];
+        transactions = [...items];
       }
 
       return transactions;

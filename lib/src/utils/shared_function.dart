@@ -54,7 +54,7 @@ class SharedFunction {
     }
 
     final defaultPath = (await getApplicationDocumentsDirectory()).path;
-    final fullPath = defaultPath + "/" + path;
+    final fullPath = "$defaultPath/$path";
     final dir = Directory(fullPath);
 
     /// Jika belum ada foldernya, buatin foldernya
@@ -62,7 +62,7 @@ class SharedFunction {
       dir.createSync(recursive: true);
     }
 
-    return fullPath + "/" + filename;
+    return "$fullPath/$filename";
   }
 
   String rupiahCurrency(
@@ -77,35 +77,35 @@ class SharedFunction {
       ).format(number);
 
   Future<DateTime?> showDateTimePicker(BuildContext context, {bool withTimePicker = true}) async {
-    final _datePicker = await showDatePicker(
+    final datePicker = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
       lastDate: DateTime(2100),
     );
 
-    if (_datePicker == null) return null;
+    if (datePicker == null) return null;
 
     if (withTimePicker) {
-      final _timePicker = await showTimePicker(context: context, initialTime: TimeOfDay.now());
-      if (_timePicker != null) {
-        return _datePicker.add(Duration(hours: _timePicker.hour, minutes: _timePicker.minute));
+      final timePicker = await showTimePicker(context: context, initialTime: TimeOfDay.now());
+      if (timePicker != null) {
+        return datePicker.add(Duration(hours: timePicker.hour, minutes: timePicker.minute));
       }
     }
 
-    return _datePicker;
+    return datePicker;
   }
 
   Future<File?> takeImage({ImageSource source = ImageSource.gallery}) async {
-    final _imagePicker = ImagePicker();
-    final _pickedFile = await _imagePicker.pickImage(
+    final picker = ImagePicker();
+    final pickedFile = await picker.pickImage(
       source: source,
       maxHeight: 600,
       maxWidth: 600,
     );
-    if (_pickedFile == null) return null;
+    if (pickedFile == null) return null;
 
-    final file = File(_pickedFile.path);
+    final file = File(pickedFile.path);
     return file;
   }
 

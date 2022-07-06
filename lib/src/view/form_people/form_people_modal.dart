@@ -25,7 +25,7 @@ class FormPeopleModal extends ConsumerStatefulWidget {
   final String? id;
 
   @override
-  _FormPeopleModalState createState() => _FormPeopleModalState();
+  createState() => _FormPeopleModalState();
 }
 
 class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
@@ -96,8 +96,8 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
       }
     });
 
-    final _state = ref.watch(peopleNotifier(widget.id)).item;
-    return _state.when(
+    final people = ref.watch(peopleNotifier(widget.id)).item;
+    return people.when(
       data: (_) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),
         child: WillPopScope(

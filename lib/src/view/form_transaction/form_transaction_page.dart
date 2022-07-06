@@ -39,7 +39,7 @@ class FormTransactionPage extends ConsumerStatefulWidget {
   final String? transactionId;
 
   @override
-  _FormTransactionPageState createState() => _FormTransactionPageState();
+  createState() => _FormTransactionPageState();
 }
 
 class _FormTransactionPageState extends ConsumerState<FormTransactionPage> {
@@ -113,9 +113,9 @@ class _FormTransactionPageState extends ConsumerState<FormTransactionPage> {
       },
     );
 
-    final _state = ref.watch(transactionNotifier(widget.transactionId));
+    final transaction = ref.watch(transactionNotifier(widget.transactionId));
 
-    return _state.item.when(
+    return transaction.item.when(
       data: (data) {
         return GestureDetector(
           /// Jike menekan ke sembarang tempat, non-aktifkan focus input

@@ -13,9 +13,9 @@ class PreviewPdfPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final now = DateTime.now();
-    final _formatDate = DateFormat.yMMMMEEEEd().format(now);
-    final _formatTime = DateFormat.Hms().format(now);
-    final namePdf = "Amerta Transaction History - $_formatDate - $_formatTime.pdf";
+    final formatDate = DateFormat.yMMMMEEEEd().format(now);
+    final formatTime = DateFormat.Hms().format(now);
+    final namePdf = "Amerta Transaction History - $formatDate - $formatTime.pdf";
     return Scaffold(
       body: SafeArea(
         child: Builder(builder: (context) {

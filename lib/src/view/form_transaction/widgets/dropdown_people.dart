@@ -5,7 +5,7 @@ class _DropdownPeople extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _selectedPeople = ref.watch(
+    final selectedPeople = ref.watch(
       formTransactionParameter.select((value) => value.selectedPeople),
     );
     return Column(
@@ -19,11 +19,11 @@ class _DropdownPeople extends ConsumerWidget {
               flex: 4,
               child: Consumer(
                 builder: (context, ref, child) {
-                  final _future = ref.watch(getDropdownPeoples);
-                  return _future.when(
+                  final future = ref.watch(getDropdownPeoples);
+                  return future.when(
                     data: (data) {
                       return DropdownButtonFormField<PeopleModel?>(
-                        value: _selectedPeople,
+                        value: selectedPeople,
                         isDense: true,
                         isExpanded: true,
                         decoration: fn.defaultInputDecoration,
@@ -37,11 +37,11 @@ class _DropdownPeople extends ConsumerWidget {
                         items: data
                             .map(
                               (e) => DropdownMenuItem(
+                                value: e,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 8.0),
                                   child: Text(e.name),
                                 ),
-                                value: e,
                               ),
                             )
                             .toList(),

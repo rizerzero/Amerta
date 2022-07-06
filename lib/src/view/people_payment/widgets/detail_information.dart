@@ -22,9 +22,9 @@ class _DetailInformation extends StatelessWidget {
         constraints: BoxConstraints(minHeight: fn.vh(context) / 3),
         child: Consumer(
           builder: (context, ref, child) {
-            final _future = ref.watch(getPaymentSummary(param));
+            final future = ref.watch(getPaymentSummary(param));
 
-            return _future.when(
+            return future.when(
               data: (data) {
                 final remainingPayment = data!.amount - (data.amountPayment ?? 0);
                 final progressBar = data.amountPayment == null

@@ -81,8 +81,8 @@ class FormPaymentModal extends ConsumerWidget {
         }
       },
     );
-    final _state = ref.watch(paymentNotifier(id)).item;
-    return _state.when(
+    final payment = ref.watch(paymentNotifier(id)).item;
+    return payment.when(
       data: (_) {
         return AlertDialog(
           scrollable: true,

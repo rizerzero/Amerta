@@ -19,7 +19,7 @@ class PaymentRepository {
     try {
       final result = await localService.getById(id);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -32,7 +32,7 @@ class PaymentRepository {
     try {
       final result = await localService.insertOrUpdatePayment(form);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -43,7 +43,7 @@ class PaymentRepository {
     try {
       final result = await localService.deletePayment(id);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));
     } catch (e) {
       return Left(UncaughtFailure(message: e.toString()));
@@ -61,7 +61,7 @@ class PaymentRepository {
       );
 
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       throw Left(SqliteFailure(exception: exception));
     } catch (e) {
       throw Left(UncaughtFailure(message: e.toString()));
@@ -74,7 +74,7 @@ class PaymentRepository {
     try {
       final result = await localService.getPayments(param);
       return Right(result);
-    } on SqliteException catch (exception, _) {
+    } on SqliteException catch (exception) {
       throw Left(SqliteFailure(exception: exception));
     } catch (e) {
       throw Left(UncaughtFailure(message: e.toString()));

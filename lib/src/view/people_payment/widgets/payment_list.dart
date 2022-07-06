@@ -12,8 +12,8 @@ class _DetailTransactionList extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(
       builder: (context, ref, child) {
-        final _future = ref.watch(getPayments(PaymentsParameter(transactionId: transactionId)));
-        return _future.when(
+        final future = ref.watch(getPayments(PaymentsParameter(transactionId: transactionId)));
+        return future.when(
           data: (data) {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -54,10 +54,10 @@ class _DetailTransactionList extends StatelessWidget {
                                   mainAxisAlignment: MainAxisAlignment.start,
                                   children: [
                                     CircleAvatar(
-                                      child: Text("${index + 1}"),
                                       backgroundColor: secondaryLight,
                                       foregroundColor: Colors.white,
                                       radius: 15.0,
+                                      child: Text("${index + 1}"),
                                     ),
                                   ],
                                 ),

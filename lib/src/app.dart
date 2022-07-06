@@ -8,7 +8,7 @@ class App extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final _goRouter = ref.watch(goRouter);
+    final router = ref.watch(goRouter);
     final theme = ThemeData();
 
     return MaterialApp.router(
@@ -23,9 +23,9 @@ class App extends ConsumerWidget {
         ),
       ),
       color: primary,
-      routeInformationParser: _goRouter.routeInformationParser,
-      routerDelegate: _goRouter.routerDelegate,
-      routeInformationProvider: _goRouter.routeInformationProvider,
+      routeInformationParser: router.routeInformationParser,
+      routerDelegate: router.routerDelegate,
+      routeInformationProvider: router.routeInformationProvider,
     );
   }
 }

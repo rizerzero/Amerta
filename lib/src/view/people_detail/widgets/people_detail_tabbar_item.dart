@@ -34,9 +34,9 @@ class _PeopleDetailTabBarItemState extends State<PeopleDetailTabBarItem>
               peopleId: widget.peopleId,
             );
 
-            final _future = ref.watch(getTransactions(param));
+            final future = ref.watch(getTransactions(param));
 
-            return _future.when(
+            return future.when(
               data: (data) {
                 if (data.isEmpty) {
                   return Center(

@@ -8,9 +8,10 @@ class PeopleSummaryTransactionState extends Equatable {
   final AsyncValue<List<SummaryTransactionModel>> items;
 
   int balance(TransactionType type) {
-    final _items = items.value ?? [];
-    final transaction = _items.where((element) => element.transactionType == type).toList();
-    return transaction.fold<int>(
+    final transactions = items.value ?? [];
+    final filteredTransactions =
+        transactions.where((element) => element.transactionType == type).toList();
+    return filteredTransactions.fold<int>(
       0,
       (previousValue, element) {
         final amount = element.totalAmount ?? 0;

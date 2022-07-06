@@ -16,15 +16,15 @@ class PDFWidget {
     final logo = pw.MemoryImage(logoByte.buffer.asUint8List());
 
     final dateNow = DateTime.now();
-    final _formatDate = DateFormat.yMMMMEEEEd().format(dateNow);
-    final _formatTime = DateFormat.Hms().format(dateNow);
+    final formatDate = DateFormat.yMMMMEEEEd().format(dateNow);
+    final formatTime = DateFormat.Hms().format(dateNow);
 
-    const _scaffoldColor = PdfColor.fromInt(0xFFF0FAFF);
-    const _primaryColor = PdfColor.fromInt(0xFF3DB2FF);
+    const scaffoldColor = PdfColor.fromInt(0xFFF0FAFF);
+    const primaryColor = PdfColor.fromInt(0xFF3DB2FF);
 
     return pw.Container(
       padding: const pw.EdgeInsets.symmetric(horizontal: 40.0, vertical: 16.0),
-      decoration: const pw.BoxDecoration(color: _scaffoldColor),
+      decoration: const pw.BoxDecoration(color: scaffoldColor),
       child: pw.Row(
         crossAxisAlignment: pw.CrossAxisAlignment.center,
         children: [
@@ -58,7 +58,7 @@ class PDFWidget {
                       transactionType.name.toUpperCase(),
                       style: pw.TextStyle(
                         fontWeight: pw.FontWeight.bold,
-                        color: _primaryColor,
+                        color: primaryColor,
                       ),
                     ),
                   ),
@@ -83,7 +83,7 @@ class PDFWidget {
                     text: "Dibuat :\n",
                     children: [
                       pw.TextSpan(
-                        text: "$_formatDate $_formatTime",
+                        text: "$formatDate $formatTime",
                         style: const pw.TextStyle(color: PdfColors.grey600),
                       ),
                     ],
@@ -102,14 +102,14 @@ class PDFWidget {
     required int index,
     required RecentTransactionModel item,
   }) {
-    const _primaryColor = PdfColor.fromInt(0xFF3DB2FF);
+    const primaryColor = PdfColor.fromInt(0xFF3DB2FF);
 
     return pw.Container(
       margin: const pw.EdgeInsets.all(16.0),
       width: double.infinity,
       padding: const pw.EdgeInsets.all(16.0),
       decoration: pw.BoxDecoration(
-        color: _primaryColor,
+        color: primaryColor,
         borderRadius: pw.BorderRadius.circular(8.0),
       ),
       child: pw.Column(
@@ -193,8 +193,8 @@ class PDFWidget {
     required int amount,
     required List<PaymentModel> payments,
   }) {
-    const _primaryColor = PdfColor.fromInt(0xFF3DB2FF);
-    const _secondaryDarkColor = PdfColor.fromInt(0xFF006A61);
+    const primaryColor = PdfColor.fromInt(0xFF3DB2FF);
+    const secondaryDarkColor = PdfColor.fromInt(0xFF006A61);
 
     final totalPayment = payments.fold<int>(
       0,
@@ -208,7 +208,7 @@ class PDFWidget {
         children: [
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-            decoration: const pw.BoxDecoration(color: _primaryColor),
+            decoration: const pw.BoxDecoration(color: primaryColor),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -260,14 +260,14 @@ class PDFWidget {
                     flex: 6,
                     child: pw.Builder(builder: (context) {
                       final payment = payments[i];
-                      final _formatDate = DateFormat.yMMMMEEEEd().format(payment.createdAt!);
-                      final _formatTime = DateFormat.Hms().format(payment.createdAt!);
+                      final formatDate = DateFormat.yMMMMEEEEd().format(payment.createdAt!);
+                      final formatTime = DateFormat.Hms().format(payment.createdAt!);
                       final description = payment.description;
                       return pw.Column(
                         crossAxisAlignment: pw.CrossAxisAlignment.stretch,
                         children: [
                           pw.Text(
-                            "$_formatDate $_formatTime",
+                            "$formatDate $formatTime",
                             textAlign: pw.TextAlign.left,
                           ),
                           if (description != null || (description?.isNotEmpty ?? false)) ...[
@@ -297,7 +297,7 @@ class PDFWidget {
             ),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-            decoration: const pw.BoxDecoration(color: _secondaryDarkColor),
+            decoration: const pw.BoxDecoration(color: secondaryDarkColor),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
@@ -326,7 +326,7 @@ class PDFWidget {
           ),
           pw.Container(
             padding: const pw.EdgeInsets.symmetric(vertical: 8.0, horizontal: 8.0),
-            decoration: const pw.BoxDecoration(color: _secondaryDarkColor),
+            decoration: const pw.BoxDecoration(color: secondaryDarkColor),
             child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [

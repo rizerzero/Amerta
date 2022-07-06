@@ -35,18 +35,18 @@ class HomeHeaderContent extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Consumer(
                     builder: (context, ref, child) {
-                      final _future = ref.watch(peopleSummaryTransactionNotifier(null));
-                      return _future.items.when(
+                      final future = ref.watch(peopleSummaryTransactionNotifier(null));
+                      return future.items.when(
                         data: (data) {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Hutang : ${fn.rupiahCurrency(_future.balance(TransactionType.hutang))}",
+                                "Hutang : ${fn.rupiahCurrency(future.balance(TransactionType.hutang))}",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                               Text(
-                                "Piutang : ${fn.rupiahCurrency(_future.balance(TransactionType.piutang))}",
+                                "Piutang : ${fn.rupiahCurrency(future.balance(TransactionType.piutang))}",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                             ],
@@ -71,8 +71,8 @@ class HomeHeaderContent extends StatelessWidget {
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    final _future = ref.watch(peopleSummaryTransactionNotifier(null));
-                    return _future.items.when(
+                    final future = ref.watch(peopleSummaryTransactionNotifier(null));
+                    return future.items.when(
                       data: (data) {
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
@@ -81,14 +81,14 @@ class HomeHeaderContent extends StatelessWidget {
                             Expanded(
                               child: SummaryAmount(
                                 title: "Hutang",
-                                amount: _future.balance(TransactionType.hutang),
+                                amount: future.balance(TransactionType.hutang),
                               ),
                             ),
                             const SizedBox(width: 24.0),
                             Expanded(
                               child: SummaryAmount(
                                 title: "Piutang",
-                                amount: _future.balance(TransactionType.piutang),
+                                amount: future.balance(TransactionType.piutang),
                               ),
                             ),
                             const SizedBox(width: 16.0),
@@ -141,8 +141,8 @@ class HomeHeaderContent extends StatelessWidget {
                     height: fn.vh(context) / 5,
                     child: Consumer(
                       builder: (context, ref, child) {
-                        final _future = ref.watch(getLatestTenPeople);
-                        return _future.when(
+                        final future = ref.watch(getLatestTenPeople);
+                        return future.when(
                           data: (data) {
                             if (data.isEmpty) {
                               return Center(

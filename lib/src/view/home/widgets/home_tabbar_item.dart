@@ -14,7 +14,7 @@ class HomeTabBarItem extends StatefulWidget {
 
   final TransactionType transactionType;
   @override
-  _HomeTabBarItemState createState() => _HomeTabBarItemState();
+  createState() => _HomeTabBarItemState();
 }
 
 class _HomeTabBarItemState extends State<HomeTabBarItem> with AutomaticKeepAliveClientMixin {
@@ -30,8 +30,8 @@ class _HomeTabBarItemState extends State<HomeTabBarItem> with AutomaticKeepAlive
         return Consumer(
           builder: (_, ref, __) {
             final param = RecentTransactionParameter(type: widget.transactionType);
-            final _future = ref.watch(getTransactions(param));
-            return _future.when(
+            final future = ref.watch(getTransactions(param));
+            return future.when(
               data: (data) {
                 if (data.isEmpty) {
                   return Center(
