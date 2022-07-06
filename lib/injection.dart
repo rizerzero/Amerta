@@ -73,14 +73,12 @@ final peopleSummaryTransactionNotifier = StateNotifierProvider.autoDispose
   (ref, peopleId) {
     /// Every [add / update / delete] transaction, refresh this provider
     ref.listen<TransactionActionState>(transactionActionNotifier, (_, state) {
-      state.insertOrUpdate.whenData((_) => ref.invalidateSelf());
-      state.delete.whenData((_) => ref.invalidateSelf());
+      ref.invalidateSelf();
     });
 
     /// Every [add / update / delete] payment, refresh this provider
     ref.listen<PaymentActionState>(paymentActionNotifier, (_, state) {
-      state.insertOrUpdate.whenData((_) => ref.invalidateSelf());
-      state.delete.whenData((_) => ref.invalidateSelf());
+      ref.invalidateSelf();
     });
 
     return PeopleSummaryTransactionNotifier(

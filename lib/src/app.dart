@@ -25,6 +25,7 @@ class App extends ConsumerWidget {
       color: primary,
       routeInformationParser: _goRouter.routeInformationParser,
       routerDelegate: _goRouter.routerDelegate,
+      routeInformationProvider: _goRouter.routeInformationProvider,
     );
   }
 }

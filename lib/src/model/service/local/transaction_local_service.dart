@@ -75,7 +75,7 @@ class TransactionLocalService {
         parameter.printTransactionType == PrintTransactionType.hutangDanPiutang;
 
     /// Get list all transaction depend of [type, peopleId, paymentStatus]
-    Future<List<RecentTransactionModel>> _transcations(PrintTransactionParameter parameter) async {
+    Future<List<RecentTransactionModel>> _transcations() async {
       List<RecentTransactionModel> transactions = [];
 
       if (isHutangAndPiutang) {
@@ -111,15 +111,16 @@ class TransactionLocalService {
 
       List<PaymentModel> payments = [];
       for (final transaction in transactions) {
-        final items = await paymentQuery
-            .getPayments(PaymentsParameter(transactionId: transaction.transactionId));
+        final paymentParameter = PaymentsParameter(transactionId: transaction.transactionId);
+        final items = await paymentQuery.getPayments(paymentParameter);
         payments = [...payments, ...items];
       }
+
       final grouped = groupBy<PaymentModel, String>(payments, (key) => key.transactionId);
       return grouped;
     }
 
-    final items = await _transcations(parameter);
+    final items = await _transcations();
     if (items.isEmpty) throw Exception("Data transaksi tidak ditemukan");
 
     final payments = await _payments(items);
