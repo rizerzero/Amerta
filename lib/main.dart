@@ -11,7 +11,7 @@ Future<void> main() async {
   /// Initialize Database Drift
   MyDatabase();
 
-  // turn off the # in the URLs on the web
+  /// turn off the # in the URLs on the web
   GoRouter.setUrlPathStrategy(UrlPathStrategy.path);
 
   runApp(const ProviderScope(child: App()));

@@ -26,7 +26,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(getPeopleById(peopleId));
+    final future = ref.watch(getPeopleById(peopleId)).unwrapPrevious();
 
     if (future is AsyncLoading) {
       return const Center(child: CircularProgressIndicator(color: Colors.white));

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,17 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
   final _key = GlobalKey<FormState>();
 
   @override
+  void initState() {
+    super.initState();
+    Timer.run(() => ref.invalidate(getPeopleById(widget.id)));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     /// Listen [People Detail Notifier]
     ref.listen<AsyncValue<PeopleModel?>>(
@@ -64,85 +76,95 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
           context: context,
           builder: (ctx) => const ModalLoadingWidget(),
         );
-      } else {
-        Navigator.pop(context);
-        state.whenOrNull(
-          data: (response) {
-            /// Jika success membuat people
-            /// Reset [Form People Parameter] & [Textfield]
-            if (response!.isNewPeople) {
-              _key.currentState?.reset();
-              ref.invalidate(formPeopleParameter);
-            }
+        return;
+      }
+      Navigator.pop(context);
+      state.whenOrNull(
+        data: (response) {
+          /// Jika success membuat people
+          /// Reset [Form People Parameter] & [Textfield]
+          if (response!.isNewPeople) {
+            /// Reset form parameter
+            _key.currentState?.reset();
+            ref.invalidate(formPeopleParameter);
+          }
 
-            showDialog(
-              context: context,
-              builder: (context) => ModalSuccessWidget(message: response.message),
-            );
-          },
-          error: (error, trace) => showDialog(
+          /// Refresh provider
+          ref.invalidate(getPeopleById(widget.id));
+          showDialog(
+            context: context,
+            builder: (context) => ModalSuccessWidget(message: response.message),
+          );
+        },
+        error: (error, trace) {
+          return showDialog(
             context: context,
             builder: (context) => ModalErrorWidget(message: "$error"),
-          ),
-        );
-      }
+          );
+        },
+      );
     });
 
-    final people = ref.watch(getPeopleById(widget.id));
-    return people.when(
-      data: (_) => GestureDetector(
-        onTap: () => FocusScope.of(context).unfocus(),
-        child: WillPopScope(
-          onWillPop: () async => false,
-          child: AlertDialog(
-            scrollable: true,
-            title: Text(
-              "Form Orang",
-              style: bodyFont.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+    final future = ref.watch(getPeopleById(widget.id));
+
+    if (future.isLoading) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (future.hasError) {
+      return AlertDialog(content: Text("${future.error}"));
+    }
+
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: WillPopScope(
+        onWillPop: () async => false,
+        child: AlertDialog(
+          scrollable: true,
+          title: Text(
+            "Form Orang",
+            style: bodyFont.copyWith(
+              fontWeight: FontWeight.bold,
             ),
-            content: Form(
-              key: _key,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                mainAxisSize: MainAxisSize.min,
-                children: const [
-                  _InputName(),
-                  SizedBox(height: 16.0),
-                  _InputImage(),
-                ],
-              ),
-            ),
-            actions: [
-              ElevatedButton(
-                onPressed: () async {
-                  final form = ref.read(formPeopleParameter);
-                  await ref.read(peopleActionNotifier.notifier).insertOrUpdate(form);
-                },
-                style: ElevatedButton.styleFrom(
-                  primary: secondaryDark,
-                ),
-                child: Text(
-                  "Submit",
-                  style: bodyFontWhite.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(),
-                child: Text(
-                  "Batal",
-                  style: bodyFont.copyWith(color: black),
-                ),
-              )
-            ],
           ),
+          content: Form(
+            key: _key,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                _InputName(),
+                SizedBox(height: 16.0),
+                _InputImage(),
+              ],
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () async {
+                final form = ref.read(formPeopleParameter);
+                await ref.read(peopleActionNotifier.notifier).insertOrUpdate(form);
+              },
+              style: ElevatedButton.styleFrom(
+                primary: secondaryDark,
+              ),
+              child: Text(
+                "Submit",
+                style: bodyFontWhite.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(
+                "Batal",
+                style: bodyFont.copyWith(color: black),
+              ),
+            )
+          ],
         ),
       ),
-      error: (error, trace) => AlertDialog(content: Text("$error")),
-      loading: () => const Center(child: CircularProgressIndicator()),
     );
   }
 }
