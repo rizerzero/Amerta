@@ -5,8 +5,82 @@
 </p>
 
 # Amerta
-Aplikasi untuk mengatur flow keluar-masuk hutang dan piutang kamu.
+Keresahan dalam mengatur hutang & piutang terciptalah aplikasi sederhana ini. Cara modern untuk mencatat hutang & piutang
 
+## Feature
+
+- [x] Form Tambah Orang
+- [x] Form Tambah Transaksi
+- [x] Form Pembayaran
+- [x] Statistik Hutang & Piutang
+- [x] List Transaksi Terkini berdasarkan tipe transaksinya (Hutang / Piutang)
+- [x] Ringkasan Transaksi (Hutang & Piutang) per orang
+- [x] Detail Transaksi
+- [x] Cetak transaksi berdasarkan : 
+1. Hutang 
+2. Piutang 
+3. Hutang & Pitaung 
+4. Spesifik Transaksi
+- [ ] Halaman Setting
+
+## Preview
+
+
+<table>
+    <tbody>
+        <tr>
+			<td>
+				<center>
+					<h3>Home</h3>
+					<img src="github/gif/1.home.gif" height=400>
+				</center>
+			</td>
+			<td>
+				<center>
+				<h3>People Form</h3>
+				<img src="github/gif/2.form_people.gif" height=400>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<center>
+				<h3>Transaction Form</h3>
+				<img src="github/gif/3.form_transaction.gif" height=400>
+				</center>
+			</td>
+			<td>
+				<center>
+				<h3>Peoples Summary</h3>
+				<img src="github/gif/4.peoples_summary.gif" height=400>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<center>
+				<h3>People Detail</h3>
+				<img src="github/gif/5.people_detail.gif" height=400>
+				</center>
+			</td>
+			<td>
+				<center>
+				<h3>Payment Form</h3>
+				<img src="github/gif/6.form_payment.gif" height=400>
+				</center>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				<center>
+				<h3>Print Transaction</h3>
+				<img src="github/gif/7.print_transaction.gif" height=400>
+				</center>
+			</td>
+		</tr>
+	</tbody>
+</table>
+ 
 ## Issues
 
 Please file any issues, bugs or feature request as an issue on <a href="https://github.com/zgramming/Amerta/issues"><b> Github </b></a>
