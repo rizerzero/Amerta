@@ -8,6 +8,7 @@ import '../../../utils/utils.dart';
 import '../../model/people/people_model.dart';
 import '../../model/transaction/form_transaction_parameter.dart';
 import '../../model/transaction/recent_transaction_model.dart';
+import '../../model/transaction/summary_transaction_detail_model.dart';
 import '../../model/transaction/summary_transaction_model.dart';
 import '../../model/transaction/transaction_insertorupdate_response.dart';
 import '../../model/transaction/transaction_model.dart';
