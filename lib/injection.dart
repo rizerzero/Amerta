@@ -10,13 +10,9 @@ import 'src/model/service/local/payment_local_service.dart';
 import 'src/model/service/local/people_local_service.dart';
 import 'src/model/service/local/transaction_local_service.dart';
 import 'src/view_model/payment/payment_action_notifier.dart';
-import 'src/view_model/payment/payment_notifier.dart';
 import 'src/view_model/people/people_action_notifier.dart';
-import 'src/view_model/people/people_notifier.dart';
-import 'src/view_model/people/peoples_summary_notifier.dart';
 import 'src/view_model/transaction/print_transaction_notifier.dart';
 import 'src/view_model/transaction/transaction_action_notifier.dart';
-import 'src/view_model/transaction/transaction_notifier.dart';
 
 ///* [Payment Section]
 
@@ -27,14 +23,6 @@ final paymentLocalService = Provider(
 final paymentRepository = Provider(
   (ref) => PaymentRepository(localService: ref.watch(paymentLocalService)),
 );
-
-final paymentNotifier =
-    StateNotifierProvider.autoDispose.family<PaymentNotifier, PaymentState, String?>((ref, id) {
-  return PaymentNotifier(
-    repository: ref.watch(paymentRepository),
-    id: id,
-  );
-});
 
 final paymentActionNotifier =
     StateNotifierProvider.autoDispose<PaymentActionNotifier, PaymentActionState>(
@@ -56,13 +44,7 @@ final transactionActionNotifier =
   return TransactionActionNotifier(repository: ref.watch(transactionRepository));
 });
 
-final transactionNotifier = StateNotifierProvider.family
-    .autoDispose<TransactionNotifier, TransactionState, String?>((ref, id) {
-  return TransactionNotifier(
-    id: id,
-    repository: ref.watch(transactionRepository),
-  );
-});
+///* [Print Transaction Section]
 
 final printTransactionNotifier =
     StateNotifierProvider.autoDispose<PrintTransactionNotifier, PrintTransactionState>(
@@ -84,20 +66,8 @@ final peopleActionNotifier =
   return PeopleActionNotifier(ref.watch(peopleRepository));
 });
 
-final peopleNotifier =
-    StateNotifierProvider.autoDispose.family<PeopleNotifier, PeopleState, String?>(
-  (ref, id) => PeopleNotifier(
-    repository: ref.watch(peopleRepository),
-    peopleId: id,
-  ),
-);
+///* [TABLE LOCAL DATABASE Section]
 
-final peoplesSummaryNotifier =
-    StateNotifierProvider.autoDispose<PeoplesSummaryNotifier, PeoplesSummaryState>((ref) {
-  return PeoplesSummaryNotifier(repository: ref.watch(peopleRepository));
-});
-
-///* [Query Section]
 final peopleTableQuery = Provider<PeopleTableQuery>((ref) => PeopleTableQuery());
 final transactionTableQuery = Provider<TransactionTableQuery>(
   (ref) => TransactionTableQuery(peopleQuery: ref.watch(peopleTableQuery)),

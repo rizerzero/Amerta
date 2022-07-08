@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../injection.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/transaction/people_summary_transaction_notifier.dart';
+import '../../../view_model/people/people_notifier.dart';
+import '../../../view_model/people/people_summary_transaction_notifier.dart';
 import '../../home/widgets/summary_amount.dart';
 import '../../modal/modal_option_people/modal_option_people.dart';
 import '../../modal/modal_print_transaction/modal_print_transaction.dart';
@@ -25,7 +25,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final future = ref.watch(peopleNotifier(peopleId)).item;
+    final future = ref.watch(getPeopleById(peopleId));
 
     if (future is AsyncLoading) {
       return const Center(child: CircularProgressIndicator(color: Colors.white));
@@ -114,7 +114,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                         Expanded(
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final future = ref.watch(getPeopleSummaryTransaction(peopleId));
+                              final future = ref.watch(getPeopleSummaryTransactionById(peopleId));
                               return future.when(
                                 data: (item) {
                                   return Row(

@@ -25,9 +25,9 @@ class PeopleLocalService {
     return result;
   }
 
-  Future<List<PeopleSummaryModel>> getPeopleSummary() async {
+  Future<List<PeopleSummaryModel>> getPeoplesSummary() async {
     await Future.delayed(kThemeAnimationDuration);
-    final result = await query.getPeopleSummary();
+    final result = await query.getPeoplesSummary();
     return result;
   }
 

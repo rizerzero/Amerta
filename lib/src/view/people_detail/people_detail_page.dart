@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../../injection.dart';
 import '../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../utils/utils.dart';
 
+import '../../view_model/people/people_notifier.dart';
 import '../../view_model/transaction/recent_transaction_notifier.dart';
 import 'widgets/people_detail_sliver_appbar.dart';
 import 'widgets/people_detail_sliver_tabbar.dart';
@@ -28,7 +28,7 @@ class PeopleDetailPage extends ConsumerWidget {
           onRefresh: () async {
             /// Refresh people notifier cause refresh all provider below this
             /// [peopleSummaryTransaction]
-            ref.invalidate(peopleNotifier(peopleId));
+            ref.invalidate(getPeopleById(peopleId));
 
             final param = RecentTransactionParameter(
               type: TransactionType.hutang,

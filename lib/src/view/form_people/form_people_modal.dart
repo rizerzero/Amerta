@@ -9,6 +9,7 @@ import '../../model/model/people/people_insertorupdate_response.dart';
 import '../../model/model/people/people_model.dart';
 import '../../utils/utils.dart';
 import '../../view_model/global/global_notifier.dart';
+import '../../view_model/people/people_notifier.dart';
 import '../widgets/modal_error.dart';
 import '../widgets/modal_loading.dart';
 import '../widgets/modal_success.dart';
@@ -32,19 +33,10 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
   final _key = GlobalKey<FormState>();
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() {
-      /// Trigger API GetById
-      ref.read(peopleNotifier(widget.id).notifier).getById(widget.id);
-    });
-  }
-
-  @override
   Widget build(BuildContext context) {
     /// Listen [People Detail Notifier]
     ref.listen<AsyncValue<PeopleModel?>>(
-      peopleNotifier(widget.id).select((value) => value.item),
+      getPeopleById(widget.id),
       (_, state) {
         state.whenData(
           (item) {
@@ -96,7 +88,7 @@ class _FormPeopleModalState extends ConsumerState<FormPeopleModal> {
       }
     });
 
-    final people = ref.watch(peopleNotifier(widget.id)).item;
+    final people = ref.watch(getPeopleById(widget.id));
     return people.when(
       data: (_) => GestureDetector(
         onTap: () => FocusScope.of(context).unfocus(),

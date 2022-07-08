@@ -13,6 +13,7 @@ import '../../model/model/transaction/transaction_model.dart';
 import '../../utils/utils.dart';
 import '../../view_model/global/global_notifier.dart';
 import '../../view_model/people/people_dropdown_notifier.dart';
+import '../../view_model/transaction/transaction_notifier.dart';
 import '../form_people/form_people_modal.dart';
 import '../widgets/modal_loading.dart';
 import '../widgets/modal_success.dart';
@@ -49,7 +50,7 @@ class _FormTransactionPageState extends ConsumerState<FormTransactionPage> {
     /// Ketika berhasil load [transactionNotifier]
     /// Set initial [formTransactionParameter]
     ref.listen<AsyncValue<TransactionModel?>>(
-      transactionNotifier(widget.transactionId).select((value) => value.item),
+      getTransactionById(widget.transactionId),
       (_, state) {
         state.whenOrNull(
           data: (item) {
@@ -113,9 +114,9 @@ class _FormTransactionPageState extends ConsumerState<FormTransactionPage> {
       },
     );
 
-    final transaction = ref.watch(transactionNotifier(widget.transactionId));
+    final future = ref.watch(getTransactionById(widget.transactionId));
 
-    return transaction.item.when(
+    return future.when(
       data: (data) {
         return GestureDetector(
           /// Jike menekan ke sembarang tempat, non-aktifkan focus input

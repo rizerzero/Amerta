@@ -60,9 +60,9 @@ class PeopleRepository {
     }
   }
 
-  Future<Either<Failure, List<PeopleSummaryModel>>> getPeopleSummary() async {
+  Future<Either<Failure, List<PeopleSummaryModel>>> getPeoplesSummary() async {
     try {
-      final result = await peopleLocalService.getPeopleSummary();
+      final result = await peopleLocalService.getPeoplesSummary();
       return Right(result);
     } on SqliteException catch (exception) {
       return Left(SqliteFailure(exception: exception));

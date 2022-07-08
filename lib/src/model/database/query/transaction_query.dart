@@ -90,7 +90,7 @@ class TransactionTableQuery extends MyDatabase {
 
     if (peopleId != null) where += " AND t1.people_id = ? ";
     if (paymentStatus != null) where += " AND t1.payment_status = ?";
-    if (limit != null) qLimit += "LIMIT $limit";
+    if (limit != null) qLimit += " LIMIT $limit";
 
     final query = """
                 SELECT t1.id, t1.title, t1.amount, t1.transaction_type, t1.loan_date, t1.return_date,
@@ -170,7 +170,7 @@ class TransactionTableQuery extends MyDatabase {
     final trx = await (select(transactionTable)..where((t) => t.id.equals(form.transactionId)))
         .getSingleOrNull();
 
-    transaction(() async {
+    final result = await transaction(() async {
       File? tempFile;
 
       /// Check if have selected file/image
@@ -210,19 +210,21 @@ class TransactionTableQuery extends MyDatabase {
           updatedAt: Value(form.updatedAt),
         ),
       );
+
+      if (trx == null) {
+        return TransactionInsertOrUpdateResponse(
+          isNewTransaction: true,
+          message: "Berhasil membuat transaksi ${form.title}",
+        );
+      }
+
+      return TransactionInsertOrUpdateResponse(
+        isNewTransaction: false,
+        message: "Berhasil mengupdate transaksi ${form.title}",
+      );
     });
 
-    if (trx == null) {
-      return TransactionInsertOrUpdateResponse(
-        isNewTransaction: true,
-        message: "Berhasil membuat transaksi ${form.title}",
-      );
-    }
-
-    return TransactionInsertOrUpdateResponse(
-      isNewTransaction: false,
-      message: "Berhasil mengupdate transaksi ${form.title}",
-    );
+    return result;
   }
 
   Future<int> deleteTransaction(String id) async {
@@ -230,7 +232,7 @@ class TransactionTableQuery extends MyDatabase {
 
     final query = delete(transactionTable)..where((trx) => trx.id.equals(id));
 
-    await transaction(() async {
+    final result = await transaction(() async {
       /// Operation Delete Image
       if (trx.attachmentPath != null) {
         final file = File(trx.attachmentPath!);
@@ -241,7 +243,9 @@ class TransactionTableQuery extends MyDatabase {
       }
 
       await query.go();
+      return 1;
     });
-    return 1;
+
+    return result;
   }
 }

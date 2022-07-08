@@ -4,9 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../injection.dart';
 import '../../utils/utils.dart';
-import '../../view_model/people/peoples_summary_notifier.dart';
+import '../../view_model/people/peoples_summary_transaction_notifier.dart';
 
 part 'widgets/appbar.dart';
 
@@ -20,12 +19,12 @@ class PeoplesSummaryPage extends ConsumerWidget {
       appBar: const _AppBar(),
       body: Builder(
         builder: (context) {
-          final future = ref.watch(peoplesSummaryNotifier).items;
+          final future = ref.watch(getPeoplesSummaryTransaction);
           return future.when(
             data: (_) {
               final items = ref.watch(filteredPeoplesSummary);
               return RefreshIndicator(
-                onRefresh: () async => ref.invalidate(peoplesSummaryNotifier),
+                onRefresh: () async => ref.invalidate(getPeoplesSummaryTransaction),
                 child: ListView.builder(
                   shrinkWrap: true,
                   padding: const EdgeInsets.all(16.0),

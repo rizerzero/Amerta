@@ -10,6 +10,7 @@ import '../../../injection.dart';
 import '../../model/model/payment/payment_model.dart';
 import '../../utils/utils.dart';
 import '../../view_model/global/global_notifier.dart';
+import '../../view_model/payment/payment_notifier.dart';
 import '../widgets/modal_loading.dart';
 
 part 'widgets/input_description.dart';
@@ -32,7 +33,7 @@ class FormPaymentModal extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     /// Listen [paymentNotifier]
     ref.listen<AsyncValue<PaymentModel?>>(
-      paymentNotifier(id).select((value) => value.item),
+      getPaymentById(id),
       (_, state) {
         /// Ketika berhasil load detail transaksi
         /// Setup [form transaction detail parameter]
@@ -81,9 +82,9 @@ class FormPaymentModal extends ConsumerWidget {
         }
       },
     );
-    final payment = ref.watch(paymentNotifier(id)).item;
-    return payment.when(
-      data: (_) {
+    final future = ref.watch(getPaymentById(id));
+    return future.when(
+      data: (item) {
         return AlertDialog(
           scrollable: true,
           title: Text(

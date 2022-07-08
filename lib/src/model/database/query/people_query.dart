@@ -70,7 +70,7 @@ class PeopleTableQuery extends MyDatabase {
     return result;
   }
 
-  Future<List<PeopleSummaryModel>> getPeopleSummary() async {
+  Future<List<PeopleSummaryModel>> getPeoplesSummary() async {
     final query = customSelect("""
           SELECT
             t1.*,

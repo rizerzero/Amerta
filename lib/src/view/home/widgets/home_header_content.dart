@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../model/model/people/people_top_ten_model.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/people/people_latest_ten_notifier.dart';
-import '../../../view_model/transaction/people_summary_transaction_notifier.dart';
+import '../../../view_model/people/people_summary_transaction_notifier.dart';
 import 'summary_amount.dart';
 
 part 'home_people_item.dart';
@@ -36,7 +36,7 @@ class HomeHeaderContent extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Consumer(
                     builder: (context, ref, child) {
-                      final future = ref.watch(getPeopleSummaryTransaction(null));
+                      final future = ref.watch(getPeopleSummaryTransactionById(null));
                       return future.when(
                         data: (item) {
                           final hutang = describeEnum(item.hutang.transactionType).toUpperCase();
@@ -72,7 +72,7 @@ class HomeHeaderContent extends StatelessWidget {
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    final future = ref.watch(getPeopleSummaryTransaction(null));
+                    final future = ref.watch(getPeopleSummaryTransactionById(null));
                     return future.when(
                       data: (item) {
                         return Row(
