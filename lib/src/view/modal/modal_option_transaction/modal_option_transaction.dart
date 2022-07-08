@@ -6,7 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
 import '../../../model/model/transaction/print_transaction_parameter.dart';
-import '../../../model/model/transaction/recent_transaction_model.dart';
+import '../../../model/model/transaction/transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../welcome/widgets/option_tile.dart';
 import '../../widgets/modal_error.dart';
@@ -19,7 +19,7 @@ class ModalOptionTransaction extends ConsumerWidget {
     required this.transaction,
   }) : super(key: key);
 
-  final RecentTransactionModel transaction;
+  final TransactionModel transaction;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -57,7 +57,7 @@ class ModalOptionTransaction extends ConsumerWidget {
             sideColor: primary,
             onTap: () => context.pushNamed(
               transactionFormEditRouteNamed,
-              params: {"transactionId": transaction.transactionId},
+              params: {"transactionId": transaction.id},
             ),
           ),
           OptionTile(
@@ -69,23 +69,23 @@ class ModalOptionTransaction extends ConsumerWidget {
             onTap: () async => await showDialog(
               barrierDismissible: false,
               context: context,
-              builder: (context) =>
-                  ModalRemoveTransaction(transactionId: transaction.transactionId),
+              builder: (context) => ModalRemoveTransaction(transactionId: transaction.id),
             ),
           ),
           OptionTile(
             padding: const EdgeInsets.only(bottom: 16.0),
             icon: Icons.print_outlined,
             title: "Cetak Transaksi",
-            subtitle: "Cetak transaksi dengan kode ${transaction.transactionId}",
+            subtitle: "Cetak transaksi dengan kode ${transaction.id}",
             sideColor: secondaryLight,
             onTap: () async {
               final parameter = PrintTransactionParameter(
-                peopleId: transaction.people.peopleId,
+                transactionId: transaction.id,
+                peopleId: transaction.people?.peopleId ?? "",
                 printTransactionType: transaction.type.toPrintType(),
               );
 
-              await ref.read(printTransactionNotifier.notifier).printTransaction(parameter);
+              await ref.read(printTransactionNotifier.notifier).printSingleTransaction(parameter);
             },
           ),
         ],

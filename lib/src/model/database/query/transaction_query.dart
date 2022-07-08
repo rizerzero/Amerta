@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -8,7 +7,6 @@ import 'package:path/path.dart' as p;
 import '../../../utils/utils.dart';
 import '../../model/people/people_model.dart';
 import '../../model/transaction/form_transaction_parameter.dart';
-import '../../model/transaction/recent_transaction_model.dart';
 import '../../model/transaction/summary_transaction_detail_model.dart';
 import '../../model/transaction/summary_transaction_model.dart';
 import '../../model/transaction/transaction_insertorupdate_response.dart';
@@ -76,10 +74,6 @@ class TransactionTableQuery extends MyDatabase {
       },
     ).get();
 
-    result.forEach((element) {
-      log("element $element");
-    });
-
     final hutang =
         result.firstWhereOrNull((element) => element.transactionType == TransactionType.hutang) ??
             const SummaryTransactionDetailModel(transactionType: TransactionType.hutang);
@@ -89,7 +83,7 @@ class TransactionTableQuery extends MyDatabase {
     return SummaryTransactionModel(hutang: hutang, piutang: piutang);
   }
 
-  Future<List<RecentTransactionModel>> getTransactions({
+  Future<List<TransactionModel>> getTransactions({
     required TransactionType type,
     PaymentStatus? paymentStatus,
     String? peopleId,
@@ -104,7 +98,7 @@ class TransactionTableQuery extends MyDatabase {
 
     final query = """
                 SELECT t1.id, t1.title, t1.amount, t1.transaction_type, t1.loan_date, t1.return_date,
-                t1.description, t1.payment_status,
+                t1.description, t1.payment_status, t1.attachment_path, t1.created_at, t1.updated_at,
                 t2.id as people_id, t2.name as people_name, t2.image_path as people_image_path,
                 (SELECT SUM(amount) FROM ${paymentTable.tableName} WHERE transaction_id = t1.id ) as amount_payment
 
@@ -126,16 +120,20 @@ class TransactionTableQuery extends MyDatabase {
         peoplesTable,
       },
     ).map((row) {
-      return RecentTransactionModel(
-        transactionId: row.read<String>("id"),
+      return TransactionModel(
+        id: row.read<String>("id"),
         amount: row.read<int>("amount"),
         amountPayment: row.read<int?>("amount_payment"),
         title: row.read<String>("title"),
         type: TransactionType.values.byName(row.read<String>("transaction_type")),
-        paymentStatus: PaymentStatus.values.byName(row.read<String>("payment_status")),
+        status: PaymentStatus.values.byName(row.read<String>("payment_status")),
         loanDate: fn.dateTimeFromUnix(row.read("loan_date"))!,
         returnDate: fn.dateTimeFromUnix(row.read("return_date")),
-        description: row.read("description"),
+        description: row.read<String?>("description"),
+        createdAt: fn.dateTimeFromUnix(row.read("created_at")) ?? DateTime.now(),
+        updatedAt: fn.dateTimeFromUnix(row.read("updated_at")) ?? DateTime.now(),
+        attachmentPath: row.read<String?>("attachment_path"),
+        peopleId: row.read<String>("people_id"),
         people: PeopleModel(
           peopleId: row.read<String>("people_id"),
           name: row.read<String>("people_name"),

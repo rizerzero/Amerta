@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../model/model/transaction/recent_transaction_parameter.dart';
+import '../../../model/model/transaction/transaction_parameter.dart';
 import '../../../utils/utils.dart';
-import '../../../view_model/transaction/recent_transaction_notifier.dart';
+import '../../../view_model/transaction/transactions_notifier.dart';
 import '../../home/widgets/transaction_tile.dart';
 
 class PeopleDetailTabBarItem extends StatefulWidget {
@@ -29,7 +29,7 @@ class _PeopleDetailTabBarItemState extends State<PeopleDetailTabBarItem>
       builder: (context) {
         return Consumer(
           builder: (_, ref, __) {
-            final param = RecentTransactionParameter(
+            final param = TransactionParameter(
               type: widget.transactionType,
               peopleId: widget.peopleId,
             );

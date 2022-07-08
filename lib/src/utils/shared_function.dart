@@ -114,18 +114,13 @@ class SharedFunction {
     required String title,
     Color? color,
   }) {
-    ScaffoldMessenger.of(context).hideCurrentSnackBar();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          title,
-          style: bodyFontWhite.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        backgroundColor: color,
-      ),
+    final snackbar = SnackBar(
+      content: Text(title, style: bodyFontWhite.copyWith(fontWeight: FontWeight.bold)),
+      backgroundColor: color,
+      duration: const Duration(seconds: 10),
     );
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(snackbar);
   }
 }
 

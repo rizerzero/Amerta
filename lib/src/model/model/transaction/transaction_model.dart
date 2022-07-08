@@ -9,6 +9,7 @@ class TransactionModel extends Equatable {
     this.peopleId = '',
     this.title = '',
     this.amount = 0,
+    this.amountPayment,
     required this.loanDate,
     this.returnDate,
     this.description,
@@ -24,6 +25,9 @@ class TransactionModel extends Equatable {
   final String peopleId;
   final String title;
   final int amount;
+
+  /// Total hutang yang sudah dibayarkan
+  final int? amountPayment;
   final DateTime loanDate;
   final DateTime? returnDate;
   final String? description;
@@ -41,6 +45,7 @@ class TransactionModel extends Equatable {
       peopleId,
       title,
       amount,
+      amountPayment,
       loanDate,
       returnDate,
       description,
@@ -55,7 +60,7 @@ class TransactionModel extends Equatable {
 
   @override
   String toString() {
-    return 'TransactionModel(id: $id, peopleId: $peopleId, title: $title, amount: $amount, loanDate: $loanDate, returnDate: $returnDate, description: $description, attachmentPath: $attachmentPath, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, people: $people)';
+    return 'TransactionModel(id: $id, peopleId: $peopleId, title: $title, amount: $amount, amountPayment: $amountPayment, loanDate: $loanDate, returnDate: $returnDate, description: $description, attachmentPath: $attachmentPath, status: $status, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, people: $people)';
   }
 
   TransactionModel copyWith({
@@ -63,6 +68,7 @@ class TransactionModel extends Equatable {
     String? peopleId,
     String? title,
     int? amount,
+    int? amountPayment,
     DateTime? loanDate,
     DateTime? returnDate,
     String? description,
@@ -78,6 +84,7 @@ class TransactionModel extends Equatable {
       peopleId: peopleId ?? this.peopleId,
       title: title ?? this.title,
       amount: amount ?? this.amount,
+      amountPayment: amountPayment ?? this.amountPayment,
       loanDate: loanDate ?? this.loanDate,
       returnDate: returnDate ?? this.returnDate,
       description: description ?? this.description,

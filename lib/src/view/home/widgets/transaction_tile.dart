@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../model/model/transaction/recent_transaction_model.dart';
+import '../../../model/model/transaction/transaction_model.dart';
 import '../../../utils/utils.dart';
 import '../../modal/modal_option_transaction/modal_option_transaction.dart';
 
@@ -14,7 +14,7 @@ class TransactionTile extends StatelessWidget {
 
   final EdgeInsetsGeometry? padding;
 
-  final RecentTransactionModel transaction;
+  final TransactionModel transaction;
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +53,8 @@ class TransactionTile extends StatelessWidget {
                 context.pushNamed(
                   peopleTransactionRouteNamed,
                   params: {
-                    "peopleId": transaction.people.peopleId,
-                    'transactionId': transaction.transactionId,
+                    "peopleId": transaction.people?.peopleId ?? "",
+                    'transactionId': transaction.id,
                   },
                 );
               },
@@ -82,9 +82,9 @@ class TransactionTile extends StatelessWidget {
                     TextSpan(
                       text: "Reference : ",
                       children: [
-                        TextSpan(text: "${transaction.people.name} "),
+                        TextSpan(text: "${transaction.people?.name} "),
                         TextSpan(
-                          text: "#${transaction.transactionId}",
+                          text: "#${transaction.id}",
                           style: bodyFont.copyWith(
                             fontWeight: FontWeight.bold,
                             color: primary,

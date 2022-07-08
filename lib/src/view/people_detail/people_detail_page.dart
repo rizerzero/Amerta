@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../model/model/transaction/recent_transaction_parameter.dart';
+import '../../model/model/transaction/transaction_parameter.dart';
 import '../../utils/utils.dart';
 
 import '../../view_model/people/people_notifier.dart';
-import '../../view_model/transaction/recent_transaction_notifier.dart';
+import '../../view_model/transaction/transactions_notifier.dart';
 import 'widgets/people_detail_sliver_appbar.dart';
 import 'widgets/people_detail_sliver_tabbar.dart';
 import 'widgets/people_detail_tabbar_item.dart';
@@ -30,7 +30,7 @@ class PeopleDetailPage extends ConsumerWidget {
             /// [peopleSummaryTransaction]
             ref.invalidate(getPeopleById(peopleId));
 
-            final param = RecentTransactionParameter(
+            final param = TransactionParameter(
               type: TransactionType.hutang,
               peopleId: peopleId,
             );

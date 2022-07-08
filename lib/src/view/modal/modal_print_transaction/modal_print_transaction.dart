@@ -52,8 +52,9 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             subtitle: "Mencetak semua transaksi Hutang",
             padding: const EdgeInsets.only(bottom: 16.0),
             onTap: () async {
-              await ref.read(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printMultipleTransaction(
                     PrintTransactionParameter(
+                      transactionId: null,
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutang,
                       paymentStatus: PaymentStatus.notPaidOff,
@@ -67,8 +68,9 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: 16.0),
             sideColor: primaryShade2,
             onTap: () async {
-              await ref.read(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printMultipleTransaction(
                     PrintTransactionParameter(
+                      transactionId: null,
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.piutang,
                       paymentStatus: PaymentStatus.notPaidOff,
@@ -81,8 +83,9 @@ class ModalOptionPrintTransaction extends ConsumerWidget {
             subtitle: "Mencetak semua transaksi Hutang dan Piutang",
             sideColor: primaryShade4,
             onTap: () async {
-              await ref.read(printTransactionNotifier.notifier).printTransaction(
+              await ref.read(printTransactionNotifier.notifier).printMultipleTransaction(
                     PrintTransactionParameter(
+                      transactionId: null,
                       peopleId: peopleId,
                       printTransactionType: PrintTransactionType.hutangDanPiutang,
                       paymentStatus: PaymentStatus.notPaidOff,

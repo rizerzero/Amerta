@@ -4,7 +4,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
 import '../../model/model/payment/payment_model.dart';
-import '../../model/model/transaction/recent_transaction_model.dart';
+import '../../model/model/transaction/transaction_model.dart';
 import '../utils.dart';
 
 class PDFWidget {
@@ -100,7 +100,7 @@ class PDFWidget {
 
   pw.Widget information({
     required int index,
-    required RecentTransactionModel item,
+    required TransactionModel item,
   }) {
     const primaryColor = PdfColor.fromInt(0xFF3DB2FF);
 
@@ -126,7 +126,7 @@ class PDFWidget {
                 ),
               ),
               pw.Text(
-                "#${item.transactionId}",
+                "#${item.id}",
                 style: pw.TextStyle(
                   color: PdfColors.white.shade(.4),
                   fontSize: 12.0,

@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../injection.dart';
+import '../../model/model/payment/payment_insertorupdate_response.dart';
 import '../../model/model/payment/payment_model.dart';
 import '../../utils/utils.dart';
 import '../../view_model/global/global_notifier.dart';
@@ -57,8 +58,7 @@ class FormPaymentModal extends ConsumerWidget {
       },
     );
 
-    /// Listen []
-    ref.listen<AsyncValue>(
+    ref.listen<AsyncValue<PaymentInsertOrUpdateResponse?>>(
       paymentActionNotifier.select((value) => value.insertOrUpdate),
       (_, state) {
         if (state is AsyncLoading) {
@@ -67,19 +67,20 @@ class FormPaymentModal extends ConsumerWidget {
             barrierDismissible: false,
             builder: (context) => const ModalLoadingWidget(),
           );
-        } else {
-          state.whenOrNull(
-            /// When success create transaction detail
-            /// Reset [TextField, Form Transaction Detail Parameter]
-            data: (_) =>
-                fn.showSnackbar(context, title: "Berhasil membuat transaksi", color: Colors.green),
-            error: (error, trace) => fn.showSnackbar(context, title: "$error", color: Colors.red),
-          );
-
-          /// Tutup Modal Form & Loading
-          int count = 0;
-          Navigator.popUntil(context, (route) => count++ == 2);
+          return;
         }
+
+        state.whenOrNull(
+          /// When success create transaction detail
+          /// Reset [TextField, Form Transaction Detail Parameter]
+          data: (response) =>
+              fn.showSnackbar(context, title: "${response?.message}", color: Colors.green),
+          error: (error, trace) => fn.showSnackbar(context, title: "$error", color: Colors.red),
+        );
+
+        /// Tutup Modal Form & Loading
+        int count = 0;
+        Navigator.popUntil(context, (route) => count++ == 2);
       },
     );
     final future = ref.watch(getPaymentById(id));

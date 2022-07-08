@@ -142,6 +142,21 @@ class PaymentTableQuery extends MyDatabase {
   }
 
   Future<PaymentInsertOrUpdateResponse> insertOrUpdatePayment(FormPaymentParameter form) async {
+    /// Check apakah pembayaran melebihi total hutang, jika iya kasih alert
+    final getCurrentSummaryPayment = await getPaymentSummary(
+      peopleId: form.peopleId,
+      transactionId: form.transactionId,
+    );
+
+    final estimatedNextPayment = (form.amount + (getCurrentSummaryPayment?.amountPayment ?? 0));
+    if (estimatedNextPayment > (getCurrentSummaryPayment?.amount ?? 0)) {
+      throw Exception("""
+Pembayaran melebihi hutang\n
+Hutang : ${fn.rupiahCurrency(getCurrentSummaryPayment?.amount ?? 0)}\n
+Estimasi Pembayaran : ${fn.rupiahCurrency(estimatedNextPayment)}
+      """);
+    }
+
     final trx = await (select(paymentTable)..where((payment) => payment.id.equals(form.id)))
         .getSingleOrNull();
 

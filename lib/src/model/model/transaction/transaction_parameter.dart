@@ -2,8 +2,8 @@ import 'package:equatable/equatable.dart';
 
 import '../../../utils/enums.dart';
 
-class RecentTransactionParameter extends Equatable {
-  const RecentTransactionParameter({
+class TransactionParameter extends Equatable {
+  const TransactionParameter({
     required this.type,
     this.limit,
     this.peopleId,
@@ -20,16 +20,16 @@ class RecentTransactionParameter extends Equatable {
 
   @override
   String toString() {
-    return 'RecentTransactionParameter(type: $type, limit: $limit, peopleId: $peopleId, paymentStatus: $paymentStatus)';
+    return 'TransactionParameter(type: $type, limit: $limit, peopleId: $peopleId, paymentStatus: $paymentStatus)';
   }
 
-  RecentTransactionParameter copyWith({
+  TransactionParameter copyWith({
     TransactionType? type,
     int? limit,
     String? peopleId,
     PaymentStatus? paymentStatus,
   }) {
-    return RecentTransactionParameter(
+    return TransactionParameter(
       type: type ?? this.type,
       limit: limit ?? this.limit,
       peopleId: peopleId ?? this.peopleId,

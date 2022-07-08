@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../model/model/people/people_model.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/people/people_notifier.dart';
 import '../../../view_model/people/people_summary_transaction_notifier.dart';
@@ -35,7 +36,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
       return future.whenOrNull(error: (error, trace) => Text("Error $error"))!;
     }
 
-    final people = future.value!;
+    final people = future.value ?? const PeopleModel();
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -58,12 +59,10 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
         );
 
         final iconPrint = IconButton(
-          onPressed: () async {
-            showModalBottomSheet(
-              context: context,
-              builder: (context) => ModalOptionPrintTransaction(peopleId: people.peopleId),
-            );
-          },
+          onPressed: () async => await showModalBottomSheet(
+            context: context,
+            builder: (context) => ModalOptionPrintTransaction(peopleId: people.peopleId),
+          ),
           icon: const Icon(Icons.print_outlined, color: Colors.white),
         );
         return FlexibleSpaceBar(

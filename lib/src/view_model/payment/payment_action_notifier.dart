@@ -21,7 +21,9 @@ class PaymentActionNotifier extends StateNotifier<PaymentActionState> {
     final result = await repository.insertOrUpdatePayment(form);
     return result.fold(
       (failure) => state = state.copyWith(insertOrUpdate: AsyncError(failure.message)),
-      (val) => state = state.copyWith(insertOrUpdate: const AsyncData(null)),
+      (val) => state = state.copyWith(
+        insertOrUpdate: AsyncData(val),
+      ),
     );
   }
 
@@ -30,7 +32,7 @@ class PaymentActionNotifier extends StateNotifier<PaymentActionState> {
     final result = await repository.deletePayment(id);
     return result.fold(
       (failure) => state = state.copyWith(delete: AsyncError(failure.message)),
-      (val) => state = state.copyWith(delete: const AsyncData(null)),
+      (val) => state = state.copyWith(delete: AsyncData(val)),
     );
   }
 }

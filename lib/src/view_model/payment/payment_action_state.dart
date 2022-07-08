@@ -7,7 +7,7 @@ class PaymentActionState extends Equatable {
   });
 
   final AsyncValue<PaymentInsertOrUpdateResponse?> insertOrUpdate;
-  final AsyncValue<void> delete;
+  final AsyncValue<int?> delete;
 
   @override
   List<Object> get props => [insertOrUpdate, delete];
@@ -17,7 +17,7 @@ class PaymentActionState extends Equatable {
 
   PaymentActionState copyWith({
     AsyncValue<PaymentInsertOrUpdateResponse?>? insertOrUpdate,
-    AsyncValue<void>? delete,
+    AsyncValue<int>? delete,
   }) {
     return PaymentActionState(
       insertOrUpdate: insertOrUpdate ?? this.insertOrUpdate,

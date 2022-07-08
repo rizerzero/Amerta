@@ -14,12 +14,22 @@ class PrintTransactionNotifier extends StateNotifier<PrintTransactionState> {
 
   final TransactionRepository repository;
 
-  Future<PrintTransactionState> printTransaction(PrintTransactionParameter parameter) async {
+  Future<PrintTransactionState> printMultipleTransaction(
+      PrintTransactionParameter parameter) async {
     state = state.copyWith(item: const AsyncLoading());
-    final result = await repository.printTransaction(parameter);
+    final result = await repository.printMultipleTransaction(parameter);
     return result.fold(
-      (l) => state = state.copyWith(item: AsyncError(l.message)),
-      (r) => state = state.copyWith(item: AsyncData(r)),
+      (failure) => state = state.copyWith(item: AsyncError(failure.message)),
+      (bytes) => state = state.copyWith(item: AsyncData(bytes)),
+    );
+  }
+
+  Future<PrintTransactionState> printSingleTransaction(PrintTransactionParameter parameter) async {
+    state = state.copyWith(item: const AsyncLoading());
+    final result = await repository.printSingleTransaction(parameter);
+    return result.fold(
+      (failure) => state = state.copyWith(item: AsyncError(failure.message)),
+      (bytes) => state = state.copyWith(item: AsyncData(bytes)),
     );
   }
 }

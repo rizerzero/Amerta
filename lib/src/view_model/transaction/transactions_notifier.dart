@@ -1,13 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../injection.dart';
-import '../../model/model/transaction/recent_transaction_model.dart';
-import '../../model/model/transaction/recent_transaction_parameter.dart';
+import '../../model/model/transaction/transaction_model.dart';
+import '../../model/model/transaction/transaction_parameter.dart';
 import '../payment/payment_action_notifier.dart';
 import 'transaction_action_notifier.dart';
 
 final getTransactions = FutureProvider.autoDispose
-    .family<List<RecentTransactionModel>, RecentTransactionParameter>((ref, param) async {
+    .family<List<TransactionModel>, TransactionParameter>((ref, param) async {
   /// Every [add / update / delete] payment, refresh this provider
   ref.listen<PaymentActionState>(paymentActionNotifier, (_, state) {
     state.insertOrUpdate.whenData((_) => ref.invalidateSelf());

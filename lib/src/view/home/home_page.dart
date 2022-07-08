@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../model/model/transaction/recent_transaction_parameter.dart';
+import '../../model/model/transaction/transaction_parameter.dart';
 import '../../utils/utils.dart';
 import '../../view_model/people/people_latest_ten_notifier.dart';
 import '../../view_model/people/people_summary_transaction_notifier.dart';
-import '../../view_model/transaction/recent_transaction_notifier.dart';
+import '../../view_model/transaction/transactions_notifier.dart';
 import 'widgets/home_header_content.dart';
 import 'widgets/home_tabbar_item.dart';
 import 'widgets/home_tabbar_persistent_header.dart';
@@ -25,7 +25,7 @@ class HomePage extends ConsumerWidget {
 
           ref.refresh(getPeopleSummaryTransactionById(null));
 
-          const param = RecentTransactionParameter(type: TransactionType.hutang);
+          const param = TransactionParameter(type: TransactionType.hutang);
           ref.refresh(getTransactions(param));
 
           ref.refresh(getTransactions(param.copyWith(type: TransactionType.piutang)));
