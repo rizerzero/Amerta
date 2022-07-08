@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:collection/collection.dart';
@@ -26,7 +27,7 @@ class TransactionTableQuery extends MyDatabase {
 
   Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
     String where = peopleId == null ? "" : "WHERE `people_id` = ?";
-
+    String subqueryWhere = peopleId == null ? "" : " AND sub2.people_id = ?";
     String query = """
     SELECT
       t1.`transaction_type` AS transactionType,
@@ -37,7 +38,9 @@ class TransactionTableQuery extends MyDatabase {
         ${paymentTable.tableName} AS sub1
         JOIN ${transactionTable.tableName} AS sub2
           ON (sub1.transaction_id = sub2.id)
-      WHERE sub2.transaction_type = t1.`transaction_type`) AS totalPayment
+      WHERE sub2.transaction_type = t1.`transaction_type`
+      $subqueryWhere
+      ) AS totalPayment
     FROM
       ${transactionTable.tableName} AS t1
     $where
@@ -51,7 +54,10 @@ class TransactionTableQuery extends MyDatabase {
         paymentTable,
       },
       variables: [
-        if (peopleId != null) Variable.withString(peopleId),
+        if (peopleId != null) ...[
+          Variable.withString(peopleId),
+          Variable.withString(peopleId),
+        ],
       ],
     ).map(
       (row) {
@@ -69,6 +75,10 @@ class TransactionTableQuery extends MyDatabase {
         );
       },
     ).get();
+
+    result.forEach((element) {
+      log("element $element");
+    });
 
     final hutang =
         result.firstWhereOrNull((element) => element.transactionType == TransactionType.hutang) ??
