@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../injection.dart';
 import '../../../utils/utils.dart';
+import '../../../view_model/transaction/people_summary_transaction_notifier.dart';
 import '../../home/widgets/summary_amount.dart';
 import '../../modal/modal_option_people/modal_option_people.dart';
 import '../../modal/modal_print_transaction/modal_print_transaction.dart';
@@ -41,7 +43,7 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
         final isCollapse = height <= kToolbarHeight + fn.notchTop(context);
 
         final iconBackButton = IconButton(
-          onPressed: () => context.goNamed(appRouteNamed),
+          onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back, color: Colors.white),
         );
 
@@ -112,23 +114,26 @@ class PeopleDetailSliverAppbar extends ConsumerWidget {
                         Expanded(
                           child: Consumer(
                             builder: (context, ref, child) {
-                              final future = ref.watch(peopleSummaryTransactionNotifier(peopleId));
-                              return future.items.when(
-                                data: (_) {
+                              final future = ref.watch(getPeopleSummaryTransaction(peopleId));
+                              return future.when(
+                                data: (item) {
                                   return Row(
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
                                       Expanded(
                                         child: SummaryAmount(
-                                          title: "Hutang",
-                                          amount: future.balance(TransactionType.hutang),
+                                          title: describeEnum(item.hutang.transactionType)
+                                              .toUpperCase(),
+                                          // amount: future.balance(TransactionType.hutang),
+                                          amount: item.hutang.balance,
                                         ),
                                       ),
-                                      const SizedBox(width: 24.0),
                                       Expanded(
                                         child: SummaryAmount(
-                                          title: "Piutang",
-                                          amount: future.balance(TransactionType.piutang),
+                                          title: describeEnum(item.piutang.transactionType)
+                                              .toUpperCase(),
+                                          // amount: future.balance(TransactionType.hutang),
+                                          amount: item.piutang.balance,
                                         ),
                                       ),
                                     ],

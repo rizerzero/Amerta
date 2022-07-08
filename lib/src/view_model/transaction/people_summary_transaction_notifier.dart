@@ -1,29 +1,27 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../injection.dart';
 import '../../model/model/transaction/summary_transaction_model.dart';
-import '../../model/repository/transaction_repository.dart';
-import '../../utils/utils.dart';
+import '../payment/payment_action_notifier.dart';
+import 'transaction_action_notifier.dart';
 
-part 'people_summary_transaction_state.dart';
+final getPeopleSummaryTransaction =
+    FutureProvider.autoDispose.family<SummaryTransactionModel, String?>((ref, peopleId) async {
+  /// Setiap ada aksi dari [paymentActionNotifier]
+  /// Refresh provider ini
+  ref.listen<PaymentActionState>(paymentActionNotifier, (previous, next) {
+    next.delete.whenData((value) => ref.invalidateSelf());
+    next.insertOrUpdate.whenData((value) => ref.invalidateSelf());
+  });
 
-class PeopleSummaryTransactionNotifier extends StateNotifier<PeopleSummaryTransactionState> {
-  PeopleSummaryTransactionNotifier({
-    required this.repository,
-    required this.peopleId,
-  }) : super(const PeopleSummaryTransactionState()) {
-    getSummaryTransaction(peopleId);
-  }
+  /// Setiap ada aksi dari [transactionActionNotifier]
+  /// Refresh provider ini
+  ref.listen<TransactionActionState>(transactionActionNotifier, (previous, next) {
+    next.delete.whenData((value) => ref.invalidateSelf());
+    next.insertOrUpdate.whenData((value) => ref.invalidateSelf());
+  });
 
-  final TransactionRepository repository;
-  final String? peopleId;
-
-  Future<PeopleSummaryTransactionState> getSummaryTransaction(String? peopleId) async {
-    state = state.copyWith(items: const AsyncLoading());
-    final result = await repository.getSummaryTransaction(peopleId);
-    return result.fold(
-      (l) => state = state.copyWith(items: AsyncError(l.message)),
-      (r) => state = state.copyWith(items: AsyncData(r)),
-    );
-  }
-}
+  final repository = ref.watch(transactionRepository);
+  final result = await repository.getSummaryTransaction(peopleId);
+  return result.fold((l) => throw l.message, (summaryTransaction) => summaryTransaction);
+});

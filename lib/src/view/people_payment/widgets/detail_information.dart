@@ -3,11 +3,12 @@ part of '../people_payment_page.dart';
 class _DetailInformation extends StatelessWidget {
   const _DetailInformation({
     Key? key,
-    required this.param,
+    required this.peopleId,
+    required this.transactionId,
   }) : super(key: key);
 
-  final PaymentSummaryParameter param;
-
+  final String peopleId;
+  final String transactionId;
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -22,6 +23,7 @@ class _DetailInformation extends StatelessWidget {
         constraints: BoxConstraints(minHeight: fn.vh(context) / 3),
         child: Consumer(
           builder: (context, ref, child) {
+            final param = PaymentSummaryParameter(peopleId: peopleId, transactionId: transactionId);
             final future = ref.watch(getPaymentSummary(param));
 
             return future.when(

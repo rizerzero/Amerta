@@ -8,17 +8,14 @@ import '../setting/setting_page.dart';
 class WelcomePage extends StatefulWidget {
   const WelcomePage({
     Key? key,
-    required this.appBottomNavigationMenu,
   }) : super(key: key);
-
-  final AppBottomNavigationMenu appBottomNavigationMenu;
 
   @override
   State<WelcomePage> createState() => _WelcomePageState();
 }
 
 class _WelcomePageState extends State<WelcomePage> {
-  int _selectedIndex = AppBottomNavigationMenu.home.toIndex();
+  int _selectedIndex = 0;
 
   final _pages = [
     const HomePage(),

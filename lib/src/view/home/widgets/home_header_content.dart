@@ -1,13 +1,14 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../injection.dart';
 import '../../../model/model/people/people_top_ten_model.dart';
 import '../../../utils/utils.dart';
 import '../../../view_model/people/people_latest_ten_notifier.dart';
+import '../../../view_model/transaction/people_summary_transaction_notifier.dart';
 import 'summary_amount.dart';
 
 part 'home_people_item.dart';
@@ -35,28 +36,28 @@ class HomeHeaderContent extends StatelessWidget {
                   padding: const EdgeInsets.all(16.0),
                   child: Consumer(
                     builder: (context, ref, child) {
-                      final future = ref.watch(peopleSummaryTransactionNotifier(null));
-                      return future.items.when(
-                        data: (data) {
+                      final future = ref.watch(getPeopleSummaryTransaction(null));
+                      return future.when(
+                        data: (item) {
+                          final hutang = describeEnum(item.hutang.transactionType).toUpperCase();
+                          final piutang = describeEnum(item.piutang.transactionType).toUpperCase();
+                          final hutangBalance = fn.rupiahCurrency(item.hutang.balance.toInt());
+                          final piutangBalance = fn.rupiahCurrency(item.piutang.balance.toInt());
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Hutang : ${fn.rupiahCurrency(future.balance(TransactionType.hutang))}",
+                                "$hutang : $hutangBalance",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                               Text(
-                                "Piutang : ${fn.rupiahCurrency(future.balance(TransactionType.piutang))}",
+                                "$piutang : $piutangBalance",
                                 style: bodyFont.copyWith(fontSize: 12.0),
                               ),
                             ],
                           );
                         },
-                        error: (error, trace) {
-                          return Center(
-                            child: Text("$error"),
-                          );
-                        },
+                        error: (error, trace) => Center(child: Text("$error")),
                         loading: () => const Center(child: CircularProgressIndicator()),
                       );
                     },
@@ -71,27 +72,24 @@ class HomeHeaderContent extends StatelessWidget {
               Expanded(
                 child: Consumer(
                   builder: (context, ref, child) {
-                    final future = ref.watch(peopleSummaryTransactionNotifier(null));
-                    return future.items.when(
-                      data: (data) {
+                    final future = ref.watch(getPeopleSummaryTransaction(null));
+                    return future.when(
+                      data: (item) {
                         return Row(
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            const SizedBox(width: 16.0),
                             Expanded(
                               child: SummaryAmount(
-                                title: "Hutang",
-                                amount: future.balance(TransactionType.hutang),
+                                title: describeEnum(item.hutang.transactionType).toUpperCase(),
+                                amount: item.hutang.balance,
                               ),
                             ),
-                            const SizedBox(width: 24.0),
                             Expanded(
                               child: SummaryAmount(
-                                title: "Piutang",
-                                amount: future.balance(TransactionType.piutang),
+                                title: describeEnum(item.piutang.transactionType).toUpperCase(),
+                                amount: item.piutang.balance,
                               ),
                             ),
-                            const SizedBox(width: 16.0),
                           ],
                         );
                       },

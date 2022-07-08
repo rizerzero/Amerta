@@ -9,7 +9,6 @@ import '../view/peoples_summary/peoples_summary_page.dart';
 import '../view/preview_pdf/preview_pdf_page.dart';
 import '../view/splash/splash_page.dart';
 import '../view/welcome/welcome_page.dart';
-import 'utils.dart';
 
 const splashRouteNamed = 'splash';
 const appRouteNamed = 'welcome';
@@ -29,88 +28,84 @@ const transactionFormEditRouteNamed = 'transaction-form-edit';
 const previewPDFRouteNamed = 'preview-pdf';
 
 final goRouter = Provider<GoRouter>(
-  (ref) {
-    return GoRouter(
-      debugLogDiagnostics: true,
-      initialLocation: '/splash',
-      redirect: (state) => null,
-      errorBuilder: (ctx, state) {
-        return const Scaffold(
-          body: Center(
-            child: Text("error"),
-          ),
-        );
-      },
-      routes: [
-        GoRoute(
-          path: "/splash",
-          name: splashRouteNamed,
-          builder: (ctx, state) => const SplashPage(),
+  (ref) => GoRouter(
+    debugLogDiagnostics: true,
+    initialLocation: '/splash',
+    redirect: (state) => null,
+    errorBuilder: (ctx, state) {
+      return const Scaffold(
+        body: Center(
+          child: Text("error"),
         ),
-        GoRoute(
-          path: '/app',
-          name: appRouteNamed,
-          builder: (ctx, state) => const WelcomePage(
-            appBottomNavigationMenu: AppBottomNavigationMenu.home,
-          ),
-          routes: [
-            /// [/app/peoples-summary]
-            GoRoute(
-              path: "peoples-summary",
-              name: peoplesSummaryRouteNamed,
-              builder: (ctx, state) => const PeoplesSummaryPage(),
-              routes: [
-                /// [/app/peoples-summary/:peopleId/transaction]
-                GoRoute(
-                  path: ':peopleId/transaction',
-                  name: peopleDetailRouteNamed,
-                  builder: (ctx, state) {
-                    final peopleId = state.params['peopleId'] ?? "-";
-                    return PeopleDetailPage(peopleId: peopleId);
-                  },
-                  routes: [
-                    /// [people/$peopleId/transaction/$transactionId]
-                    GoRoute(
-                      path: ":transactionId",
-                      name: peopleTransactionRouteNamed,
-                      builder: (ctx, state) {
-                        final transactionId = state.params["transactionId"] ?? "-";
-                        final peopleId = state.params['peopleId'] ?? "-";
+      );
+    },
+    routes: [
+      GoRoute(
+        path: "/splash",
+        name: splashRouteNamed,
+        builder: (ctx, state) => const SplashPage(),
+      ),
+      GoRoute(
+        path: '/app',
+        name: appRouteNamed,
+        builder: (ctx, state) => const WelcomePage(),
+        routes: [
+          /// [/app/peoples-summary]
+          GoRoute(
+            path: "peoples-summary",
+            name: peoplesSummaryRouteNamed,
+            builder: (ctx, state) => const PeoplesSummaryPage(),
+            routes: [
+              /// [/app/peoples-summary/:peopleId/transaction]
+              GoRoute(
+                path: ':peopleId/transaction',
+                name: peopleDetailRouteNamed,
+                builder: (ctx, state) {
+                  final peopleId = state.params['peopleId'] ?? "-";
+                  return PeopleDetailPage(peopleId: peopleId);
+                },
+                routes: [
+                  /// [people/$peopleId/transaction/$transactionId]
+                  GoRoute(
+                    path: ":transactionId",
+                    name: peopleTransactionRouteNamed,
+                    builder: (ctx, state) {
+                      final transactionId = state.params["transactionId"] ?? "-";
+                      final peopleId = state.params['peopleId'] ?? "-";
 
-                        return PeoplePaymentPage(
-                          transactionId: transactionId,
-                          peopleId: peopleId,
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        ),
-        GoRoute(
-          path: "/preview-pdf",
-          name: previewPDFRouteNamed,
-          builder: (context, state) => const PreviewPdfPage(),
-        ),
-        GoRoute(
-          path: "/transaction/form",
-          name: transactionFormNewRouteNamed,
-          redirect: (state) => "/transaction/form/new",
-          routes: [
-            GoRoute(
-              path: ":transactionId",
-              name: transactionFormEditRouteNamed,
-              builder: (ctx, state) {
-                state.extra;
-                final transactionId = state.params['transactionId'];
-                return FormTransactionPage(transactionId: transactionId);
-              },
-            )
-          ],
-        ),
-      ],
-    );
-  },
+                      return PeoplePaymentPage(
+                        transactionId: transactionId,
+                        peopleId: peopleId,
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
+      GoRoute(
+        path: "/preview-pdf",
+        name: previewPDFRouteNamed,
+        builder: (context, state) => const PreviewPdfPage(),
+      ),
+      GoRoute(
+        path: "/transaction/form",
+        name: transactionFormNewRouteNamed,
+        redirect: (state) => "/transaction/form/new",
+        routes: [
+          GoRoute(
+            path: ":transactionId",
+            name: transactionFormEditRouteNamed,
+            builder: (ctx, state) {
+              state.extra;
+              final transactionId = state.params['transactionId'];
+              return FormTransactionPage(transactionId: transactionId);
+            },
+          )
+        ],
+      ),
+    ],
+  ),
 );

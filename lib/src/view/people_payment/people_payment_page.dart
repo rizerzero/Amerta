@@ -25,24 +25,20 @@ class PeoplePaymentPage extends ConsumerWidget {
   final String peopleId;
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final param = PaymentSummaryParameter(
-      peopleId: peopleId,
-      transactionId: transactionId,
-    );
     return Scaffold(
       appBar: AppBar(
         elevation: 0.0,
         centerTitle: true,
-        title: Consumer(
-          builder: (context, ref, child) {
-            final id = ref.watch(getPaymentSummary(param)).value?.transactionId;
-            return Text("$id", style: bodyFontWhite.copyWith(fontSize: 14.0));
-          },
-        ),
+        title: Text("Transaksi Detail", style: bodyFontWhite),
       ),
       body: SafeArea(
         child: RefreshIndicator(
           onRefresh: () async {
+            final param = PaymentSummaryParameter(
+              peopleId: peopleId,
+              transactionId: transactionId,
+            );
+
             ref.invalidate(getPaymentSummary(param));
             ref.invalidate(getPayments(PaymentsParameter(transactionId: transactionId)));
           },
@@ -53,7 +49,7 @@ class PeoplePaymentPage extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _DetailInformation(param: param),
+                  _DetailInformation(peopleId: peopleId, transactionId: transactionId),
                   const SizedBox(height: 16.0),
                   _DetailTransactionList(transactionId: transactionId),
                 ],

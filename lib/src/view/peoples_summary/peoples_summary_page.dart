@@ -53,24 +53,25 @@ class PeoplesSummaryPage extends ConsumerWidget {
                                   Hero(
                                     tag: index.toString(),
                                     child: ClipOval(
-                                      child: Builder(builder: (context) {
-                                        final imageDefault = Image.asset(
-                                          kLogo,
-                                          fit: BoxFit.cover,
-                                          height: 30,
-                                          width: 30,
-                                        );
-                                        if (item.people.imagePath == null) {
-                                          return imageDefault;
-                                        }
-                                        return Image.file(
-                                          File(item.people.imagePath!),
-                                          fit: BoxFit.cover,
-                                          width: 30,
-                                          height: 30,
-                                          errorBuilder: (context, error, trace) => imageDefault,
-                                        );
-                                      }),
+                                      child: Builder(
+                                        builder: (context) {
+                                          final imageDefault = Image.asset(
+                                            kLogo,
+                                            fit: BoxFit.cover,
+                                            height: 30,
+                                            width: 30,
+                                          );
+                                          if (item.people.imagePath == null) return imageDefault;
+
+                                          return Image.file(
+                                            File(item.people.imagePath!),
+                                            fit: BoxFit.cover,
+                                            width: 30,
+                                            height: 30,
+                                            errorBuilder: (context, error, trace) => imageDefault,
+                                          );
+                                        },
+                                      ),
                                     ),
                                   ),
                                   const SizedBox(width: 16.0),

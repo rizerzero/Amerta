@@ -11,7 +11,7 @@ class SummaryAmount extends StatelessWidget {
   }) : super(key: key);
 
   final String title;
-  final int amount;
+  final double amount;
   final VoidCallback? onTap;
 
   @override
@@ -33,7 +33,7 @@ class SummaryAmount extends StatelessWidget {
             child: InkWell(
               onTap: onTap,
               child: Text(
-                fn.rupiahCurrency(amount, prefix: "Rp."),
+                fn.rupiahCurrency(amount.toInt(), prefix: "Rp."),
                 style: headerFontWhite.copyWith(
                   fontSize: 40.0,
                   fontWeight: FontWeight.bold,

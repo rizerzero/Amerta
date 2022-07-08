@@ -108,12 +108,7 @@ class _DetailTransactionList extends StatelessWidget {
             );
           },
           error: (error, trace) => Center(
-            child: Text(
-              "$error",
-              style: bodyFont.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            child: Text("$error", style: bodyFont.copyWith(fontWeight: FontWeight.bold)),
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
         );
@@ -137,27 +132,23 @@ class _ButtonAction extends StatelessWidget {
       spacing: 8.0,
       children: [
         OutlinedButton(
-          onPressed: () async {
-            await showDialog(
-              barrierDismissible: false,
-              context: context,
-              builder: (context) => FormPaymentModal(
-                id: item.id,
-                peopleId: item.peopleId,
-                transactionId: item.transactionId,
-              ),
-            );
-          },
+          onPressed: () async => await showDialog(
+            barrierDismissible: false,
+            context: context,
+            builder: (context) => FormPaymentModal(
+              id: item.id,
+              peopleId: item.peopleId,
+              transactionId: item.transactionId,
+            ),
+          ),
           style: TextButton.styleFrom(side: const BorderSide(color: primary)),
           child: Text("Edit", style: bodyFont.copyWith(color: primary)),
         ),
         OutlinedButton(
-          onPressed: () async {
-            await showDialog(
-              context: context,
-              builder: (context) => ModalRemovePayment(id: item.id),
-            );
-          },
+          onPressed: () async => await showDialog(
+            context: context,
+            builder: (context) => ModalRemovePayment(id: item.id),
+          ),
           style: TextButton.styleFrom(side: const BorderSide(color: Colors.red)),
           child: Text("Hapus", style: bodyFont.copyWith(color: Colors.red)),
         ),
@@ -187,10 +178,7 @@ class _Header extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            DateFormat.yMMMMEEEEd().format(date),
-            style: bodyFontWhite.copyWith(fontSize: 16.0),
-          ),
+          Text(DateFormat.yMMMMEEEEd().format(date), style: bodyFontWhite.copyWith(fontSize: 16.0)),
         ],
       ),
     );

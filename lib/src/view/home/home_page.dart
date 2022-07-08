@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-import '../../../injection.dart';
 import '../../model/model/transaction/recent_transaction_parameter.dart';
 import '../../utils/utils.dart';
 import '../../view_model/people/people_latest_ten_notifier.dart';
+import '../../view_model/transaction/people_summary_transaction_notifier.dart';
 import '../../view_model/transaction/recent_transaction_notifier.dart';
 import 'widgets/home_header_content.dart';
 import 'widgets/home_tabbar_item.dart';
@@ -23,7 +23,7 @@ class HomePage extends ConsumerWidget {
         onRefresh: () async {
           ref.refresh(getLatestTenPeople);
 
-          ref.refresh(peopleSummaryTransactionNotifier(null));
+          ref.refresh(getPeopleSummaryTransaction(null));
 
           const param = RecentTransactionParameter(type: TransactionType.hutang);
           ref.refresh(getTransactions(param));

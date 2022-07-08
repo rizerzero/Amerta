@@ -19,8 +19,9 @@ class TransactionRepository {
 
   final TransactionLocalService transactionLocalService;
 
-  Future<Either<Failure, List<SummaryTransactionModel>>> getSummaryTransaction(
-      String? peopleId) async {
+  Future<Either<Failure, SummaryTransactionModel>> getSummaryTransaction(
+    String? peopleId,
+  ) async {
     try {
       final result = await transactionLocalService.getSummaryTransaction(peopleId);
       return Right(result);

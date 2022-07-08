@@ -14,7 +14,6 @@ import 'src/view_model/payment/payment_notifier.dart';
 import 'src/view_model/people/people_action_notifier.dart';
 import 'src/view_model/people/people_notifier.dart';
 import 'src/view_model/people/peoples_summary_notifier.dart';
-import 'src/view_model/transaction/people_summary_transaction_notifier.dart';
 import 'src/view_model/transaction/print_transaction_notifier.dart';
 import 'src/view_model/transaction/transaction_action_notifier.dart';
 import 'src/view_model/transaction/transaction_notifier.dart';
@@ -44,16 +43,13 @@ final paymentActionNotifier =
 
 ///* [Transaction Section]
 
-final transactionLocalService = Provider((ref) {
-  return TransactionLocalService(
-    query: ref.watch(transactionTableQuery),
-    paymentQuery: ref.watch(paymentTableQuery),
-  );
-});
+final transactionLocalService = Provider((ref) => TransactionLocalService(
+      query: ref.watch(transactionTableQuery),
+      paymentQuery: ref.watch(paymentTableQuery),
+    ));
 
-final transactionRepository = Provider((ref) {
-  return TransactionRepository(transactionLocalService: ref.watch(transactionLocalService));
-});
+final transactionRepository = Provider(
+    (ref) => TransactionRepository(transactionLocalService: ref.watch(transactionLocalService)));
 
 final transactionActionNotifier =
     StateNotifierProvider.autoDispose<TransactionActionNotifier, TransactionActionState>((ref) {
@@ -63,36 +59,14 @@ final transactionActionNotifier =
 final transactionNotifier = StateNotifierProvider.family
     .autoDispose<TransactionNotifier, TransactionState, String?>((ref, id) {
   return TransactionNotifier(
-    repository: ref.watch(transactionRepository),
     id: id,
+    repository: ref.watch(transactionRepository),
   );
 });
 
-final peopleSummaryTransactionNotifier = StateNotifierProvider.autoDispose
-    .family<PeopleSummaryTransactionNotifier, PeopleSummaryTransactionState, String?>(
-  (ref, peopleId) {
-    /// Every [add / update / delete] transaction, refresh this provider
-    ref.listen<TransactionActionState>(transactionActionNotifier, (_, state) {
-      ref.invalidateSelf();
-    });
-
-    /// Every [add / update / delete] payment, refresh this provider
-    ref.listen<PaymentActionState>(paymentActionNotifier, (_, state) {
-      ref.invalidateSelf();
-    });
-
-    return PeopleSummaryTransactionNotifier(
-      peopleId: peopleId,
-      repository: ref.watch(transactionRepository),
-    );
-  },
-);
-
 final printTransactionNotifier =
     StateNotifierProvider.autoDispose<PrintTransactionNotifier, PrintTransactionState>(
-  (ref) {
-    return PrintTransactionNotifier(repository: ref.watch(transactionRepository));
-  },
+  (ref) => PrintTransactionNotifier(repository: ref.watch(transactionRepository)),
 );
 
 ///* [People Section]
@@ -112,12 +86,10 @@ final peopleActionNotifier =
 
 final peopleNotifier =
     StateNotifierProvider.autoDispose.family<PeopleNotifier, PeopleState, String?>(
-  (ref, id) {
-    return PeopleNotifier(
-      repository: ref.watch(peopleRepository),
-      peopleId: id,
-    );
-  },
+  (ref, id) => PeopleNotifier(
+    repository: ref.watch(peopleRepository),
+    peopleId: id,
+  ),
 );
 
 final peoplesSummaryNotifier =

@@ -27,7 +27,7 @@ class TransactionLocalService {
   final TransactionTableQuery query;
   final PaymentTableQuery paymentQuery;
 
-  Future<List<SummaryTransactionModel>> getSummaryTransaction(String? peopleId) async {
+  Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
     await Future.delayed(kThemeAnimationDuration);
     final result = await query.getSummaryTransaction(peopleId);
     return result;

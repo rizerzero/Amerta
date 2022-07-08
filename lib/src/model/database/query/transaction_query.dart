@@ -23,54 +23,30 @@ class TransactionTableQuery extends MyDatabase {
 
   final PeopleTableQuery peopleQuery;
 
-  Future<List<SummaryTransactionModel>> getSummaryTransaction(String? peopleId) async {
-    String query = "";
+  Future<SummaryTransactionModel> getSummaryTransaction(String? peopleId) async {
+    String where = peopleId == null ? "" : "WHERE `people_id` = ?";
 
-    if (peopleId != null) {
-      /// Transaction Summary for specific people
-      query = """
-        SELECT
-          t1.`id`,
-          t1.`transaction_type`,
-          t1.`amount` AS total_amount,
-          (SELECT
-            SUM(amount)
-          FROM
-            ${paymentTable.tableName}
-          WHERE `transaction_id` = t1.id) AS total_amount_payment
-        FROM
-          ${transactionTable.tableName} AS t1
-        WHERE t1.`people_id` = ?
-        GROUP BY
-          t1.id,
-          t1.`transaction_type`,
-          `total_amount_payment`,
-          t1.`amount`
-        """;
-    } else {
-      /// Transaction summary for owner application
-      query = """
-        SELECT
-          t1.`transaction_type`,
-          SUM(`amount`) AS total_amount,
-          (SELECT
-            SUM(sub1.amount)
-          FROM
-            ${paymentTable.tableName} AS sub1
-            JOIN ${transactionTable.tableName} AS sub2
-              ON (sub1.transaction_id = sub2.id)
-          WHERE sub2.transaction_type = t1.`transaction_type`) AS total_amount_payment
-        FROM
-          ${transactionTable.tableName} AS t1
-        GROUP BY t1.`transaction_type` 
-       """;
-    }
+    String query = """
+    SELECT
+      t1.`transaction_type` AS transactionType,
+      COALESCE(SUM(t1.`amount`),0) AS totalAmount,
+      (SELECT
+        COALESCE(SUM(sub1.amount),0)
+      FROM
+        ${paymentTable.tableName} AS sub1
+        JOIN ${transactionTable.tableName} AS sub2
+          ON (sub1.transaction_id = sub2.id)
+      WHERE sub2.transaction_type = t1.`transaction_type`) AS totalPayment
+    FROM
+      ${transactionTable.tableName} AS t1
+    $where
+    GROUP BY `transaction_type`
+""";
 
     final result = await customSelect(
       query,
       readsFrom: {
         transactionTable,
-        peoplesTable,
         paymentTable,
       },
       variables: [
@@ -78,17 +54,28 @@ class TransactionTableQuery extends MyDatabase {
       ],
     ).map(
       (row) {
-        return SummaryTransactionModel(
-          totalAmount: row.read<int?>("total_amount"),
-          totalAmountPayment: row.read<int?>("total_amount_payment"),
-          transactionType: TransactionType.values.firstWhereOrNull(
-            (element) => element.name == row.read<String?>("transaction_type"),
-          ),
+        final totalAmount = row.read<double?>("totalAmount") ?? 0;
+        final totalAmountPayment = row.read<double?>("totalPayment") ?? 0;
+        final transactionType = TransactionType.values.firstWhereOrNull(
+              (element) => element.name == row.read<String?>("transactionType"),
+            ) ??
+            TransactionType.hutang;
+        return SummaryTransactionDetailModel(
+          totalAmount: totalAmount,
+          totalAmountPayment: totalAmountPayment,
+          transactionType: transactionType,
+          balance: totalAmount - totalAmountPayment,
         );
       },
     ).get();
 
-    return result;
+    final hutang =
+        result.firstWhereOrNull((element) => element.transactionType == TransactionType.hutang) ??
+            const SummaryTransactionDetailModel(transactionType: TransactionType.hutang);
+    final piutang =
+        result.firstWhereOrNull((element) => element.transactionType == TransactionType.piutang) ??
+            const SummaryTransactionDetailModel(transactionType: TransactionType.piutang);
+    return SummaryTransactionModel(hutang: hutang, piutang: piutang);
   }
 
   Future<List<RecentTransactionModel>> getTransactions({
